@@ -1,4 +1,4 @@
-package com.isa.controller;
+package com.isa.med_equipment.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.isa.beans.User;
-import com.isa.service.impl.UserService;
+import com.isa.med_equipment.beans.User;
+import com.isa.med_equipment.service.impl.UserService;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
 
-    public UserController(@Qualifier("firstService") UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

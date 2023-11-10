@@ -1,4 +1,4 @@
-package com.isa.beans;
+package com.isa.med_equipment.beans;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;

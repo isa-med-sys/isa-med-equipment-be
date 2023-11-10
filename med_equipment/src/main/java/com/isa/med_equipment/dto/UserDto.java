@@ -1,9 +1,9 @@
-package com.isa.dto;
+package com.isa.med_equipment.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import com.isa.beans.Address;
+import com.isa.med_equipment.beans.Address;
 
 public class UserDto {
     @NotEmpty(message = "Name is required")

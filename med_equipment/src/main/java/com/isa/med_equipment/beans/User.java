@@ -1,4 +1,4 @@
-package com.isa.beans;
+package com.isa.med_equipment.beans;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

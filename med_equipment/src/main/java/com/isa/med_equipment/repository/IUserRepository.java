@@ -1,6 +1,6 @@
-package com.isa.repository;
+package com.isa.med_equipment.repository;
 
-import com.isa.beans.User;
+import com.isa.med_equipment.beans.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

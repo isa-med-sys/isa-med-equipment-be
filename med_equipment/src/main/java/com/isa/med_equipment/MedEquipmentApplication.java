@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.isa.beans")
-@EnableJpaRepositories(basePackages = "com.isa.repository")
+@EntityScan(basePackages = "com.isa.med_equipment.beans")
+@EnableJpaRepositories(basePackages = "com.isa.med_equipment.repository")
 public class MedEquipmentApplication {
 
 	public static void main(String[] args) {

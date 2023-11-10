@@ -1,7 +1,7 @@
-package com.isa.service;
+package com.isa.med_equipment.service;
 
-import com.isa.beans.User;
-import com.isa.dto.UserDto;
+import com.isa.med_equipment.beans.User;
+import com.isa.med_equipment.dto.UserDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
