@@ -13,7 +13,7 @@ import com.isa.med_equipment.beans.User;
 import com.isa.med_equipment.service.impl.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
 
