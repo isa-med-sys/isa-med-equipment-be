@@ -1,8 +1,6 @@
 package com.isa.med_equipment.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import com.isa.med_equipment.beans.Address;
 
 public class UserDto {
@@ -20,7 +18,6 @@ public class UserDto {
 
     @NotEmpty(message = "Password is required")
     private String password;
-
     @NotEmpty(message = "Phone number is required")
     private String phoneNumber;
 

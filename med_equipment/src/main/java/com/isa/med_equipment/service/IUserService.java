@@ -12,4 +12,5 @@ public interface IUserService {
     List<User> findAll();
     Optional<User> findById(Long id);
     User register(UserDto userDto);
+    boolean emailExists(String email);
 }
