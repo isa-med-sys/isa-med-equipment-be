@@ -9,6 +9,7 @@ import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.IUserService;
 import com.isa.med_equipment.validation.EmailExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +21,15 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     final EmailSenderService emailSenderService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService) {
+    public UserService(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         super();
         this.userRepository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailSenderService = emailSenderService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,8 +47,6 @@ public class UserService implements IUserService {
         return userRepository.existsByEmail(email);
     }
 
-    // TODO protect password
-
     @Override
     public User register(UserDto userDto) throws EmailExistsException {
         User user = new User();
@@ -57,7 +58,7 @@ public class UserService implements IUserService {
         user.setSurname(userDto.getSurname());
         user.setOccupation(userDto.getOccupation());
         user.setCompanyInfo(userDto.getCompanyInfo());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setEnabled(false);
