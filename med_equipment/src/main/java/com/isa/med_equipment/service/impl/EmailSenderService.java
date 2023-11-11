@@ -22,7 +22,7 @@ public class EmailSenderService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setFrom("medicalequipment753@gmail.com");
-        mailMessage.setSubject("Complete your registration.");
+        mailMessage.setSubject("Complete your registration!");
         mailMessage.setText("To be able to log into your account, please click on the following link: " + confirmationLink);
         javaMailSender.send(mailMessage);
     }

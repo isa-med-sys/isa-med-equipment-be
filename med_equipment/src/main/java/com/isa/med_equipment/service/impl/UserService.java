@@ -1,16 +1,18 @@
 package com.isa.med_equipment.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-import com.isa.med_equipment.beans.User;
 import com.isa.med_equipment.beans.Address;
+import com.isa.med_equipment.beans.ConfirmationToken;
+import com.isa.med_equipment.beans.User;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.repository.ConfirmationTokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.IUserService;
+import com.isa.med_equipment.validation.EmailExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.isa.med_equipment.beans.ConfirmationToken;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -45,8 +47,11 @@ public class UserService implements IUserService {
     // TODO protect password
 
     @Override
-    public User register(UserDto userDto) {
+    public User register(UserDto userDto) throws EmailExistsException {
         User user = new User();
+
+        if(emailExists(userDto.getEmail()))
+            throw new EmailExistsException("Account with email address: " + userDto.getEmail() + " already exists");
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());

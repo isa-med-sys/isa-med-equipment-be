@@ -1,15 +1,16 @@
 package com.isa.med_equipment.controller;
 
+import com.isa.med_equipment.beans.User;
+import com.isa.med_equipment.dto.UserDto;
+import com.isa.med_equipment.service.impl.UserService;
+import com.isa.med_equipment.validation.EmailExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
-
-import com.isa.med_equipment.beans.ConfirmationToken;
-import com.isa.med_equipment.beans.User;
-import com.isa.med_equipment.service.impl.UserService;
-import com.isa.med_equipment.dto.UserDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,12 +38,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         try {
-            boolean emailExists = userService.emailExists(userDto.getEmail());
-            if (emailExists)
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("User with email " + userDto.getEmail() + " already exists.");
             User registeredUser = userService.register(userDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+        } catch (EmailExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
         }
