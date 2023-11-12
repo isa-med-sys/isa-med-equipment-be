@@ -3,12 +3,13 @@ package com.isa.med_equipment.scheduler;
 import com.isa.med_equipment.beans.ConfirmationToken;
 import com.isa.med_equipment.repository.ConfirmationTokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
+import com.isa.med_equipment.beans.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import com.isa.med_equipment.beans.User;
+
 import java.time.*;
-import java.time.Duration;
 
 @Component
 public class TokenCleanupScheduler {

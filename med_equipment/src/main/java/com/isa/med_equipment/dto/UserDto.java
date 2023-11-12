@@ -1,7 +1,9 @@
 package com.isa.med_equipment.dto;
 
-import jakarta.validation.constraints.*;
 import com.isa.med_equipment.beans.Address;
+import com.isa.med_equipment.enums.Role;
+
+import jakarta.validation.constraints.*;
 
 public class UserDto {
     @NotEmpty(message = "Name is required")
@@ -30,6 +32,8 @@ public class UserDto {
 	@NotEmpty(message = "Address is required")
 	private Address address;
 
+	private Role role;
+
     public UserDto() {
 
     }
@@ -41,7 +45,7 @@ public class UserDto {
 			@NotEmpty(message = "Phone number is required") String phoneNumber,
 			@NotEmpty(message = "Occupation is required") String occupation,
 			@NotEmpty(message = "Company information number is required") String companyInfo,
-			@NotEmpty(message = "Address is required") Address address) {
+			@NotEmpty(message = "Address is required") Address address, Role role) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -51,6 +55,7 @@ public class UserDto {
 		this.occupation = occupation;
 		this.companyInfo = companyInfo;
 		this.address = address;
+		this.role = role;
 	}
 
 	public String getName() {
@@ -115,5 +120,13 @@ public class UserDto {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public Role getRole() {
+		return role;
 	}
 }

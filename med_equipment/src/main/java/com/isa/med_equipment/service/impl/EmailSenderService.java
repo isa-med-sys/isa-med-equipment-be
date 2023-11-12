@@ -1,11 +1,12 @@
 package com.isa.med_equipment.service.impl;
 
+import com.isa.med_equipment.beans.User;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import com.isa.med_equipment.beans.User;
 
 @Service
 public class EmailSenderService {

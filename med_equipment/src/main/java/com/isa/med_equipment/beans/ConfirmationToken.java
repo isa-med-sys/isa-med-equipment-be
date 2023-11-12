@@ -1,9 +1,9 @@
 package com.isa.med_equipment.beans;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.UUID;
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name="confirmationTokens")
@@ -21,7 +21,7 @@ public class ConfirmationToken {
     private Date createdDate;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(nullable = false, name = "userId")
     private User user;
 
     public ConfirmationToken() {}

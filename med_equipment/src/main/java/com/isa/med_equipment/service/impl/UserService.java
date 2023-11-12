@@ -8,6 +8,7 @@ import com.isa.med_equipment.repository.ConfirmationTokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.IUserService;
 import com.isa.med_equipment.validation.EmailExistsException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
-    final EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -62,6 +63,7 @@ public class UserService implements IUserService {
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setEnabled(false);
+        user.setRole(userDto.getRole());
 
         Address address = new Address();
         address.setStreet(userDto.getAddress().getStreet());
