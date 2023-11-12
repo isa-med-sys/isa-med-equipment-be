@@ -46,7 +46,6 @@ public class UserController {
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         try {
             User registeredUser = userService.register(userDto);
-            AuthenticationResponse response = authenticationService.register(registeredUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

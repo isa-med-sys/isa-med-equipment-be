@@ -2,16 +2,16 @@ package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.auth.AuthenticationRequest;
 import com.isa.med_equipment.auth.AuthenticationResponse;
-import com.isa.med_equipment.repository.UserRepository;
-import com.isa.med_equipment.repository.TokenRepository;
 import com.isa.med_equipment.beans.Token;
 import com.isa.med_equipment.beans.User;
 import com.isa.med_equipment.enums.TokenType;
+import com.isa.med_equipment.repository.TokenRepository;
+import com.isa.med_equipment.repository.UserRepository;
 
-import org.springframework.stereotype.Service;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,18 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
-    public AuthenticationResponse register(User user) {
-        var jwtToken = jwtService.generateToken(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
-    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
@@ -44,8 +36,8 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        User user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         var jwtToken = jwtService.generateToken(user);
         saveUserToken(user, jwtToken);
