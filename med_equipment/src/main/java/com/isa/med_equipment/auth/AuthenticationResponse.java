@@ -1,9 +1,11 @@
 package com.isa.med_equipment.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Data
 @Builder
@@ -11,5 +13,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthenticationResponse {
 
-    private String token;
+    @JsonProperty("access_token")
+    private String accessToken;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 }

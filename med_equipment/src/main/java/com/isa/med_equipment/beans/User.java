@@ -56,6 +56,9 @@ public class User implements UserDetails {
         this.enabled = false;
     }
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     public User(Long id,  String name, String surname, String email, String password, String phoneNumber,
                 String occupation, String companyInfo, Address address) {
         super();
