@@ -1,6 +1,6 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.repository.TokenRepository;
+import com.isa.med_equipment.security.token.TokenRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

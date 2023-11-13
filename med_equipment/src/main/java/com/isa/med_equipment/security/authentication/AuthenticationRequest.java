@@ -1,4 +1,4 @@
-package com.isa.med_equipment.auth;
+package com.isa.med_equipment.security.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

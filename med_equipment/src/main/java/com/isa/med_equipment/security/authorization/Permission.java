@@ -1,4 +1,4 @@
-package com.isa.med_equipment.enums;
+package com.isa.med_equipment.security.authorization;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

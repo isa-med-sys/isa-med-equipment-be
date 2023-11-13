@@ -1,6 +1,6 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.beans.User;
+import com.isa.med_equipment.model.User;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

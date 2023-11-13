@@ -1,6 +1,4 @@
-package com.isa.med_equipment.beans;
-
-import com.isa.med_equipment.enums.Role;
+package com.isa.med_equipment.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

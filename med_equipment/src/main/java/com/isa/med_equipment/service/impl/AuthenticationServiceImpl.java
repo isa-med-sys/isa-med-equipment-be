@@ -1,13 +1,14 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.auth.AuthenticationRequest;
-import com.isa.med_equipment.auth.AuthenticationResponse;
-import com.isa.med_equipment.beans.Token;
-import com.isa.med_equipment.beans.User;
-import com.isa.med_equipment.enums.TokenType;
-import com.isa.med_equipment.repository.TokenRepository;
+import com.isa.med_equipment.security.authentication.AuthenticationRequest;
+import com.isa.med_equipment.security.authentication.AuthenticationResponse;
+import com.isa.med_equipment.model.Token;
+import com.isa.med_equipment.model.User;
+import com.isa.med_equipment.security.token.TokenType;
+import com.isa.med_equipment.security.token.TokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
 
+import com.isa.med_equipment.service.AuthenticationService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;

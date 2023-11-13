@@ -1,6 +1,6 @@
-package com.isa.med_equipment.beans;
+package com.isa.med_equipment.model;
 
-import com.isa.med_equipment.enums.TokenType;
+import com.isa.med_equipment.security.token.TokenType;
 
 import jakarta.persistence.*;
 

@@ -1,7 +1,7 @@
 package com.isa.med_equipment.dto;
 
-import com.isa.med_equipment.beans.Address;
-import com.isa.med_equipment.enums.Role;
+import com.isa.med_equipment.model.Address;
+import com.isa.med_equipment.model.Role;
 
 import jakarta.validation.constraints.*;
 

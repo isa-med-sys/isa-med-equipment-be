@@ -1,4 +1,4 @@
-package com.isa.med_equipment.beans;
+package com.isa.med_equipment.model;
 
 import jakarta.persistence.*;
 

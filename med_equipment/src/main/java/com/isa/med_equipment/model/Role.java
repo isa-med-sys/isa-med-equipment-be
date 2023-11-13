@@ -1,5 +1,6 @@
-package com.isa.med_equipment.enums;
+package com.isa.med_equipment.model;
 
+import com.isa.med_equipment.security.authorization.Permission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.isa.med_equipment.enums.Permission.*;
+import static com.isa.med_equipment.security.authorization.Permission.*;
 
 @RequiredArgsConstructor
 public enum Role {

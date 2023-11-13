@@ -1,6 +1,6 @@
 package com.isa.med_equipment.config;
 
-import com.isa.med_equipment.auth.JwtAuthenticationFilter;
+import com.isa.med_equipment.security.authentication.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

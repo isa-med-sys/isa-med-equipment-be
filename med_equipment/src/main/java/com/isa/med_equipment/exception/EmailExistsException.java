@@ -1,4 +1,4 @@
-package com.isa.med_equipment.validation;
+package com.isa.med_equipment.exception;
 
 public class EmailExistsException extends Exception {
 

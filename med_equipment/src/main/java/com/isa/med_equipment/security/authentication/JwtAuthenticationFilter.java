@@ -1,7 +1,7 @@
-package com.isa.med_equipment.auth;
+package com.isa.med_equipment.security.authentication;
 
 import com.isa.med_equipment.service.impl.JwtService;
-import com.isa.med_equipment.repository.TokenRepository;
+import com.isa.med_equipment.security.token.TokenRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

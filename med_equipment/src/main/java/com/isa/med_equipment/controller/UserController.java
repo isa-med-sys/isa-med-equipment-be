@@ -1,14 +1,12 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.auth.AuthenticationRequest;
-import com.isa.med_equipment.auth.AuthenticationResponse;
-import com.isa.med_equipment.service.impl.AuthenticationService;
-import com.isa.med_equipment.beans.User;
-import com.isa.med_equipment.service.impl.JwtService;
 import com.isa.med_equipment.dto.UserDto;
-import com.isa.med_equipment.service.impl.UserService;
-import com.isa.med_equipment.validation.EmailExistsException;
-
+import com.isa.med_equipment.exception.EmailExistsException;
+import com.isa.med_equipment.model.User;
+import com.isa.med_equipment.security.authentication.AuthenticationRequest;
+import com.isa.med_equipment.security.authentication.AuthenticationResponse;
+import com.isa.med_equipment.service.AuthenticationService;
+import com.isa.med_equipment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,24 +24,13 @@ public class UserController {
     private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserController(UserService userService, AuthenticationService authenticationService, JwtService jwtService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAll")
-    public ResponseEntity<List<User>> findAll() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
         try {
             User registeredUser = userService.register(userDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
@@ -65,7 +52,18 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<User>> findAll() {
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
+        Optional<User> user = userService.findById(id);
+        return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 }

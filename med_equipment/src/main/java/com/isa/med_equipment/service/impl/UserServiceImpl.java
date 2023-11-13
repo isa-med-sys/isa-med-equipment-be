@@ -1,13 +1,13 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.beans.Address;
-import com.isa.med_equipment.beans.ConfirmationToken;
-import com.isa.med_equipment.beans.User;
+import com.isa.med_equipment.model.Address;
+import com.isa.med_equipment.model.ConfirmationToken;
+import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.dto.UserDto;
-import com.isa.med_equipment.repository.ConfirmationTokenRepository;
+import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
-import com.isa.med_equipment.service.IUserService;
-import com.isa.med_equipment.validation.EmailExistsException;
+import com.isa.med_equipment.service.UserService;
+import com.isa.med_equipment.exception.EmailExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService implements IUserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -25,7 +25,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         super();
         this.userRepository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
