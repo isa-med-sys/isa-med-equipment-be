@@ -16,5 +16,4 @@ public class MedEquipmentApplication {
 		SpringApplication.run(MedEquipmentApplication.class, args);
 		System.out.println("Hello world!");
 	}
-
 }

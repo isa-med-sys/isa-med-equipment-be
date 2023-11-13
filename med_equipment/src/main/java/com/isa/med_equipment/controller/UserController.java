@@ -47,7 +47,7 @@ public class UserController {
         try {
             User registeredUser = userService.register(userDto);
             AuthenticationResponse token = authenticationService.register(registeredUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(token);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {

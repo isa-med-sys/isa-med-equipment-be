@@ -14,9 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.isa.med_equipment.enums.Permission.ADMIN_READ;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -36,7 +33,12 @@ public class SecurityConfiguration {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html" };
+            "/swagger-ui.html",
+            "http:/localhost:4200/**",
+            "http://localhost:4200/registration",
+            "http:/localhost:4200",
+            "/api/users/**"
+    };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -49,9 +51,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers(POST, "/api/users/register", "/api/users/login").permitAll()
-                                .requestMatchers(GET, "/api/users/confirm-account").permitAll()
-                                .requestMatchers(GET, "/api/users/getAll").hasAnyAuthority(ADMIN_READ.name())
                                 .anyRequest()
                                 .authenticated()
                 )
