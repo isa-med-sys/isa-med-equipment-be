@@ -24,16 +24,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(User registeredUser) {
-        var jwtToken = jwtService.generateToken(registeredUser);
-        var refreshToken = jwtService.generateRefreshToken(registeredUser);
-        saveUserToken(registeredUser, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
