@@ -1,7 +1,7 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.model.ConfirmationToken;
+import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;

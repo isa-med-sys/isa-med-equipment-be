@@ -1,5 +1,6 @@
-package com.isa.med_equipment.model;
+package com.isa.med_equipment.security.token;
 
+import com.isa.med_equipment.model.User;
 import jakarta.persistence.*;
 
 import java.util.Date;

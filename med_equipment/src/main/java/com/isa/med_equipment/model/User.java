@@ -1,5 +1,6 @@
 package com.isa.med_equipment.model;
 
+import com.isa.med_equipment.security.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 

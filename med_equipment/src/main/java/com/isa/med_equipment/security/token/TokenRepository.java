@@ -1,7 +1,5 @@
 package com.isa.med_equipment.security.token;
 
-import com.isa.med_equipment.model.Token;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
