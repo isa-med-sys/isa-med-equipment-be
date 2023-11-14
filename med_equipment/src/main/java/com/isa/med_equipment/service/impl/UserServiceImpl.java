@@ -1,14 +1,14 @@
 package com.isa.med_equipment.service.impl;
 
+import com.isa.med_equipment.dto.UserDto;
+import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.model.Address;
 import com.isa.med_equipment.security.token.ConfirmationToken;
+import com.isa.med_equipment.model.Role;
 import com.isa.med_equipment.model.User;
-import com.isa.med_equipment.dto.UserDto;
-import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.repository.UserRepository;
+import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
-import com.isa.med_equipment.exception.EmailExistsException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setEnabled(false);
-        user.setRole(userDto.getRole());
+        user.setRole(Role.USER);
 
         Address address = new Address();
         address.setStreet(userDto.getAddress().getStreet());

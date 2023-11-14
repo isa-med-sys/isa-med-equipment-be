@@ -1,11 +1,9 @@
 package com.isa.med_equipment.model;
-
 import com.isa.med_equipment.security.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -22,6 +20,7 @@ public class User implements UserDetails {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Getter
     @Column(name = "surname", nullable = false)
     private String surname;
 
@@ -96,10 +95,6 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getSurname() {
-        return surname;
-    }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -158,7 +153,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return role.getAuthorities();
     }
 
     public String getPassword() {

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static com.isa.med_equipment.security.authorization.Permission.*;
 
+@Getter
 @RequiredArgsConstructor
 public enum Role {
     USER(Collections.emptySet()),
@@ -24,7 +25,6 @@ public enum Role {
             )
     );
 
-    @Getter
     private final Set<Permission> permissions;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
