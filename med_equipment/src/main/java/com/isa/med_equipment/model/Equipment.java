@@ -3,6 +3,9 @@ package com.isa.med_equipment.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -30,6 +33,13 @@ public class Equipment {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false)
     private EquipmentType type;
+
+    @ManyToMany(mappedBy = "equipment")
+    private Set<Company> companies = new HashSet<>();
+
+//    @ManyToOne
+//    @JoinColumn(name = "companyId", referencedColumnName = "id")
+//    private Company company;
 
 //    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 //    @JoinTable(name = "Owns", joinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "equipment_id", referencedColumnName = "id"))
