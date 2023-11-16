@@ -11,10 +11,12 @@ import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,15 +49,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean emailExists(String email) {
-        return userRepository.existsByEmail(email);
+    public Optional<User> emailExists(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public User register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
         RegisteredUser user = new RegisteredUser();
 
-        if(emailExists(userRegistrationDto.getEmail()))
+        if(emailExists(userRegistrationDto.getEmail()).isPresent())
             throw new EmailExistsException("Account with email address: " + userRegistrationDto.getEmail() + " already exists");
 
         user.setName(userRegistrationDto.getName());
