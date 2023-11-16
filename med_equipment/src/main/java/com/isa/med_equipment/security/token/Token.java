@@ -1,13 +1,11 @@
 package com.isa.med_equipment.security.token;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.isa.med_equipment.model.User;
-import com.isa.med_equipment.security.token.TokenType;
-
 import jakarta.persistence.*;
-
-import lombok.Data;
-import lombok.Builder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -15,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "JwtTokens")
+@Table(name = "jwt_tokens")
 public class Token {
 
   @Id
@@ -33,6 +31,18 @@ public class Token {
   public boolean expired;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId")
+  @JoinColumn(name = "user_id")
+  @JsonBackReference
   public User user;
+
+  @Override
+  public String toString() {
+    return "Token{" +
+            "id=" + id +
+            ", token='" + token + '\'' +
+            ", tokenType=" + tokenType +
+            ", revoked=" + revoked +
+            ", expired=" + expired +
+            '}';
+  }
 }

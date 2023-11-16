@@ -1,161 +1,60 @@
 package com.isa.med_equipment.model;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.isa.med_equipment.security.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+import static jakarta.persistence.InheritanceType.JOINED;
+
+@Data
 @Entity
-@Table(name = "Users")
-public class User implements UserDetails {
+@Table(name="users")
+@Inheritance(strategy=JOINED)
+public abstract class User implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Getter
     @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "phoneNumber", nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-
-    @Column(name = "occupation", nullable = false)
-    private String occupation;
-
-    @Column(name = "companyInfo", nullable = false)
-    private String companyInfo;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "addressId", referencedColumnName="id")
-    private Address address;
 
     @Column(name = "enabled")
     private boolean enabled;
 
-    @Enumerated(EnumType.ORDINAL)
-    private Role role;
-
-    public User() {
-        this.enabled = false;
-    }
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Token> tokens;
 
-    public User(Long id,  String name, String surname, String email, String password, String phoneNumber,
-                String occupation, String companyInfo, Address address) {
-        super();
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.occupation = occupation;
-        this.companyInfo = companyInfo;
-        this.address = address;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
-    }
-
-    public String getCompanyInfo() {
-        return companyInfo;
-    }
-
-    public void setCompanyInfo(String companyInfo) {
-        this.companyInfo = companyInfo;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean getEnabled() {
-        return enabled;
-    }
+    public abstract Role getRole();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
+        return getRole().getAuthorities();
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
