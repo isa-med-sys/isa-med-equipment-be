@@ -5,7 +5,8 @@ import com.isa.med_equipment.model.Role;
 
 import jakarta.validation.constraints.*;
 
-public class UserDto {
+public class UserRegistrationDto {
+
     @NotEmpty(message = "Name is required")
     @Size(min = 2, max = 32)
     private String name;
@@ -34,18 +35,18 @@ public class UserDto {
 
 	private Role role;
 
-    public UserDto() {
+    public UserRegistrationDto() {
 
     }
 
-	public UserDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
-			@NotEmpty(message = "Surname is required") @Size(min = 2, max = 32) String surname,
-			@NotEmpty(message = "Email is required") @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$") String email,
-			@NotEmpty(message = "Password is required") String password,
-			@NotEmpty(message = "Phone number is required") String phoneNumber,
-			@NotEmpty(message = "Occupation is required") String occupation,
-			@NotEmpty(message = "Company information number is required") String companyInfo,
-			@NotEmpty(message = "Address is required") Address address, Role role) {
+	public UserRegistrationDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
+							   @NotEmpty(message = "Surname is required") @Size(min = 2, max = 32) String surname,
+							   @NotEmpty(message = "Email is required") @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$") String email,
+							   @NotEmpty(message = "Password is required") String password,
+							   @NotEmpty(message = "Phone number is required") String phoneNumber,
+							   @NotEmpty(message = "Occupation is required") String occupation,
+							   @NotEmpty(message = "Company information number is required") String companyInfo,
+							   @NotEmpty(message = "Address is required") Address address, Role role) {
 		super();
 		this.name = name;
 		this.surname = surname;

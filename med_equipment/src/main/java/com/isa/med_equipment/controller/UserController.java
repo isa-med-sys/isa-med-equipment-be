@@ -1,7 +1,9 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.dto.UserDto;
+import com.isa.med_equipment.dto.UserRegistrationDto;
+import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
+import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.security.authentication.AuthenticationRequest;
 import com.isa.med_equipment.security.authentication.AuthenticationResponse;
@@ -10,6 +12,7 @@ import com.isa.med_equipment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +33,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> register(@RequestBody UserRegistrationDto userRegistrationDto) {
         try {
-            User registeredUser = userService.register(userDto);
+            User registeredUser = userService.register(userRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -65,5 +68,17 @@ public class UserController {
     public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
         return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
+
+    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
+        try {
+            Optional<User> updatedUser = userService.update(id, userUpdateDto);
+            return updatedUser.map(user -> ResponseEntity.ok().body(user))
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IncorrectPasswordException e) {
+            return ResponseEntity.badRequest().body("Incorrect password");
+        }
     }
 }

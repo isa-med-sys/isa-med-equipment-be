@@ -31,10 +31,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/users")) {
+        String path = request.getServletPath();
+
+        if (shouldBypassJwtValidation(path)) {
             filterChain.doFilter(request, response);
             return;
         }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
@@ -65,5 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    private boolean shouldBypassJwtValidation(String path) {
+        // Add specific endpoints that should bypass JWT validation
+        return path.contains("/api/users/register") ||
+                path.contains("/api/users/confirm-account") ||
+                path.contains("/api/users/login");
     }
 }
