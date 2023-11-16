@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -58,19 +57,15 @@ public class UserController {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
-    @GetMapping()
-    public ResponseEntity<List<User>> findAll() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
     public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
         return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
         try {
             Optional<User> updatedUser = userService.update(id, userUpdateDto);

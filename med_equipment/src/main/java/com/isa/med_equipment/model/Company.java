@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Companies")
+@Table(name = "companies")
 public class Company {
 
     @Id
@@ -26,7 +26,7 @@ public class Company {
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "addressId", referencedColumnName="id")
+    @JoinColumn(name = "address_id", referencedColumnName="id")
     private Address address;
 
     @Column(name = "rating")
@@ -34,7 +34,7 @@ public class Company {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "Company_Equipment",
+            name = "company_equipment",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id")
     )
