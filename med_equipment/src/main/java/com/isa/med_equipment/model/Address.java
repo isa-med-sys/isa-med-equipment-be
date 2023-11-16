@@ -1,9 +1,14 @@
 package com.isa.med_equipment.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "Addresses")
+@Table(name = "addresses")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address {
 
     @Id
@@ -23,56 +28,10 @@ public class Address {
     @Column(name = "country", nullable = false)
     private String country;
 
-    public Address() {
-
-    }
-
-    public Address(Long id, String street, String streetNumber, String city, String country) {
-        super();
-        this.id = id;
+    public void updateAddress(String street, String streetNumber, String city, String country) {
         this.street = street;
         this.streetNumber = streetNumber;
         this.city = city;
-        this.country = country;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getStreetNumber() {
-        return streetNumber;
-    }
-
-    public void setStreetNumber(String streetNumber) {
-        this.streetNumber = streetNumber;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
         this.country = country;
     }
 }

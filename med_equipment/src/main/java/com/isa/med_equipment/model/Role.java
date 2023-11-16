@@ -10,20 +10,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.isa.med_equipment.security.authorization.Permission.*;
+import static com.isa.med_equipment.security.authorization.Permission.USER_READ;
+import static com.isa.med_equipment.security.authorization.Permission.USER_UPDATE;
 
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    USER(Collections.emptySet()),
-    ADMIN(
+    REGISTERED_USER(
             Set.of(
-                    ADMIN_READ,
-                    ADMIN_UPDATE,
-                    ADMIN_DELETE,
-                    ADMIN_CREATE
+                    USER_READ,
+                    USER_UPDATE
             )
-    );
+    ),
+    COMPANY_ADMIN(Collections.emptySet()),
+    SYSTEM_ADMIN(Collections.emptySet())
+    ;
 
     private final Set<Permission> permissions;
 

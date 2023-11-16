@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="confirmationTokens")
+@Table(name="confirmation_tokens")
 public class ConfirmationToken {
 
     @Id
@@ -22,7 +22,7 @@ public class ConfirmationToken {
     private Date createdDate;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "userId")
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     public ConfirmationToken() {}

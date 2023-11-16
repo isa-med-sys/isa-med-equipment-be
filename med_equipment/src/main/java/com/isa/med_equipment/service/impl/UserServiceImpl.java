@@ -1,14 +1,17 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.UserDto;
+import com.isa.med_equipment.dto.UserRegistrationDto;
+import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
+import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.security.token.ConfirmationToken;
-import com.isa.med_equipment.model.Role;
+import com.isa.med_equipment.model.RegisteredUser;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.repository.UserRepository;
+import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,27 +52,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(UserDto userDto) throws EmailExistsException {
-        User user = new User();
+    public User register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
+        RegisteredUser user = new RegisteredUser();
 
-        if(emailExists(userDto.getEmail()))
-            throw new EmailExistsException("Account with email address: " + userDto.getEmail() + " already exists");
+        if(emailExists(userRegistrationDto.getEmail()))
+            throw new EmailExistsException("Account with email address: " + userRegistrationDto.getEmail() + " already exists");
 
-        user.setName(userDto.getName());
-        user.setSurname(userDto.getSurname());
-        user.setOccupation(userDto.getOccupation());
-        user.setCompanyInfo(userDto.getCompanyInfo());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setEmail(userDto.getEmail());
-        user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setName(userRegistrationDto.getName());
+        user.setSurname(userRegistrationDto.getSurname());
+        user.setOccupation(userRegistrationDto.getOccupation());
+        user.setCompanyInfo(userRegistrationDto.getCompanyInfo());
+        user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
+        user.setEmail(userRegistrationDto.getEmail());
+        user.setPhoneNumber(userRegistrationDto.getPhoneNumber());
         user.setEnabled(false);
-        user.setRole(Role.USER);
 
         Address address = new Address();
-        address.setStreet(userDto.getAddress().getStreet());
-        address.setStreetNumber(userDto.getAddress().getStreetNumber());
-        address.setCity(userDto.getAddress().getCity());
-        address.setCountry(userDto.getAddress().getCountry());
+        address.setStreet(userRegistrationDto.getAddress().getStreet());
+        address.setStreetNumber(userRegistrationDto.getAddress().getStreetNumber());
+        address.setCity(userRegistrationDto.getAddress().getCity());
+        address.setCountry(userRegistrationDto.getAddress().getCountry());
         user.setAddress(address);
 
         userRepository.save(user);
@@ -93,5 +95,39 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> update(Long userId, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isEmpty()) return Optional.empty();
+
+        User existingUser = optionalUser.get();
+
+        existingUser.setName(userUpdateDto.getName());
+        existingUser.setSurname(userUpdateDto.getSurname());
+        if (passwordEncoder.matches(userUpdateDto.getOldPassword(), existingUser.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(userUpdateDto.getNewPassword()));
+        } else {
+            throw new IncorrectPasswordException("Old password is incorrect");
+        }
+        existingUser.setPhoneNumber(userUpdateDto.getPhoneNumber());
+
+        if (existingUser instanceof RegisteredUser registeredUser) {
+            registeredUser.setOccupation(userUpdateDto.getOccupation());
+            registeredUser.setCompanyInfo(userUpdateDto.getCompanyInfo());
+            registeredUser.getAddress().updateAddress(
+                    userUpdateDto.getAddress().getStreet(),
+                    userUpdateDto.getAddress().getStreetNumber(),
+                    userUpdateDto.getAddress().getCity(),
+                    userUpdateDto.getAddress().getCountry()
+            );
+        }
+
+        userRepository.save(existingUser);
+
+        return Optional.of(existingUser);
     }
 }
