@@ -1,9 +1,11 @@
 package com.isa.med_equipment.service;
 
+import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
+import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.User;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +21,5 @@ public interface UserService {
     List<User> findAll();
     Optional<User> findById(Long id);
     Optional<User> update(Long userId, UserUpdateDto UserUpdateDto) throws IncorrectPasswordException;
+    CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException;
 }

@@ -37,7 +37,9 @@ public class SecurityConfiguration {
             "http:/localhost:4200/**",
             "http://localhost:4200/registration",
             "http:/localhost:4200",
-            "/api/users/**"
+            "/api/users/**",
+            "/api/equipment/**",
+            "/api/companies/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

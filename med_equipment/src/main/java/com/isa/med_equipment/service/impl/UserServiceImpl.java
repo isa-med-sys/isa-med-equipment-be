@@ -1,12 +1,12 @@
 package com.isa.med_equipment.service.impl;
 
+import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
-import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.model.RegisteredUser;
-import com.isa.med_equipment.model.User;
+import com.isa.med_equipment.model.*;
+import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
@@ -24,14 +24,16 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         super();
         this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
@@ -112,6 +114,44 @@ public class UserServiceImpl implements UserService {
         userRepository.save(existingUser);
 
         return Optional.of(existingUser);
+    }
+
+    @Override
+    public CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException {
+        CompanyAdmin companyAdmin = new CompanyAdmin();
+
+        if(emailExists(companyAdminRegistrationDto.getEmail()).isPresent())
+            throw new EmailExistsException("Account with email address: " + companyAdminRegistrationDto.getEmail() + " already exists");
+
+        companyAdmin.setName(companyAdminRegistrationDto.getName());
+        companyAdmin.setSurname(companyAdminRegistrationDto.getSurname());
+
+        Optional<Company> retrievedCompanyOptional = companyRepository.findById(companyAdminRegistrationDto.getCompanyId());
+        Company company = retrievedCompanyOptional.orElse(new Company());
+
+        companyAdmin.setCompany(company);
+        companyAdmin.setPassword(passwordEncoder.encode(companyAdminRegistrationDto.getPassword()));
+        companyAdmin.setEmail(companyAdminRegistrationDto.getEmail());
+        companyAdmin.setPhoneNumber(companyAdminRegistrationDto.getPhoneNumber());
+        companyAdmin.setEnabled(true); // --
+        //companyAdmin.setRole(Role.COMPANY_ADMIN);
+
+        Address address = new Address();
+        address.setStreet(companyAdminRegistrationDto.getAddress().getStreet());
+        address.setStreetNumber(companyAdminRegistrationDto.getAddress().getStreetNumber());
+        address.setCity(companyAdminRegistrationDto.getAddress().getCity());
+        address.setCountry(companyAdminRegistrationDto.getAddress().getCountry());
+        companyAdmin.setAddress(address);
+
+        userRepository.save(companyAdmin);
+
+        //ConfirmationToken token = new ConfirmationToken(user);
+        //confirmationTokenRepository.save(token);
+
+        //String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
+        //emailSenderService.sendEmail(user, confirmationLink);
+
+        return companyAdmin;
     }
 
     private void validateCurrentPassword(String currentPassword, User existingUser) throws IncorrectPasswordException {

@@ -6,6 +6,7 @@ import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.service.CompanyService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,7 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = new Company();
 
         company.setName(companyDto.getName());
+        company.setDescription(companyDto.getDescription());
         company.setRating(companyDto.getRating());
         company.setEquipment(companyDto.getEquipment());
 
@@ -54,6 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public Company update(Long id, CompanyDto companyDto) {
 
         Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -62,8 +65,10 @@ public class CompanyServiceImpl implements CompanyService {
             Company company = optionalCompany.get();
 
             company.setName(companyDto.getName());
+            company.setDescription(companyDto.getDescription());
             company.setRating(companyDto.getRating());
             company.setEquipment(companyDto.getEquipment());
+            company.setAdmins(companyDto.getCompanyAdmins());
 
             Address address = new Address();
 

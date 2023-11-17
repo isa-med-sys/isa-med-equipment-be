@@ -27,7 +27,7 @@ public class Equipment {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @Column(name = "rating", nullable = false)
+    @Column(name = "rating")
     private Float rating;
 
     @Enumerated(EnumType.ORDINAL)
@@ -36,14 +36,4 @@ public class Equipment {
 
     @ManyToMany(mappedBy = "equipment")
     private Set<Company> companies = new HashSet<>();
-
-//    @ManyToOne
-//    @JoinColumn(name = "companyId", referencedColumnName = "id")
-//    private Company company;
-
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-//    @JoinTable(name = "Owns", joinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "equipment_id", referencedColumnName = "id"))
-//    private Set<Company> companies = new HashSet<Company>();
-
-    //kolicina?, proizovdjac?
 }
