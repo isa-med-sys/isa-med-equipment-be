@@ -1,9 +1,11 @@
 package com.isa.med_equipment.controller;
 
+import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
+import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.security.authentication.AuthenticationRequest;
 import com.isa.med_equipment.security.authentication.AuthenticationResponse;
@@ -37,6 +39,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
+        }
+    }
+
+    @PostMapping("/register-company-admin")
+    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
+    public ResponseEntity<?> registerCompanyAdmin(@RequestBody CompanyAdminRegistrationDto companyAdminRegistrationDto) {
+        try {
+            CompanyAdmin registeredCompanyAdmin = userService.registerCompanyAdmin(companyAdminRegistrationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(registeredCompanyAdmin);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
         }

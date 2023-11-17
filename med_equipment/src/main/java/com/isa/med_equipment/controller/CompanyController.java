@@ -6,6 +6,7 @@ import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/companies")
-@CrossOrigin(origins = "http://localhost:4200")
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -35,6 +35,7 @@ public class CompanyController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/add")
+    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.add(companyDto);
@@ -45,6 +46,7 @@ public class CompanyController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/update/{id}")
+    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id") //
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);
