@@ -1,5 +1,6 @@
 package com.isa.med_equipment.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,5 +36,6 @@ public class Equipment {
     private EquipmentType type;
 
     @ManyToMany(mappedBy = "equipment")
+    @JsonIgnore
     private Set<Company> companies = new HashSet<>();
 }
