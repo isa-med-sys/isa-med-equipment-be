@@ -20,9 +20,8 @@ public class UserUpdateDto {
 
     @NotEmpty(message = "Current password is required")
     @Size(min = 5, max = 32)
-    private String oldPassword;
+    private String currentPassword;
 
-    @NotEmpty(message = "New password is required")
     @Size(min = 5, max = 32)
     private String newPassword;
 
@@ -44,8 +43,7 @@ public class UserUpdateDto {
 
     public UserUpdateDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                                @NotEmpty(message = "Surname is required") @Size(min = 2, max = 32) String surname,
-                               @NotEmpty(message = "Old Password is required") String oldPassword,
-                               @NotEmpty(message = "New Password is required") String newPassword,
+                               @NotEmpty(message = "Current Password is required") String currentPassword, String newPassword,
                                @NotEmpty(message = "Phone Number is required") String phoneNumber,
                                @NotEmpty(message = "Occupation is required") String occupation,
                                @NotEmpty(message = "Company Information number is required") String companyInfo,
@@ -53,7 +51,7 @@ public class UserUpdateDto {
         super();
         this.name = name;
         this.surname = surname;
-        this.oldPassword = oldPassword;
+        this.currentPassword = currentPassword;
         this.newPassword = newPassword;
         this.phoneNumber = phoneNumber;
         this.occupation = occupation;

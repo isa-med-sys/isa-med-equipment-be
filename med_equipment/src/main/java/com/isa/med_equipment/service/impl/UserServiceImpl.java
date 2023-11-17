@@ -15,8 +15,7 @@ import com.isa.med_equipment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -104,32 +103,47 @@ public class UserServiceImpl implements UserService {
     public Optional<User> update(Long userId, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
         Optional<User> optionalUser = userRepository.findById(userId);
 
-        if (optionalUser.isEmpty()) return Optional.empty();
+        if (optionalUser.isEmpty()) { return Optional.empty(); }
 
         User existingUser = optionalUser.get();
+        validateCurrentPassword(userUpdateDto.getCurrentPassword(), existingUser);
 
-        existingUser.setName(userUpdateDto.getName());
-        existingUser.setSurname(userUpdateDto.getSurname());
-        if (passwordEncoder.matches(userUpdateDto.getOldPassword(), existingUser.getPassword())) {
-            existingUser.setPassword(passwordEncoder.encode(userUpdateDto.getNewPassword()));
-        } else {
-            throw new IncorrectPasswordException("Old password is incorrect");
-        }
-        existingUser.setPhoneNumber(userUpdateDto.getPhoneNumber());
-
-        if (existingUser instanceof RegisteredUser registeredUser) {
-            registeredUser.setOccupation(userUpdateDto.getOccupation());
-            registeredUser.setCompanyInfo(userUpdateDto.getCompanyInfo());
-            registeredUser.getAddress().updateAddress(
-                    userUpdateDto.getAddress().getStreet(),
-                    userUpdateDto.getAddress().getStreetNumber(),
-                    userUpdateDto.getAddress().getCity(),
-                    userUpdateDto.getAddress().getCountry()
-            );
-        }
-
+        updateUserData(existingUser, userUpdateDto);
         userRepository.save(existingUser);
 
         return Optional.of(existingUser);
+    }
+
+    private void validateCurrentPassword(String currentPassword, User existingUser) throws IncorrectPasswordException {
+        if (!passwordEncoder.matches(currentPassword, existingUser.getPassword())) {
+            throw new IncorrectPasswordException("Current password is incorrect");
+        }
+    }
+
+    private void updateUserData(User existingUser, UserUpdateDto userUpdateDto) {
+        existingUser.setName(userUpdateDto.getName());
+        existingUser.setSurname(userUpdateDto.getSurname());
+        existingUser.setPassword(encodePassword(userUpdateDto.getNewPassword(), userUpdateDto.getCurrentPassword()));
+        existingUser.setPhoneNumber(userUpdateDto.getPhoneNumber());
+
+        if (existingUser instanceof RegisteredUser registeredUser) {
+            updateRegisteredUserData(registeredUser, userUpdateDto);
+        }
+    }
+
+    private String encodePassword(String newPassword, String currentPassword) {
+        boolean hasNewPassword = newPassword != null && !newPassword.isBlank();
+        return hasNewPassword ? passwordEncoder.encode(newPassword) : passwordEncoder.encode(currentPassword);
+    }
+
+    private void updateRegisteredUserData(RegisteredUser registeredUser, UserUpdateDto userUpdateDto) {
+        registeredUser.setOccupation(userUpdateDto.getOccupation());
+        registeredUser.setCompanyInfo(userUpdateDto.getCompanyInfo());
+        registeredUser.getAddress().updateAddress(
+                userUpdateDto.getAddress().getStreet(),
+                userUpdateDto.getAddress().getStreetNumber(),
+                userUpdateDto.getAddress().getCity(),
+                userUpdateDto.getAddress().getCountry()
+        );
     }
 }
