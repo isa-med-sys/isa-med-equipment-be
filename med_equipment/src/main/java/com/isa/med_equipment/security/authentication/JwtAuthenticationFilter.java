@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean shouldBypassJwtValidation(String path) {
         // Add specific endpoints that should bypass JWT validation
-        return path.contains("/api/users/register") ||
+        return path.endsWith("/api/users/register") ||
                 path.contains("/api/users/confirm-account") ||
                 path.contains("/api/users/login");
     }

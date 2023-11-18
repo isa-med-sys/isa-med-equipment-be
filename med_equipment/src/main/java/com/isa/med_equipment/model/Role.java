@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.isa.med_equipment.security.authorization.Permission.USER_READ;
-import static com.isa.med_equipment.security.authorization.Permission.USER_UPDATE;
+import static com.isa.med_equipment.security.authorization.Permission.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -23,7 +22,12 @@ public enum Role {
             )
     ),
     COMPANY_ADMIN(Collections.emptySet()),
-    SYSTEM_ADMIN(Collections.emptySet())
+    SYSTEM_ADMIN(Set.of(
+            SYSTEM_ADMIN_READ,
+            SYSTEM_ADMIN_UPDATE,
+            SYSTEM_ADMIN_DELETE,
+            SYSTEM_ADMIN_CREATE
+    ))
     ;
 
     private final Set<Permission> permissions;

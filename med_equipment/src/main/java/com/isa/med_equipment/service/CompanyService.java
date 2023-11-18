@@ -10,6 +10,7 @@ import java.util.Optional;
 @Service
 public interface CompanyService {
     List<Company> findAll();
+    List<Company> findAllByEquipment(Long id);
     Optional<Company> findById(Long id);
     Company add(CompanyDto companyDto);
     Company update(Long id, CompanyDto companyDto);

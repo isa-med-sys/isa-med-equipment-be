@@ -28,6 +28,11 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.findAll(), HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/equipment/{id}")
+    public ResponseEntity<List<Company>> findAllByEquipment(@PathVariable Long id) {
+        return new ResponseEntity<>(companyService.findAllByEquipment(id), HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ResponseEntity<Optional<Company>> getById(@PathVariable Long id) {
         Optional<Company> company = companyService.findById(id);
@@ -35,7 +40,7 @@ public class CompanyController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/add")
-    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.add(companyDto);
@@ -46,7 +51,7 @@ public class CompanyController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/update/{id}")
-    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id") //
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);

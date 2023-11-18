@@ -1,5 +1,7 @@
 package com.isa.med_equipment.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,5 +48,6 @@ public class Company {
     private Set<Equipment> equipment = new HashSet<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER) //
+    @JsonBackReference
     private List<CompanyAdmin> admins = new ArrayList<>();
 }

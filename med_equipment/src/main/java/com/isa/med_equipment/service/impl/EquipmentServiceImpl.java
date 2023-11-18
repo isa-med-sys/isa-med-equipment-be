@@ -25,6 +25,13 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
+    public List<Equipment> search(String name, String type, Float rating) {
+        List<Equipment> equipment = equipmentRepository.findAll();
+        //filter
+        return equipment;
+    }
+
+    @Override
     public Optional<Equipment> findById(Long id)  {
         return equipmentRepository.findById(id);
     }

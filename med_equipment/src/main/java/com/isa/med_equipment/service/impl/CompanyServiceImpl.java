@@ -3,6 +3,7 @@ package com.isa.med_equipment.service.impl;
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.Address;
 import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.service.CompanyService;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,26 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<Company> findAll() {
         return companyRepository.findAll();
+    }
+
+    @Override
+    public List<Company> findAllByEquipment(Long id) {
+        List<Company> companies = companyRepository.findAll();
+        List<Company> filteredCompanies = new ArrayList<>();
+
+        for (Company company : companies) {
+            boolean hasEquipmentWithId = false;
+            for (Equipment equipment : company.getEquipment()) {
+                if (equipment.getId().equals(id)) {
+                    hasEquipmentWithId = true;
+                    break;
+                }
+            }
+            if (hasEquipmentWithId) {
+                filteredCompanies.add(company);
+            }
+        }
+        return filteredCompanies;
     }
 
     @Override
