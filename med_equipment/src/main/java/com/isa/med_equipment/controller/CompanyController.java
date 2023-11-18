@@ -46,9 +46,7 @@ public class CompanyController {
     }
 
     @PostMapping("/add")
-    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
-    //@RequestMapping(method = RequestMethod.POST, value = "/add") petar nek rijesi sta da ostane
-    // @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.add(companyDto);
@@ -59,9 +57,7 @@ public class CompanyController {
     }
 
     @PutMapping("/update/{id}")
-    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id") //
-
-    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')") petar nek proveri sta treba ovdje
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);

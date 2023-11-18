@@ -44,7 +44,6 @@ public class Company {
     private Set<Equipment> equipment = new HashSet<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-
     @JsonBackReference
     private List<CompanyAdmin> admins = new ArrayList<>();
 }

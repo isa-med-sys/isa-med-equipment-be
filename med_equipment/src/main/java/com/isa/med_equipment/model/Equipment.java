@@ -36,8 +36,4 @@ public class Equipment {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false)
     private EquipmentType type;
-
-//    @ManyToMany(mappedBy = "equipment", fetch = FetchType.EAGER)
-//    @JsonBackReference
-//    private Set<Company> companies = new HashSet<>();
 }
