@@ -34,7 +34,7 @@ public class CompanyController {
         return company.isPresent() ? ResponseEntity.ok(company) : ResponseEntity.notFound().build();
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/add")
+    @PostMapping("/add")
     //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
@@ -45,7 +45,7 @@ public class CompanyController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/update/{id}")
+    @PutMapping("/update/{id}")
     //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id") //
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
