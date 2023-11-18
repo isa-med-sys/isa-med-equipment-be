@@ -21,7 +21,13 @@ public enum Role {
                     USER_UPDATE
             )
     ),
-    COMPANY_ADMIN(Collections.emptySet()),
+
+    COMPANY_ADMIN(
+            Set.of(
+                    COMPANY_ADMIN_READ,
+                    COMPANY_ADMIN_UPDATE
+            )
+    ),
     SYSTEM_ADMIN(Set.of(
             SYSTEM_ADMIN_READ,
             SYSTEM_ADMIN_UPDATE,

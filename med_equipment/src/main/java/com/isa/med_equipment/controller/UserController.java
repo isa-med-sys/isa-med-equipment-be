@@ -76,14 +76,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
+    //@PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
+    @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
     public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
         return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
+    //@PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
+    @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
         try {
             Optional<User> updatedUser = userService.update(id, userUpdateDto);

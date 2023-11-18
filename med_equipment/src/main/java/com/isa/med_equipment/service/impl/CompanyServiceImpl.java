@@ -73,6 +73,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
+    @Transactional
     public Company add(CompanyDto companyDto) {
         Company company = new Company();
 

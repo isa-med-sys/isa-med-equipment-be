@@ -45,8 +45,10 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.findAllByEquipment(id), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/add")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    @PostMapping("/add")
+    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
+    //@RequestMapping(method = RequestMethod.POST, value = "/add") petar nek rijesi sta da ostane
+    // @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.add(companyDto);
@@ -56,8 +58,10 @@ public class CompanyController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/update/{id}")
-    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    @PutMapping("/update/{id}")
+    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id") //
+
+    //@PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')") petar nek proveri sta treba ovdje
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);

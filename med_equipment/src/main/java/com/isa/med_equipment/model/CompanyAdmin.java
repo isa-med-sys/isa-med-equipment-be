@@ -16,6 +16,7 @@ public class CompanyAdmin extends User {
     @JoinColumn(name = "company_id", referencedColumnName="id")
     @JsonManagedReference
     private Company company;
+
     @Override
     public Role getRole() {
         return Role.COMPANY_ADMIN;
