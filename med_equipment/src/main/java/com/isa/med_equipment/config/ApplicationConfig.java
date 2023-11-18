@@ -1,6 +1,7 @@
 package com.isa.med_equipment.config;
 
 import com.isa.med_equipment.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class ApplicationConfiguration {
+public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public ApplicationConfiguration(UserRepository userRepository) {
+    public ApplicationConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -45,5 +46,10 @@ public class ApplicationConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
