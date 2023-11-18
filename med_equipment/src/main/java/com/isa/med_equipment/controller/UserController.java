@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -45,8 +47,11 @@ public class UserController {
     }
 
     @PostMapping("/register-company-admin")
-    //@PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN') and #id == authentication.principal.id") //
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<?> registerCompanyAdmin(@RequestBody CompanyAdminRegistrationDto companyAdminRegistrationDto) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Principal: " + principal);
         try {
             CompanyAdmin registeredCompanyAdmin = userService.registerCompanyAdmin(companyAdminRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredCompanyAdmin);

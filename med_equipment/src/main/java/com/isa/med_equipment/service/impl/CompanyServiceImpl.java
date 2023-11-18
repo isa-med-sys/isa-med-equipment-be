@@ -3,13 +3,21 @@ package com.isa.med_equipment.service.impl;
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.Address;
 import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.repository.CompanyRepository;
+import com.isa.med_equipment.repository.CompanySpecifications;
 import com.isa.med_equipment.service.CompanyService;
+import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,22 +25,52 @@ import java.util.Optional;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public List<Company> findAll() {
-        return companyRepository.findAll();
+    public Page<CompanyDto> findAll(String name, String city, Float rating, Pageable pageable) {
+        Specification<Company> spec = Specification.where(StringUtils.isBlank(name) ? null : CompanySpecifications.nameLike(name))
+                .and(StringUtils.isBlank(city) ? null : CompanySpecifications.cityLike(city))
+                .and(rating == null ? null : CompanySpecifications.ratingGreaterThanOrEqual(rating));
+
+        Page<Company> companies = companyRepository.findAll(spec, pageable);
+        return mapper.mapPage(companies, CompanyDto.class);
+    }
+
+    public CompanyDto findById(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+        return mapper.map(company, CompanyDto.class);
     }
 
     @Override
-    public Optional<Company> findById(Long id) {
-        return companyRepository.findById(id);
+    public List<Company> findAllByEquipment(Long id) {
+        List<Company> companies = companyRepository.findAll();
+        List<Company> filteredCompanies = new ArrayList<>();
+
+        for (Company company : companies) {
+            boolean hasEquipmentWithId = false;
+            for (Equipment equipment : company.getEquipment()) {
+                if (equipment.getId().equals(id)) {
+                    hasEquipmentWithId = true;
+                    break;
+                }
+            }
+            if (hasEquipmentWithId) {
+                filteredCompanies.add(company);
+            }
+        }
+        return filteredCompanies;
     }
+
+
 
     @Override
     @Transactional

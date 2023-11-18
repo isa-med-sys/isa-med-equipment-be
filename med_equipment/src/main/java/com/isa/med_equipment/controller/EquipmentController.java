@@ -32,4 +32,9 @@ public class EquipmentController {
         Optional<Equipment> equipment = equipmentService.findById(id);
         return equipment.isPresent() ? ResponseEntity.ok(equipment) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{name}/{type}/{rating}")
+    public ResponseEntity<List<Equipment>> getByParams(@PathVariable String name,@PathVariable String type,@PathVariable Float rating) {
+        return new ResponseEntity<>(equipmentService.search(name, type, rating), HttpStatus.OK);
+    }
 }

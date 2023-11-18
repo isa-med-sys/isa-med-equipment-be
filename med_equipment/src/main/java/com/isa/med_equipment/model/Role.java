@@ -21,13 +21,19 @@ public enum Role {
                     USER_UPDATE
             )
     ),
+
     COMPANY_ADMIN(
             Set.of(
                     COMPANY_ADMIN_READ,
                     COMPANY_ADMIN_UPDATE
             )
     ),
-    SYSTEM_ADMIN(Collections.emptySet())
+    SYSTEM_ADMIN(Set.of(
+            SYSTEM_ADMIN_READ,
+            SYSTEM_ADMIN_UPDATE,
+            SYSTEM_ADMIN_DELETE,
+            SYSTEM_ADMIN_CREATE
+    ))
     ;
 
     private final Set<Permission> permissions;

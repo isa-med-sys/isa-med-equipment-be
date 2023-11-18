@@ -9,5 +9,6 @@ import java.util.Optional;
 @Service
 public interface EquipmentService {
     List<Equipment> findAll();
+    List<Equipment> search(String name, String type, Float rating);
     Optional<Equipment> findById(Long id);
 }

@@ -133,23 +133,9 @@ public class UserServiceImpl implements UserService {
         companyAdmin.setPassword(passwordEncoder.encode(companyAdminRegistrationDto.getPassword()));
         companyAdmin.setEmail(companyAdminRegistrationDto.getEmail());
         companyAdmin.setPhoneNumber(companyAdminRegistrationDto.getPhoneNumber());
-        companyAdmin.setEnabled(true); // --
-        //companyAdmin.setRole(Role.COMPANY_ADMIN);
-
-        Address address = new Address();
-        address.setStreet(companyAdminRegistrationDto.getAddress().getStreet());
-        address.setStreetNumber(companyAdminRegistrationDto.getAddress().getStreetNumber());
-        address.setCity(companyAdminRegistrationDto.getAddress().getCity());
-        address.setCountry(companyAdminRegistrationDto.getAddress().getCountry());
-        companyAdmin.setAddress(address);
+        companyAdmin.setEnabled(true);
 
         userRepository.save(companyAdmin);
-
-        //ConfirmationToken token = new ConfirmationToken(user);
-        //confirmationTokenRepository.save(token);
-
-        //String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
-        //emailSenderService.sendEmail(user, confirmationLink);
 
         return companyAdmin;
     }
