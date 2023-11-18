@@ -22,7 +22,7 @@ public class RegisteredUser extends User {
 
     @Column(name = "penalty_points", nullable = false)
     private Integer penaltyPoints = 0;
-    
+
     // TODO
     // Loyalty Program
 
