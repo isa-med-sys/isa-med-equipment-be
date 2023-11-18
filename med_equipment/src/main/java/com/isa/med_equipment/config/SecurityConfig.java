@@ -20,7 +20,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     private static final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**",
@@ -37,7 +37,8 @@ public class SecurityConfiguration {
             "http:/localhost:4200/**",
             "http://localhost:4200/registration",
             "http:/localhost:4200",
-            "/api/users/**"
+            "/api/users/**",
+            "/api/companies/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
