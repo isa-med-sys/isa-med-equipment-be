@@ -16,9 +16,13 @@ public class RegisteredUser extends User {
     @Column(name = "company_info", nullable = false)
     private String companyInfo;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
     @Column(name = "penalty_points", nullable = false)
     private Integer penaltyPoints = 0;
-
+    
     // TODO
     // Loyalty Program
 
