@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -58,6 +59,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
         }
     }
+
+    @GetMapping("/company/{id}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    public ResponseEntity<List<CompanyAdmin>> getByCompanyId(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.findByCompanyId(id), HttpStatus.OK);
+    }
+
 
     @GetMapping("/confirm-account")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {

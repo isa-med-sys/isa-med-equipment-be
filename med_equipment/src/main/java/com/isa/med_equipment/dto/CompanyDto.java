@@ -31,21 +31,14 @@ public class CompanyDto {
     private Address address;
 
     private Float rating;
-
-    private Set<Equipment> equipment; //
-
-    private List<CompanyAdmin> companyAdmins; //
-
     public CompanyDto(Long id, @NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                       @NotEmpty(message = "Description is required") @Size(min = 2, max = 32) String description,
                       @NotEmpty(message = "Address is required") Address address,
-                      Float rating, Set<Equipment> equipment, List<CompanyAdmin> companyAdmins) {
+                      Float rating) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.address = address;
         this.rating = rating;
-        this.equipment = equipment;
-        this.companyAdmins = companyAdmins;
     }
 }

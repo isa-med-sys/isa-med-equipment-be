@@ -19,6 +19,7 @@ public interface UserService {
     Optional<User> emailExists(String email);
     User confirmRegistration(String token);
     List<User> findAll();
+    List<CompanyAdmin> findByCompanyId(Long id);
     Optional<User> findById(Long id);
     Optional<User> update(Long userId, UserUpdateDto UserUpdateDto) throws IncorrectPasswordException;
     CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException;

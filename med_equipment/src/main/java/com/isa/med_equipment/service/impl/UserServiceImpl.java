@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -42,6 +43,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public List<CompanyAdmin> findByCompanyId(Long id) {
+        List<User> allUsers = userRepository.findAll();
+        return allUsers.stream()
+                .filter(user -> user instanceof CompanyAdmin)
+                .map(user -> (CompanyAdmin) user)
+                .filter(admin -> admin.getCompany() != null && admin.getCompany().getId().equals(id))
+                .collect(Collectors.toList());
     }
 
     @Override
