@@ -2,6 +2,7 @@ package com.isa.med_equipment.controller;
 
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,6 +51,11 @@ public class CompanyController {
     @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_REGISTERED_USER')")
     public ResponseEntity<List<Company>> findAllByEquipment(@PathVariable Long id) {
         return new ResponseEntity<>(companyService.findAllByEquipment(id), HttpStatus.OK);
+    }
+
+    @GetMapping("admins/{id}")
+    public ResponseEntity<List<CompanyAdmin>> findAllAdmins(@PathVariable Long id) {
+        return new ResponseEntity<>(companyService.findAllAdmins(id) , HttpStatus.OK);
     }
 
     @PostMapping

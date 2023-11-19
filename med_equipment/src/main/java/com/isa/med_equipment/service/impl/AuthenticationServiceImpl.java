@@ -2,6 +2,7 @@ package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.security.authentication.AuthenticationRequest;
 import com.isa.med_equipment.security.authentication.AuthenticationResponse;
+import com.isa.med_equipment.security.authentication.JwtService;
 import com.isa.med_equipment.security.token.Token;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.security.token.TokenType;

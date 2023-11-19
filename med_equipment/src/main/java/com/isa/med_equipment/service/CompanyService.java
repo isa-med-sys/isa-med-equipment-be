@@ -2,6 +2,7 @@ package com.isa.med_equipment.service;
 
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.CompanyAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public interface CompanyService {
     List<Company> findAllTemp(); //temp
     CompanyDto findById(Long id);
     List<Company> findAllByEquipment(Long id);
+    List<CompanyAdmin> findAllAdmins(Long id);
     Company add(CompanyDto companyDto);
     Company update(Long id, CompanyDto companyDto);
 }

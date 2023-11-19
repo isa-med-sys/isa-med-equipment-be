@@ -1,4 +1,4 @@
-package com.isa.med_equipment.service.impl;
+package com.isa.med_equipment.security.authentication;
 
 import com.isa.med_equipment.model.User;
 import io.jsonwebtoken.Claims;

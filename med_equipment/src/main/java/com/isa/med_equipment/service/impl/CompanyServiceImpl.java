@@ -2,6 +2,10 @@ package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.*;
+import com.isa.med_equipment.model.Address;
+import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.CompanyAdmin;
+import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.CompanySpecifications;
 import com.isa.med_equipment.repository.UserRepository;
@@ -77,7 +81,13 @@ public class CompanyServiceImpl implements CompanyService {
         return filteredCompanies;
     }
 
+    @Override
+    public List<CompanyAdmin> findAllAdmins(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
 
+        return company.getAdmins();
+    }
 
     @Override
     @Transactional
@@ -113,14 +123,12 @@ public class CompanyServiceImpl implements CompanyService {
             company.setDescription(companyDto.getDescription());
             company.setRating(companyDto.getRating());
 
-            Address address = new Address();
-
-            address.setCity(companyDto.getAddress().getCity());
-            address.setCountry(companyDto.getAddress().getCountry());
-            address.setStreet(companyDto.getAddress().getStreet());
-            address.setStreetNumber(companyDto.getAddress().getStreetNumber());
-
-            company.setAddress(address);
+            company.getAddress().updateAddress(
+                    companyDto.getAddress().getStreet(),
+                    companyDto.getAddress().getStreetNumber(),
+                    companyDto.getAddress().getCity(),
+                    companyDto.getAddress().getCountry()
+            );
 
             return companyRepository.save(company);
         } else {
