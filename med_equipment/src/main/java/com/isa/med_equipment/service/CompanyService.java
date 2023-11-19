@@ -12,6 +12,7 @@ import java.util.List;
 public interface CompanyService {
 
     Page<CompanyDto> findAll(String name, String city, Float rating, Pageable pageable);
+    List<Company> findAllTemp(); //temp
     CompanyDto findById(Long id);
     List<Company> findAllByEquipment(Long id);
     Company add(CompanyDto companyDto);

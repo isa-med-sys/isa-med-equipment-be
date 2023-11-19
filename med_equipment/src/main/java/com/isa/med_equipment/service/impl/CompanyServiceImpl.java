@@ -1,11 +1,10 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.CompanyDto;
-import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.model.Company;
-import com.isa.med_equipment.model.Equipment;
+import com.isa.med_equipment.model.*;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.CompanySpecifications;
+import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,17 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
     private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, Mapper mapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, UserRepository userRepository, Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
         this.mapper = mapper;
     }
 
@@ -42,6 +44,11 @@ public class CompanyServiceImpl implements CompanyService {
 
         Page<Company> companies = companyRepository.findAll(spec, pageable);
         return mapper.mapPage(companies, CompanyDto.class);
+    }
+
+    @Override
+    public List<Company> findAllTemp() {
+        return companyRepository.findAll();
     }
 
     public CompanyDto findById(Long id) {
@@ -80,7 +87,6 @@ public class CompanyServiceImpl implements CompanyService {
         company.setName(companyDto.getName());
         company.setDescription(companyDto.getDescription());
         company.setRating(companyDto.getRating());
-        company.setEquipment(companyDto.getEquipment());
 
         Address address = new Address();
 
@@ -106,8 +112,6 @@ public class CompanyServiceImpl implements CompanyService {
             company.setName(companyDto.getName());
             company.setDescription(companyDto.getDescription());
             company.setRating(companyDto.getRating());
-            company.setEquipment(companyDto.getEquipment());
-            company.setAdmins(companyDto.getCompanyAdmins());
 
             Address address = new Address();
 

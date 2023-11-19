@@ -6,6 +6,7 @@ import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +35,11 @@ public class CompanyController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/temp")
+    public ResponseEntity<List<Company>> findAll() { //koristim ja fajndol al da nije pejdziran privremeno
+        return new ResponseEntity<>(companyService.findAllTemp(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> getById(@PathVariable Long id) {
         CompanyDto result = companyService.findById(id);
@@ -41,11 +47,12 @@ public class CompanyController {
     }
 
     @GetMapping("/equipment/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_REGISTERED_USER')")
     public ResponseEntity<List<Company>> findAllByEquipment(@PathVariable Long id) {
         return new ResponseEntity<>(companyService.findAllByEquipment(id), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
         try {
