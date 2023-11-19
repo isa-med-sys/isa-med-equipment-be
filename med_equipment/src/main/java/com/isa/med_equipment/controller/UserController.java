@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,7 +75,6 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
     @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
     public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
         Optional<User> user = userService.findById(id);
@@ -84,7 +82,6 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    //@PreAuthorize("hasRole('ROLE_REGISTERED_USER') and #id == authentication.principal.id")
     @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
         try {

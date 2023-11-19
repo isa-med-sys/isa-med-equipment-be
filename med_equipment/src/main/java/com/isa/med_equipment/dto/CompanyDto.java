@@ -17,6 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class CompanyDto {
 
+    private Long id;
+
     @NotEmpty(message = "Name is required")
     @Size(min = 2, max = 32)
     private String name;
@@ -34,10 +36,11 @@ public class CompanyDto {
 
     private List<CompanyAdmin> companyAdmins; //
 
-    public CompanyDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
+    public CompanyDto(Long id, @NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                       @NotEmpty(message = "Description is required") @Size(min = 2, max = 32) String description,
                       @NotEmpty(message = "Address is required") Address address,
                       Float rating, Set<Equipment> equipment, List<CompanyAdmin> companyAdmins) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.address = address;

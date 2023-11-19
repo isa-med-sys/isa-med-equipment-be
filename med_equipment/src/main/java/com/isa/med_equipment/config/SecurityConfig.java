@@ -34,9 +34,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html",
-            "http:/localhost:4200/**",
-            "http://localhost:4200/registration",
-            "http:/localhost:4200",
+            "http://localhost:4200/**",
             "/api/users/**",
             "/api/equipment/**",
             "/api/companies/**"
