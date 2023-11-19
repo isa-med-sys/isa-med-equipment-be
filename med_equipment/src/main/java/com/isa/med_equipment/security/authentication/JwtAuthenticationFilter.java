@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.contains("/api/users/confirm-account") ||
                 path.contains("/api/users/login") ||
                 (path.endsWith("/api/companies") && method.equals("GET")) ||
-                (path.matches(".*/api/companies/\\d+$") && method.equals("GET"));
+                (path.matches(".*/api/companies/\\d+$") && method.equals("GET")) ||
+                (path.matches(".*/api/companies/all-equipment/\\d+$") && method.equals("GET"));
     }
 }

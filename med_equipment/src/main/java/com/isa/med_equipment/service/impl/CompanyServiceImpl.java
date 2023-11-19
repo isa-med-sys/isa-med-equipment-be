@@ -61,6 +61,11 @@ public class CompanyServiceImpl implements CompanyService {
         return mapper.map(company, CompanyDto.class);
     }
 
+    public Company findCompany(Long id) {
+        return companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+    }
+
     @Override
     public List<Company> findAllByEquipment(Long id) {
         List<Company> companies = companyRepository.findAll();
