@@ -3,6 +3,7 @@ package com.isa.med_equipment.service.impl;
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.model.Address;
 import com.isa.med_equipment.model.Company;
+import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.CompanySpecifications;
@@ -70,7 +71,13 @@ public class CompanyServiceImpl implements CompanyService {
         return filteredCompanies;
     }
 
+    @Override
+    public List<CompanyAdmin> findAllAdmins(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
 
+        return company.getAdmins();
+    }
 
     @Override
     @Transactional
