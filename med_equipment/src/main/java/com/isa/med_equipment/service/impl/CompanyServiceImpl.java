@@ -109,14 +109,12 @@ public class CompanyServiceImpl implements CompanyService {
             company.setEquipment(companyDto.getEquipment());
             company.setAdmins(companyDto.getCompanyAdmins());
 
-            Address address = new Address();
-
-            address.setCity(companyDto.getAddress().getCity());
-            address.setCountry(companyDto.getAddress().getCountry());
-            address.setStreet(companyDto.getAddress().getStreet());
-            address.setStreetNumber(companyDto.getAddress().getStreetNumber());
-
-            company.setAddress(address);
+            company.getAddress().updateAddress(
+                    companyDto.getAddress().getStreet(),
+                    companyDto.getAddress().getStreetNumber(),
+                    companyDto.getAddress().getCity(),
+                    companyDto.getAddress().getCountry()
+            );
 
             return companyRepository.save(company);
         } else {

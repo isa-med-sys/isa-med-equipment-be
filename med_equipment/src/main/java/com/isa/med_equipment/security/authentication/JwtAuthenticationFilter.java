@@ -1,6 +1,5 @@
 package com.isa.med_equipment.security.authentication;
 
-import com.isa.med_equipment.service.impl.JwtService;
 import com.isa.med_equipment.security.token.TokenRepository;
 
 import jakarta.servlet.FilterChain;
