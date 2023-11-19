@@ -17,7 +17,8 @@ public class Calendar {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "calendar_id")
     @JsonBackReference
     private List<TimeSlot> timeSlots = new ArrayList<>();
 }
