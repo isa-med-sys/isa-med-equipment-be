@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationDto userRegistrationDto) {
         try {
-            User registeredUser = userService.register(userRegistrationDto);
+            UserRegistrationDto registeredUser = userService.register(userRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -66,11 +66,10 @@ public class UserController {
         return new ResponseEntity<>(userService.findByCompanyId(id), HttpStatus.OK);
     }
 
-
     @GetMapping("/confirm-account")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
         try {
-            User confirmedUser = userService.confirmRegistration(token);
+            UserRegistrationDto confirmedUser = userService.confirmRegistration(token);
             return (confirmedUser != null) ? ResponseEntity.ok("Account successfully confirmed.") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid or expired token.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the confirmation.");

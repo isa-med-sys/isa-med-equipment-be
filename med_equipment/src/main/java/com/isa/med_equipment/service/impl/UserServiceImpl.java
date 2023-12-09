@@ -12,6 +12,7 @@ import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
 
+import com.isa.med_equipment.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,15 +30,17 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder, Mapper mapper) {
         super();
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailSenderService = emailSenderService;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     @Override
@@ -66,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
+    public UserRegistrationDto register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
         RegisteredUser user = new RegisteredUser();
 
         if(emailExists(userRegistrationDto.getEmail()).isPresent())
@@ -96,10 +99,10 @@ public class UserServiceImpl implements UserService {
         String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
         emailSenderService.sendEmail(user, confirmationLink);
 
-        return user;
+        return mapper.map(user, UserRegistrationDto.class);
     }
 
-    public User confirmRegistration(String confirmationToken) {
+    public UserRegistrationDto confirmRegistration(String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
         User user = token.getUser();
 
@@ -108,7 +111,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
 
-        return user;
+        return mapper.map(user, UserRegistrationDto.class);
     }
 
     @Override
