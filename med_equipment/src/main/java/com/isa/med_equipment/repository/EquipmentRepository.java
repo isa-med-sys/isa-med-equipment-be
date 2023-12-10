@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
-    //Page<Equipment> findAll(Specification<Equipment> specification, Pageable pageable);
+    Page<Equipment> findAll(Specification<Equipment> specification, Pageable pageable);
 }

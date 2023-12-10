@@ -53,9 +53,9 @@ INSERT INTO company_admins (id, company_id)
 VALUES
     (2, 1);
 
-INSERT INTO system_admins (id)
+INSERT INTO system_admins (id, has_changed_password)
 VALUES
-    (3);
+    (3, false);
 
 INSERT INTO company_equipment (company_id, equipment_id)
 VALUES

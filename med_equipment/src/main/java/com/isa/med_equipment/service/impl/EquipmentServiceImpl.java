@@ -28,15 +28,15 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
 
-    //private final Mapper mapper;
+    private final Mapper mapper;
 
     @Autowired
-    public EquipmentServiceImpl(EquipmentRepository equipmentRepository, CompanyRepository companyRepository, UserRepository userRepository) {//mm
+    public EquipmentServiceImpl(EquipmentRepository equipmentRepository, CompanyRepository companyRepository, UserRepository userRepository, Mapper mapper) {
         super();
         this.equipmentRepository = equipmentRepository;
         this.companyRepository = companyRepository;
         this.userRepository = userRepository;
-        //this.mapper = mapper;
+        this.mapper = mapper;
     }
     @Override
     public List<Equipment> findAll()  {
@@ -53,11 +53,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     public List<Equipment> search(String name, String type, Float rating, String userRole, Long id) {
         List<Equipment> equipment = equipmentRepository.findAll();
         if(userRole.equals("COMPANY_ADMIN")) {
-//            Optional<User> user = userRepository.findById(id);
-//            Optional<CompanyAdmin> companyAdmin = user.filter(u -> u instanceof CompanyAdmin).map(u -> (CompanyAdmin) u);
-//            CompanyAdmin admin = companyAdmin.orElseThrow(() -> new RuntimeException("User is not a CompanyAdmin"));
-//            Company company = admin.getCompany();
-//            equipment = findAllByCompanyId(company.getId());
             equipment = userRepository.findById(id)
                     .filter(u -> u instanceof CompanyAdmin)
                     .map(u -> (CompanyAdmin) u)
@@ -88,13 +83,12 @@ public class EquipmentServiceImpl implements EquipmentService {
         return equipmentRepository.findById(id);
     }
 
-//    @Override
-//    public Page<EquipmentDto> findAllPaged(String name, String type, Float rating, Pageable pageable) {
-//        Specification<Equipment> spec = Specification.where(StringUtils.isBlank(name) ? null : EquipmentSpecifications.nameLike(name))
-//                .and(StringUtils.isBlank(type) ? null : EquipmentSpecifications.typeLike(type))
-//                .and(rating == null ? null : EquipmentSpecifications.ratingGreaterThanOrEqual(rating));
-//
-//        Page<Equipment> equipment = equipmentRepository.findAll(spec, pageable);
-//        return mapper.mapPage(equipment, EquipmentDto.class);
-//    }
+    @Override
+    public Page<EquipmentDto> findAllPaged(String name, String type, Float rating, Pageable pageable) {
+        Specification<Equipment> spec = Specification.where(StringUtils.isBlank(name) ? null : EquipmentSpecifications.nameLike(name))
+                .and(StringUtils.isBlank(type) ? null : EquipmentSpecifications.typeEquals(type))
+                .and(rating == null ? null : EquipmentSpecifications.ratingGreaterThanOrEqual(rating));
+        Page<Equipment> equipment = equipmentRepository.findAll(spec, pageable);
+        return mapper.mapPage(equipment, EquipmentDto.class); //valid
+    }
 }

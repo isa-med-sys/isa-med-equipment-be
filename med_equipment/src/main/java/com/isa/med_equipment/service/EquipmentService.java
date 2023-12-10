@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public interface EquipmentService {
     List<Equipment> findAll();
-    //Page<EquipmentDto> findAllPaged(String name, String type, Float rating, Pageable pageable);
+    Page<EquipmentDto> findAllPaged(String name, String type, Float rating, Pageable pageable);
     List<Equipment> findAllByCompanyId(Long id);
     List<Equipment> search(String name, String type, Float rating, String userRole, Long id);
     Optional<Equipment> findById(Long id);
