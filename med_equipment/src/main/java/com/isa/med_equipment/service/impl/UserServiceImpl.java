@@ -11,7 +11,6 @@ import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
-
 import com.isa.med_equipment.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -97,7 +96,10 @@ public class UserServiceImpl implements UserService {
         confirmationTokenRepository.save(token);
 
         String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
-        emailSenderService.sendEmail(user, confirmationLink);
+        String registrationSubject = "Complete your registration!";
+        String registrationMessage = "To be able to log into your account, please click on the following link: " + confirmationLink;
+
+        emailSenderService.sendEmail(user, registrationSubject, registrationMessage);
 
         return mapper.map(user, UserRegistrationDto.class);
     }

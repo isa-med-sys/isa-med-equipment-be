@@ -15,19 +15,19 @@ public class Reservation {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName="id")
+    @JoinColumn(name = "user_id", referencedColumnName="id", nullable = false)
     @JsonManagedReference
     private RegisteredUser user;
 
     @ManyToOne
-    @JoinColumn(name = "equipment_id", referencedColumnName="id")
+    @JoinColumn(name = "equipment_id", referencedColumnName="id", nullable = false)
     @JsonManagedReference
     private Equipment equipment;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "time_slot_id", referencedColumnName="id")
+    @JoinColumn(name = "time_slot_id", referencedColumnName="id", nullable = false)
     private TimeSlot  timeSlot;
 
-    @Column(name = "is_picked_up")
+    @Column(name = "is_picked_up", nullable = false)
     private Boolean isPickedUp;
 }
