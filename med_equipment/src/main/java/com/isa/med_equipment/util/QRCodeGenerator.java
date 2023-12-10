@@ -25,7 +25,11 @@ public class QRCodeGenerator {
             String formattedStartDate = formatDate(reservation.getTimeSlot().getStart());
             Date endDate = calculateEndDate(reservation.getTimeSlot().getStart(), reservation.getTimeSlot().getDuration());
 
-            String qrData = String.format("User: %s, Appointment start date: %s, Appointment end date: %s, Equipment: %s",
+            String qrData = String.format("""
+                             Email: %s
+                             Appointment start date: %s
+                             Appointment end date: %s
+                             Equipment: %s""",
                     reservation.getUser().getUsername(),
                     formattedStartDate,
                     formatDate(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()),
