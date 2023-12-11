@@ -9,6 +9,7 @@ import com.isa.med_equipment.repository.ReservationRepository;
 import com.isa.med_equipment.repository.TimeSlotRepository;
 import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.ReservationService;
+import com.isa.med_equipment.util.EmailSender;
 import com.isa.med_equipment.util.Mapper;
 import com.isa.med_equipment.util.QRCodeGenerator;
 import jakarta.mail.MessagingException;
@@ -22,22 +23,22 @@ public class ReservationServiceImpl implements ReservationService {
     private final TimeSlotRepository timeSlotRepository;
     private final EquipmentRepository equipmentRepository;
     private final ReservationRepository reservationRepository;
-    private final EmailSenderService emailSenderService;
+    private final EmailSender emailSender;
     private final Mapper mapper;
 
-    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, EquipmentRepository equipmentRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EmailSenderService emailSenderService) {
+    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, EquipmentRepository equipmentRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EmailSender emailSender) {
         this.mapper = mapper;
         this.userRepository = userRepository;
         this.equipmentRepository = equipmentRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.reservationRepository = reservationRepository;
-        this.emailSenderService = emailSenderService;
+        this.emailSender = emailSender;
     }
 
     @Override
     public ReservationDto makeReservation(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Equipment equipment = equipmentRepository.findById(reservationDto.getEquipmentId())
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
@@ -69,7 +70,7 @@ public class ReservationServiceImpl implements ReservationService {
             String registrationSubject = "Details about your reservation.";
             String registrationMessage = "Scan the QR code to be able to see details about your reservation.";
             try {
-                emailSenderService.sendEmailWithAttachment(user, registrationSubject, registrationMessage, qrCodeByteArray, "reservation_qr_code.png");
+                emailSender.sendEmailWithAttachment(user, registrationSubject, registrationMessage, qrCodeByteArray, "reservation_qr_code.png");
             } catch (MessagingException e) {
                 throw new EmailNotSentException("Error sending email with attachment" + e);
             }

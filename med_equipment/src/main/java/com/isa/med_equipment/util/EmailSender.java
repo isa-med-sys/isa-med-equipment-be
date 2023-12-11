@@ -1,4 +1,4 @@
-package com.isa.med_equipment.service.impl;
+package com.isa.med_equipment.util;
 
 import com.isa.med_equipment.model.User;
 import jakarta.activation.DataHandler;
@@ -15,14 +15,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailSenderService {
+public class EmailSender {
     private static final String FROM_EMAIL = "medicalequipment753@gmail.com";
     private static final String CONTENT_TYPE = "application/octet-stream";
 
     private final JavaMailSender javaMailSender;
 
     @Autowired
-    public EmailSenderService(JavaMailSender javaMailSender) {
+    public EmailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
