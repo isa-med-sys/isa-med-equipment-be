@@ -4,10 +4,12 @@ import com.isa.med_equipment.model.Address;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserUpdateDto {
 
     @NotEmpty(message = "Name is required")
@@ -36,10 +38,6 @@ public class UserUpdateDto {
 
     @NotEmpty(message = "Address is required")
     private Address address;
-
-    public UserUpdateDto() {
-
-    }
 
     public UserUpdateDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                                @NotEmpty(message = "Surname is required") @Size(min = 2, max = 32) String surname,
