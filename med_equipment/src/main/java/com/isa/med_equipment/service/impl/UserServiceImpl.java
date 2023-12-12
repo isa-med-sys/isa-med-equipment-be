@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            CompanyRepository companyRepository,
                            ConfirmationTokenRepository confirmationTokenRepository,
-                           EmailSenderService emailSenderService,
+                           EmailSender emailSender,
                            PasswordEncoder passwordEncoder,
                            Mapper mapper) {
         super();
