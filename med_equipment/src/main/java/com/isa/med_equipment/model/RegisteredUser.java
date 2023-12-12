@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -23,8 +25,8 @@ public class RegisteredUser extends User {
     @Column(name = "penalty_points", nullable = false)
     private Integer penaltyPoints = 0;
 
-    // TODO
-    // Loyalty Program
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Reservation> reservations;
 
     @Override
     public Role getRole() {

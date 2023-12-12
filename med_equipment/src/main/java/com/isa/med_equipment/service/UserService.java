@@ -18,9 +18,9 @@ import java.util.Optional;
 @Service
 public interface UserService {
 
-    User register(UserRegistrationDto userRegistrationDto) throws EmailExistsException;
+    UserRegistrationDto register(UserRegistrationDto userRegistrationDto) throws EmailExistsException;
     Optional<User> emailExists(String email);
-    User confirmRegistration(String token);
+    UserRegistrationDto confirmRegistration(String token);
     List<User> findAll();
     List<CompanyAdmin> findByCompanyId(Long id);
     UserDto findById(Long id);
