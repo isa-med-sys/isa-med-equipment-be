@@ -1,5 +1,9 @@
 package com.isa.med_equipment.service.impl;
 
+import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
+import com.isa.med_equipment.dto.SystemAdminRegistrationDto;
+import com.isa.med_equipment.dto.UserRegistrationDto;
+import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
@@ -134,6 +138,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public Boolean changePassword(Long userId, String password) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isEmpty()) { return false; }
+
+        User existingUser = optionalUser.get();
+        if(password != null && !password.isBlank() && !getPasswordChange(userId)) {
+            if (existingUser instanceof SystemAdmin systemAdmin) {
+                ((SystemAdmin) existingUser).setHasChangedPassword(true);
+                existingUser.setPassword(passwordEncoder.encode(password));
+                userRepository.save(existingUser);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException {
         CompanyAdmin companyAdmin = new CompanyAdmin();
 
@@ -155,6 +179,41 @@ public class UserServiceImpl implements UserService {
         userRepository.save(companyAdmin);
 
         return companyAdmin;
+    }
+
+    @Override
+    public SystemAdmin registerSystemAdmin(SystemAdminRegistrationDto systemAdminRegistrationDto) throws EmailExistsException {
+        SystemAdmin systemAdmin = new SystemAdmin();
+
+        if(emailExists(systemAdminRegistrationDto.getEmail()).isPresent())
+            throw new EmailExistsException("Account with email address: " + systemAdminRegistrationDto.getEmail() + " already exists");
+
+        systemAdmin.setName(systemAdminRegistrationDto.getName());
+        systemAdmin.setSurname(systemAdminRegistrationDto.getSurname());
+
+        systemAdmin.setPassword(passwordEncoder.encode(systemAdminRegistrationDto.getPassword()));
+        systemAdmin.setEmail(systemAdminRegistrationDto.getEmail());
+        systemAdmin.setPhoneNumber(systemAdminRegistrationDto.getPhoneNumber());
+        systemAdmin.setEnabled(true);
+        systemAdmin.setHasChangedPassword(false);
+
+        userRepository.save(systemAdmin);
+
+        return systemAdmin;
+    }
+
+    @Override
+    public Boolean getPasswordChange(Long id) { //brziGolub
+        Optional<User> userOptional = findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user instanceof SystemAdmin systemAdmin) {
+                return systemAdmin.getHasChangedPassword();
+            } else {
+                return true;
+            }
+        }
+        return true;
     }
 
     private void validateCurrentPassword(String currentPassword, User existingUser) throws IncorrectPasswordException {

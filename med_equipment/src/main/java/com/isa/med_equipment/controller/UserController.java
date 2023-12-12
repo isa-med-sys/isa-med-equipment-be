@@ -1,11 +1,13 @@
 package com.isa.med_equipment.controller;
 
 import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
+import com.isa.med_equipment.dto.SystemAdminRegistrationDto;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.model.CompanyAdmin;
+import com.isa.med_equipment.model.SystemAdmin;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.security.authentication.AuthenticationRequest;
 import com.isa.med_equipment.security.authentication.AuthenticationResponse;
@@ -59,10 +61,30 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register-system-admin")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    public ResponseEntity<?> registerSystemAdmin(@RequestBody SystemAdminRegistrationDto systemAdminRegistrationDto) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Principal: " + principal);
+        try {
+            SystemAdmin registeredSystemAdmin = userService.registerSystemAdmin(systemAdminRegistrationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(registeredSystemAdmin);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
+        }
+    }
+
     @GetMapping("/company/{id}")
     @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<List<CompanyAdmin>> getByCompanyId(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findByCompanyId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/password-change/{id}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    public ResponseEntity<Boolean> getPasswordChange(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.getPasswordChange(id), HttpStatus.OK);
     }
 
     @GetMapping("/confirm-account")
@@ -92,5 +114,11 @@ public class UserController {
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
         UserDto result = userService.update(id, userUpdateDto);
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/password/{id}")
+    @PreAuthorize("(hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
+    public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody String pass) {
+        return new ResponseEntity<>(userService.changePassword(id, pass), HttpStatus.OK);
     }
 }

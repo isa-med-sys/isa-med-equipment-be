@@ -1,8 +1,12 @@
 package com.isa.med_equipment.controller;
 
+import com.isa.med_equipment.dto.CompanyDto;
+import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.service.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +24,16 @@ public class EquipmentController {
     @Autowired
     public EquipmentController(EquipmentService equipmentService) {
         this.equipmentService = equipmentService;
+    }
+
+    @GetMapping("/rerna")
+    public ResponseEntity<Page<EquipmentDto>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "5") int size,
+                                                    @RequestParam(name = "name", required = false) String name,
+                                                    @RequestParam(name = "type", required = false) String type,
+                                                    @RequestParam(name = "rating", required = false) Float rating) {
+        Page<EquipmentDto> result = equipmentService.findAllPaged(name, type, rating,  PageRequest.of(page, size));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping()
@@ -45,14 +59,4 @@ public class EquipmentController {
             @RequestParam(required = false) String role) {
         return new ResponseEntity<>(equipmentService.search(name, type, rating, role, id), HttpStatus.OK);
     }
-
-//    @GetMapping("/search")
-//    @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_REGISTERED_USER')")
-//    public ResponseEntity<Page<EquipmentDto>> getByParams(@RequestParam(defaultValue = "0") int page,
-//                                                          @RequestParam(defaultValue = "5") int size,
-//                                                          @RequestParam(name = "name", required = false) String name,
-//                                                          @RequestParam(name = "type", required = false) String type,
-//                                                          @RequestParam(name = "rating", required = false) Float rating) {
-//        return new ResponseEntity<>(equipmentService.findAllPaged(name, type, rating, PageRequest.of(page, size)), HttpStatus.OK);
-//    }
 }
