@@ -121,4 +121,10 @@ public class UserController {
             return ResponseEntity.badRequest().body("Incorrect password");
         }
     }
+
+    @PutMapping("/password/{id}")
+    @PreAuthorize("(hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
+    public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody String pass) {
+        return new ResponseEntity<>(userService.changePassword(id, pass), HttpStatus.OK);
+    }
 }

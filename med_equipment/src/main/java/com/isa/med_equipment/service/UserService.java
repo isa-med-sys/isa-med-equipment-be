@@ -27,4 +27,5 @@ public interface UserService {
     CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException;
     SystemAdmin registerSystemAdmin(SystemAdminRegistrationDto systemAdminRegistrationDto) throws EmailExistsException;
     Boolean getPasswordChange(Long id);
+    Boolean changePassword(Long userId, String password);
 }

@@ -129,6 +129,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public Boolean changePassword(Long userId, String password) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isEmpty()) { return false; }
+
+        User existingUser = optionalUser.get();
+        if(password != null && !password.isBlank() && !getPasswordChange(userId)) {
+            if (existingUser instanceof SystemAdmin systemAdmin) {
+                ((SystemAdmin) existingUser).setHasChangedPassword(true);
+                existingUser.setPassword(passwordEncoder.encode(password));
+                userRepository.save(existingUser);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public CompanyAdmin registerCompanyAdmin(CompanyAdminRegistrationDto companyAdminRegistrationDto) throws EmailExistsException {
         CompanyAdmin companyAdmin = new CompanyAdmin();
 
