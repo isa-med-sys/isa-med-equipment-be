@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean getPasswordChange(Long id) { //brziGolub
-        Optional<User> userOptional = findById(id);
+        Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user instanceof SystemAdmin systemAdmin) {
