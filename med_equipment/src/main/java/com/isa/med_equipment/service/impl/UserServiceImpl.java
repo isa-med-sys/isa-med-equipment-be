@@ -1,8 +1,6 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
-import com.isa.med_equipment.dto.UserRegistrationDto;
-import com.isa.med_equipment.dto.UserUpdateDto;
+import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.*;
@@ -13,6 +11,7 @@ import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
 import com.isa.med_equipment.util.EmailSender;
 import com.isa.med_equipment.util.Mapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,12 @@ public class UserServiceImpl implements UserService {
     private final Mapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSender emailSender, PasswordEncoder passwordEncoder, Mapper mapper) {
+    public UserServiceImpl(UserRepository userRepository,
+                           CompanyRepository companyRepository,
+                           ConfirmationTokenRepository confirmationTokenRepository,
+                           EmailSenderService emailSenderService,
+                           PasswordEncoder passwordEncoder,
+                           Mapper mapper) {
         super();
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
@@ -59,8 +63,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public UserDto findById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found!", id)));
+        return mapper.map(user, UserDto.class);
     }
 
     @Override
@@ -129,18 +135,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Optional<User> update(Long userId, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    public UserDto update(Long id, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found!", id)));
 
-        if (optionalUser.isEmpty()) { return Optional.empty(); }
+        validateCurrentPassword(userUpdateDto.getCurrentPassword(), user);
+        updateUserData(user, userUpdateDto);
+        userRepository.save(user);
 
-        User existingUser = optionalUser.get();
-        validateCurrentPassword(userUpdateDto.getCurrentPassword(), existingUser);
-
-        updateUserData(existingUser, userUpdateDto);
-        userRepository.save(existingUser);
-
-        return Optional.of(existingUser);
+        return mapper.map(user, UserDto.class);
     }
 
     @Override
