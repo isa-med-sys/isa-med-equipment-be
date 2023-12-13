@@ -1,12 +1,13 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.Equipment;
-import com.isa.med_equipment.model.User;
-import com.isa.med_equipment.repository.*;
+import com.isa.med_equipment.repository.CompanyRepository;
+import com.isa.med_equipment.repository.EquipmentRepository;
+import com.isa.med_equipment.repository.EquipmentSpecifications;
+import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.service.EquipmentService;
 import com.isa.med_equipment.util.Mapper;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +46,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public List<Equipment> findAllByCompanyId(Long id) { //u
         Company company = companyRepository.findById(id).orElse(new Company());
-        return company.getEquipment().stream().toList();
+        return company.getEquipment().keySet().stream().toList();
     }
 
     @Override
