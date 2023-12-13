@@ -29,7 +29,7 @@ public class Company {
     @Column(name = "rating")
     private Float rating;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //cascade type
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", referencedColumnName="id")
     private Address address;
 

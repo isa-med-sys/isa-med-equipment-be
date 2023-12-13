@@ -21,16 +21,16 @@ VALUES
 
 INSERT INTO companies (name, rating, address_id, description)
 VALUES
-    ('MediQuip', 9.5, 2, 'A test company with a good rating.'),
-    ('Health Innovations', 5.8, 3, 'Another test company with a moderate rating.'),
+    ('MediQuip', 4.5, 2, 'A test company with a good rating.'),
+    ('Health Innovations', 3.8, 3, 'Another test company with a moderate rating.'),
     ('Wellness Solutions', 2.5, 4, 'A test company with a lower rating.'),
-    ('MedTech Solutions', 8.0, 5, 'A test company with a higher rating.'),
-    ('LifeCare Services', 6.2, 6, 'A test company with an average rating.'),
-    ('Advanced Health', 4.8, 7, 'A test company with a below-average rating.'),
-    ('Elite Medical Group', 9.7, 8, 'A test company with an excellent rating.'),
-    ('Precision Health', 8.5, 9, 'A test company with a decent rating.'),
-    ('Vitality Care', 3.0, 10, 'A test company with a very low rating.'),
-    ('WellBeing Solutions', 8.2, 11, 'A test company with a good rating.');
+    ('MedTech Solutions', 4.0, 5, 'A test company with a higher rating.'),
+    ('LifeCare Services', 4.2, 6, 'A test company with an average rating.'),
+    ('Advanced Health', 2.8, 7, 'A test company with a below-average rating.'),
+    ('Elite Medical Group', 4.7, 8, 'A test company with an excellent rating.'),
+    ('Precision Health', 4.5, 9, 'A test company with a decent rating.'),
+    ('Vitality Care', 2.0, 10, 'A test company with a very low rating.'),
+    ('WellBeing Solutions', 4.2, 11, 'A test company with a good rating.');
 
 INSERT INTO equipment (name, description, price, rating, type)
 VALUES
