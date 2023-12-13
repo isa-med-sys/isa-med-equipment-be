@@ -28,7 +28,8 @@ public class MapperImpl implements Mapper {
         return new PageImpl<>(content, sourcePage.getPageable(), sourcePage.getTotalElements());
     }
 
-    private <T, U> List<U> mapList(List<T> sourceList, Class<U> targetClass) {
+    @Override
+    public <T, U> List<U> mapList(List<T> sourceList, Class<U> targetClass) {
         return sourceList.stream()
                 .map(source -> map(source, targetClass))
                 .collect(Collectors.toList());
