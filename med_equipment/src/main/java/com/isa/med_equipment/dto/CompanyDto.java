@@ -30,11 +30,11 @@ public class CompanyDto {
     private List<EquipmentDto> equipment;
 
     private Float rating;
+
     public CompanyDto(Long id, @NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                       @NotEmpty(message = "Description is required") @Size(min = 2, max = 32) String description,
                       @NotEmpty(message = "Address is required") Address address,
-                      Float rating,
-                      List<EquipmentDto> equipment) {
+                      Float rating, List<EquipmentDto> equipment) {
         this.id = id;
         this.name = name;
         this.description = description;

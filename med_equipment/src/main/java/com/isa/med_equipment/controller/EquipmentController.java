@@ -1,6 +1,5 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.service.EquipmentService;
@@ -26,7 +25,7 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
-    @GetMapping("/rerna")
+    @GetMapping()
     public ResponseEntity<Page<EquipmentDto>> findAll(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "5") int size,
                                                     @RequestParam(name = "name", required = false) String name,
@@ -34,12 +33,6 @@ public class EquipmentController {
                                                     @RequestParam(name = "rating", required = false) Float rating) {
         Page<EquipmentDto> result = equipmentService.findAllPaged(name, type, rating,  PageRequest.of(page, size));
         return ResponseEntity.ok(result);
-    }
-
-    @GetMapping()
-    @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN', 'ROLE_REGISTERED_USER')")
-    public ResponseEntity<List<Equipment>> findAll() {
-        return new ResponseEntity<>(equipmentService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 @Entity
@@ -33,14 +33,16 @@ public class Company {
     @JoinColumn(name = "address_id", referencedColumnName="id")
     private Address address;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
+    @ElementCollection
+    @CollectionTable(
             name = "company_equipment",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "equipment_id")
+            joinColumns = @JoinColumn(name = "company_id")
     )
+    @MapKeyJoinColumn(name = "equipment_id")
+    @Column(name = "quantity", nullable = false)
     @JsonManagedReference
-    private Set<Equipment> equipment = new HashSet<>();
+    private Map<Equipment, Integer> equipment = new HashMap<>();
+
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonBackReference

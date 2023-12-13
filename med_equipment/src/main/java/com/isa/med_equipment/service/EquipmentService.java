@@ -1,6 +1,5 @@
 package com.isa.med_equipment.service;
 
-import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.model.Equipment;
 import org.springframework.data.domain.Page;

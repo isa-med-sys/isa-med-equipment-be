@@ -57,22 +57,23 @@ INSERT INTO system_admins (id, has_changed_password)
 VALUES
     (3, false);
 
-INSERT INTO company_equipment (company_id, equipment_id)
+INSERT INTO company_equipment (company_id, equipment_id, quantity)
 VALUES
-    (1, 1),
-    (1, 3),
-    (2, 2),
-    (3, 5),
-    (3, 6),
-    (4, 4),
-    (4, 7),
-    (5, 8),
-    (5, 9),
-    (6, 10),
-    (7, 1),
-    (7, 4),
-    (8, 5),
-    (8, 7),
-    (9, 2),
-    (10, 3),
-    (10, 8);
+    (1, 1, 2),
+    (1, 3, 5),
+    (2, 2, 3),
+    (3, 5, 1),
+    (3, 6, 2),
+    (4, 4, 1),
+    (4, 7, 3),
+    (5, 8, 4),
+    (5, 9, 2),
+    (6, 10, 1),
+    (7, 1, 2),
+    (7, 4, 1),
+    (8, 5, 3),
+    (8, 7, 2),
+    (9, 2, 1),
+    (10, 3, 3),
+    (10, 8, 2);
+

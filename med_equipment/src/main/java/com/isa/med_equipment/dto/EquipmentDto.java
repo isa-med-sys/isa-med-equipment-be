@@ -1,9 +1,6 @@
 package com.isa.med_equipment.dto;
 
-import com.isa.med_equipment.model.Address;
 import com.isa.med_equipment.model.EquipmentType;
-import com.isa.med_equipment.model.Role;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -28,14 +25,17 @@ public class EquipmentDto {
 
     private EquipmentType type;
 
+    private Integer quantity;
+
     public EquipmentDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                    @NotEmpty(message = "Description is required") String description,
-                   @NotEmpty(message = "Price is required") Float price, Float rating, EquipmentType type) {
+                   @NotEmpty(message = "Price is required") Float price, Float rating, EquipmentType type, Integer quantity) {
         super();
         this.name = name;
         this.description = description;
         this.price = price;
         this.rating = rating;
         this.type = type;
+        this.quantity = quantity;
     }
 }
