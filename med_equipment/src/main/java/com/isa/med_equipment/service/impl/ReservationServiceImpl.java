@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,6 +52,10 @@ public class ReservationServiceImpl implements ReservationService {
 
         TimeSlot timeSlot = timeSlotRepository.findById(reservationDto.getTimeSlotId())
                 .orElseThrow(() -> new EntityNotFoundException("Time slot not found."));
+
+        if (timeSlot.getStart().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Cannot reserve a time slot in the past.");
+        }
 
         if(!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
