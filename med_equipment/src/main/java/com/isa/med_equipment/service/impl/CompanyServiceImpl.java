@@ -12,6 +12,7 @@ import com.isa.med_equipment.repository.CompanySpecifications;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,10 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -168,6 +166,29 @@ public class CompanyServiceImpl implements CompanyService {
             );
 
             return companyRepository.save(company);
+        } else {
+            throw new EntityNotFoundException("Company not found with id: " + id);
+        }
+    }
+
+    public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
+
+        Optional<Company> optionalCompany = companyRepository.findById(id);
+
+        if (optionalCompany.isPresent()) {
+
+            Company company = optionalCompany.get();
+
+            Map<Equipment, Integer> updatedEquipment = new HashMap<>();
+
+            for (EquipmentDto eq : equipmentDto) {
+                updatedEquipment.put(mapper.map(eq, Equipment.class), eq.getQuantity());
+            }
+
+            company.setEquipment(updatedEquipment);
+
+            company = companyRepository.save(company);
+            return mapper.map(company, CompanyDto.class);
         } else {
             throw new EntityNotFoundException("Company not found with id: " + id);
         }
