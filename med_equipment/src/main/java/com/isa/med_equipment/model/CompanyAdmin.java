@@ -17,6 +17,9 @@ public class CompanyAdmin extends User {
     @JsonManagedReference
     private Company company;
 
+    @Column(name = "has_changed_password", nullable = false)
+    private Boolean hasChangedPassword;
+
     @Override
     public Role getRole() {
         return Role.COMPANY_ADMIN;

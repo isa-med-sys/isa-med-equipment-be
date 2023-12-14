@@ -164,6 +164,11 @@ public class UserServiceImpl implements UserService {
                 existingUser.setPassword(passwordEncoder.encode(password));
                 userRepository.save(existingUser);
                 return true;
+            } else if (existingUser instanceof CompanyAdmin companyAdmin) {
+                ((CompanyAdmin) existingUser).setHasChangedPassword(true);
+                existingUser.setPassword(passwordEncoder.encode(password));
+                userRepository.save(existingUser);
+                return true;
             }
         }
 
@@ -216,12 +221,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean getPasswordChange(Long id) { //brziGolub
+    public Boolean getPasswordChange(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user instanceof SystemAdmin systemAdmin) {
                 return systemAdmin.getHasChangedPassword();
+            } else if (user instanceof CompanyAdmin companyAdmin) {
+                return companyAdmin.getHasChangedPassword();
             } else {
                 return true;
             }
