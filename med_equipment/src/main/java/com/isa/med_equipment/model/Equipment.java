@@ -33,4 +33,7 @@ public class Equipment {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false)
     private EquipmentType type;
+
+    @Version
+    private Long version;
 }

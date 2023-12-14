@@ -43,12 +43,44 @@ public class Company {
     @JsonManagedReference
     private Map<Equipment, Integer> equipment = new HashMap<>();
 
-
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonBackReference
     private List<CompanyAdmin> admins = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "calendar_id", referencedColumnName="id")
-    private Calendar calendar;
+    @Version
+    private Long version;
+
+    public List<Equipment> getEquipmentInStock(List<Long> requestedEquipmentIds) {
+        List<Equipment> availableEquipment = new ArrayList<>();
+
+        for (Long equipmentId : requestedEquipmentIds) {
+            Equipment equipment = findEquipmentById(equipmentId);
+            if (getEquipmentQuantityInStock(equipment) <= 0) {
+                throw new IllegalStateException("No equipment in stock: " + equipment.getName());
+            }
+
+            availableEquipment.add(equipment);
+        }
+
+        return availableEquipment;
+    }
+
+    private Equipment findEquipmentById(Long equipmentId) {
+        for (Map.Entry<Equipment, Integer> entry : this.equipment.entrySet()) {
+            Equipment equipment = entry.getKey();
+            if (equipment.getId().equals(equipmentId)) {
+                return equipment;
+            }
+        }
+        throw new EntityNotFoundException("Equipment not found.");
+    }
+
+    public int getEquipmentQuantityInStock(Equipment equipment) {
+        return this.equipment.getOrDefault(equipment, 0);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s\n%s %s, %s, %s", name, address.getStreet(), address.getStreetNumber(), address.getCity(), address.getCountry());
+    }
 }
