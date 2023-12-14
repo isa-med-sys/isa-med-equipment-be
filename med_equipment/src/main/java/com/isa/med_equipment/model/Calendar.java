@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,4 +40,26 @@ public class Calendar {
 
     @Version
     private Long version;
+
+    public void addTimeSlot(TimeSlot timeSlot) {
+        if (!isWorkingDay(timeSlot.getStart())) {
+            throw new IllegalArgumentException("Time Slot is not on a working day.");
+        }
+
+        if (!isWithinWorkingHours(timeSlot.getStart().toLocalTime())) {
+            throw new IllegalArgumentException("Time Slot is not within work hours.");
+        }
+
+        timeSlots.add(timeSlot);
+    }
+
+    private boolean isWithinWorkingHours(LocalTime time) {
+        return !time.isBefore(workStartTime)
+                && !time.isAfter(workEndTime.minusMinutes(TimeSlot.DURATION.toMinutes()));
+    }
+
+    private boolean isWorkingDay(LocalDateTime dateTime) {
+        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
+        return worksOnWeekends || (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY);
+    }
 }

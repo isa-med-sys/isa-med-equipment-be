@@ -11,4 +11,5 @@ public interface CalendarService {
 
     CalendarDto findByCompany(Long companyId);
     List<TimeSlotDto> findFreePredefinedTimeSlotsByCompany(Long companyId);
+    TimeSlotDto createTimeSlot(TimeSlotDto timeSlotDto);
 }
