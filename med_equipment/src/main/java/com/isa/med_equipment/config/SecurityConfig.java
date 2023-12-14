@@ -37,7 +37,8 @@ public class SecurityConfig {
             "http://localhost:4200/**",
             "/api/users/**",
             "/api/equipment/**",
-            "/api/companies/**"
+            "/api/companies/**",
+            "/api/reservations/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

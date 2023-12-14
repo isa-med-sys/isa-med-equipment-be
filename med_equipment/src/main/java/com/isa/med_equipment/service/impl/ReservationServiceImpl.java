@@ -4,7 +4,7 @@ import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.exception.EmailNotSentException;
 import com.isa.med_equipment.exception.QRCodeGenerationException;
 import com.isa.med_equipment.model.*;
-import com.isa.med_equipment.repository.EquipmentRepository;
+import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.ReservationRepository;
 import com.isa.med_equipment.repository.TimeSlotRepository;
 import com.isa.med_equipment.repository.UserRepository;
@@ -14,58 +14,82 @@ import com.isa.med_equipment.util.Mapper;
 import com.isa.med_equipment.util.QRCodeGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
     private final UserRepository userRepository;
     private final TimeSlotRepository timeSlotRepository;
-    private final EquipmentRepository equipmentRepository;
+    private final CompanyRepository companyRepository;
     private final ReservationRepository reservationRepository;
     private final EmailSender emailSender;
     private final Mapper mapper;
 
-    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, EquipmentRepository equipmentRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EmailSender emailSender) {
+    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, CompanyRepository companyRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EmailSender emailSender) {
         this.mapper = mapper;
         this.userRepository = userRepository;
-        this.equipmentRepository = equipmentRepository;
+        this.companyRepository = companyRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.reservationRepository = reservationRepository;
         this.emailSender = emailSender;
     }
 
     @Override
-    public ReservationDto makeReservation(ReservationDto reservationDto) {
+    @Transactional(rollbackFor = Exception.class)
+    public ReservationDto reserve(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found."));
 
-        Equipment equipment = equipmentRepository.findById(reservationDto.getEquipmentId())
-                .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
+        Company company = companyRepository.findById(reservationDto.getCompanyId())
+                .orElseThrow(() -> new EntityNotFoundException("Company not found."));
 
         TimeSlot timeSlot = timeSlotRepository.findById(reservationDto.getTimeSlotId())
-                .orElseThrow(() -> new EntityNotFoundException("Time slot not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Time slot not found."));
 
-        Reservation reservation = createReservation(user, equipment, timeSlot);
+        if(!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
+            throw new IllegalArgumentException("Admin doesn't work at the company.");
+        }
+
+        List<Equipment> equipment = company.getEquipmentInStock(reservationDto.getEquipmentIds());
+        checkEquipmentAvailability(company, equipment);
+
+        Reservation reservation = new Reservation();
+        reservation.make((RegisteredUser) user, equipment, timeSlot);
+        byte[] qrCode = generateQRCode(reservation);
+
         reservationRepository.save(reservation);
 
-        byte[] qrCodeByteArray = QRCodeGenerator.generateQRCodeImageAsByteArray(reservation);
-        sendEmailWithQRCode(user, qrCodeByteArray);
+        sendEmailWithQRCode(user, qrCode);
 
         return mapper.map(reservation, ReservationDto.class);
     }
 
-    private Reservation createReservation(User user, Equipment equipment, TimeSlot timeSlot) {
-        Reservation reservation = new Reservation();
-        reservation.setUser((RegisteredUser) user);
-        reservation.setEquipment(equipment);
-        reservation.setTimeSlot(timeSlot);
-        reservation.setIsPickedUp(false);
-
-        return reservation;
+    private byte[] generateQRCode(Reservation reservation) {
+        byte[] qrCode = QRCodeGenerator.generateReservationQRCode(reservation);
+        reservation.setQrCode(qrCode);
+        return qrCode;
     }
 
-    private void sendEmailWithQRCode(User user, byte[] qrCodeByteArray) {
+    private void checkEquipmentAvailability(Company company, List<Equipment> equipment) {
+        for (Equipment equip : equipment) {
+            int inStockQuantity = company.getEquipmentQuantityInStock(equip);
+            int reservedQuantity = reservationRepository.getTotalReservedQuantity(equip, company.getId());
+
+            int availableQuantity = inStockQuantity - reservedQuantity;
+            if (availableQuantity <= 0) {
+                throw new IllegalStateException("No equipment available: " + equip.getName());
+            }
+        }
+    }
+
+    @Async
+    public void sendEmailWithQRCode(User user, byte[] qrCodeByteArray) {
         if (qrCodeByteArray != null) {
             String registrationSubject = "Details about your reservation.";
             String registrationMessage = "Scan the QR code to be able to see details about your reservation.";

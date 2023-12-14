@@ -1,7 +1,8 @@
 package com.isa.med_equipment.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class SystemAdmin extends User {
 
     @Column(name = "has_changed_password", nullable = false)
     private Boolean hasChangedPassword;
+
     @Override
     public Role getRole() {
         return Role.SYSTEM_ADMIN;
