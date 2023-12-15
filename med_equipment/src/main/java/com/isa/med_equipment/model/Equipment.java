@@ -35,6 +35,9 @@ public class Equipment {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "type", nullable = false)
     private EquipmentType type;
+  
+    @Version
+    private Long version;
 
     @Override
     public boolean equals(Object o) {
@@ -48,5 +51,4 @@ public class Equipment {
     public int hashCode() {
         return Objects.hash(id);
     }
-
 }
