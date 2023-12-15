@@ -1,16 +1,16 @@
 INSERT INTO addresses (city, country, street, street_number)
 VALUES
-     ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2'),
-     ('Beograd', 'Serbia', 'Knez Mihailova', '13'),
-     ('Novi Sad', 'Serbia', 'Dunavska', '16'),
-     ('Beograd', 'Serbia', 'Karađorđeva', '15'),
-     ('Beograd', 'Serbia', 'Terazije', '16'),
-     ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2'),
-     ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5'),
-     ('Smederevo', 'Serbia', 'Karađorđeva', '33'),
-     ('Kraljevo', 'Serbia', 'Stefana Nemanje', '24'),
-     ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
-     ('Niš', 'Serbia', 'Obrenovićeva', '55');
+    ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2'),
+    ('Beograd', 'Serbia', 'Knez Mihailova', '13'),
+    ('Novi Sad', 'Serbia', 'Dunavska', '16'),
+    ('Beograd', 'Serbia', 'Karađorđeva', '15'),
+    ('Beograd', 'Serbia', 'Terazije', '16'),
+    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2'),
+    ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5'),
+    ('Smederevo', 'Serbia', 'Karađorđeva', '33'),
+    ('Kraljevo', 'Serbia', 'Stefana Nemanje', '24'),
+    ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
+    ('Niš', 'Serbia', 'Obrenovićeva', '55');
 
 INSERT INTO users (email, enabled, name, password, phone_number, surname)
 VALUES
@@ -117,15 +117,15 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '1 day', true, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '14:30:00' + INTERVAL '1 day', true, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '08:45:00' + INTERVAL '2 day', true, 1, 2, 0),
-    (CURRENT_DATE + INTERVAL '09:30:00' + INTERVAL '2 day', true, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '10:30:00' + INTERVAL '2 day', true, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '12:15:00' + INTERVAL '2 day', true, 1, 2, 0),
-    (CURRENT_DATE + INTERVAL '15:00:00' + INTERVAL '2 day', true, 1, 2, 0),
-    (CURRENT_DATE + INTERVAL '08:45:00' + INTERVAL '1 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '16:00:00' + INTERVAL '2 day', true, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:45:00' + INTERVAL '1 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '13:30:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '14:15:00' + INTERVAL '1 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '1 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '09:00:00' + INTERVAL '2 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '2 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '2 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '14:30:00' + INTERVAL '2 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '2 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '12:45:00' + INTERVAL '2 day', true, 1, 3, 0);
 

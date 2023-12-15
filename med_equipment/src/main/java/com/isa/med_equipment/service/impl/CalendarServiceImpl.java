@@ -64,7 +64,7 @@ public class CalendarServiceImpl implements CalendarService {
         Calendar calendar = calendarRepository.findByCompany_Id(admin.getCompany().getId())
                         .orElseThrow(() -> new EntityNotFoundException("Calendar not found"));
 
-        if (timeSlotDto.getStart().isBefore(LocalDateTime.now())) {
+        if (timeSlotDto.getStart() != null && timeSlotDto.getStart().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot create a time slot in the past.");
         }
 
