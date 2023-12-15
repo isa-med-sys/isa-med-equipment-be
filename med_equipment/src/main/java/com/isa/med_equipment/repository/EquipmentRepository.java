@@ -1,6 +1,5 @@
 package com.isa.med_equipment.repository;
 
-import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.model.Equipment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

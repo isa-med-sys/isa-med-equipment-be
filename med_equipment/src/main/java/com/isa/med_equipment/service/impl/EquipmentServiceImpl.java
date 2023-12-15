@@ -1,22 +1,22 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.EquipmentDto;
-import com.isa.med_equipment.model.Company;
-import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.Equipment;
-import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.EquipmentRepository;
 import com.isa.med_equipment.repository.EquipmentSpecifications;
-import com.isa.med_equipment.repository.UserRepository;
+import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.service.EquipmentService;
 import com.isa.med_equipment.util.Mapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,17 +25,14 @@ import java.util.stream.Collectors;
 public class EquipmentServiceImpl implements EquipmentService {
 
     private final EquipmentRepository equipmentRepository;
-    private final CompanyRepository companyRepository;
-    private final UserRepository userRepository;
-
+    private final CompanyService companyService;
     private final Mapper mapper;
 
     @Autowired
-    public EquipmentServiceImpl(EquipmentRepository equipmentRepository, CompanyRepository companyRepository, UserRepository userRepository, Mapper mapper) {
+    public EquipmentServiceImpl(EquipmentRepository equipmentRepository, CompanyService companyService, Mapper mapper) {
         super();
         this.equipmentRepository = equipmentRepository;
-        this.companyRepository = companyRepository;
-        this.userRepository = userRepository;
+        this.companyService = companyService;
         this.mapper = mapper;
     }
     @Override
@@ -44,38 +41,35 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public List<Equipment> findAllByCompanyId(Long id) { //u
-        Company company = companyRepository.findById(id).orElse(new Company());
-        return company.getEquipment().keySet().stream().toList();
-    }
+    public Page<EquipmentDto> findAllByCompanyIdPaged(String name, String type, Float rating, Long id, Pageable pageable) {
+        List<EquipmentDto> eq;
+        Specification<Equipment> spec = Specification.where(StringUtils.isBlank(name) ? null : EquipmentSpecifications.nameLike(name))
+                .and(StringUtils.isBlank(type) ? null : EquipmentSpecifications.typeEquals(type))
+                .and(rating == null ? null : EquipmentSpecifications.ratingGreaterThanOrEqual(rating));
 
-    @Override
-    public List<Equipment> search(String name, String type, Float rating, String userRole, Long id) {
-        List<Equipment> equipment = equipmentRepository.findAll();
-        if(userRole.equals("COMPANY_ADMIN")) {
-            equipment = userRepository.findById(id)
-                    .filter(u -> u instanceof CompanyAdmin)
-                    .map(u -> (CompanyAdmin) u)
-                    .map(CompanyAdmin::getCompany)
-                    .map(company -> findAllByCompanyId(company.getId()))
-                    .orElseThrow(() -> new RuntimeException("User is not a CompanyAdmin"));
+        Page<Equipment> equipment = equipmentRepository.findAll(spec, PageRequest.of(0, Integer.MAX_VALUE));
+
+        eq = companyService.findEquipmentByCompany(id);
+        List<Equipment> filteredEquipment = equipment.getContent()
+                .stream()
+                .filter(e -> eq.stream().anyMatch(eqItem -> eqItem.getId().equals(e.getId())))
+                .collect(Collectors.toList());
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<Equipment> pageList;
+
+        if (filteredEquipment.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, filteredEquipment.size());
+            pageList = filteredEquipment.subList(startItem, toIndex);
         }
-        if (name != null && !name.isEmpty()) {
-            equipment = equipment.stream()
-                    .filter(e -> e.getName().toLowerCase().contains(name.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-        if (type != null && !type.isEmpty() && !type.equals("ALL")) {
-            equipment = equipment.stream()
-                    .filter(e -> type.equals("") || e.getType().toString().equals(type))
-                    .collect(Collectors.toList());
-        }
-        if (rating != null) {
-            equipment = equipment.stream()
-                    .filter(e -> e.getRating() != null && e.getRating() >= rating)
-                    .collect(Collectors.toList());
-        }
-        return equipment;
+
+        equipment = new PageImpl<>(pageList, pageable, filteredEquipment.size());
+        return mapper.mapPage(equipment, EquipmentDto.class);
     }
 
     @Override
@@ -89,6 +83,6 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .and(StringUtils.isBlank(type) ? null : EquipmentSpecifications.typeEquals(type))
                 .and(rating == null ? null : EquipmentSpecifications.ratingGreaterThanOrEqual(rating));
         Page<Equipment> equipment = equipmentRepository.findAll(spec, pageable);
-        return mapper.mapPage(equipment, EquipmentDto.class); //valid
+        return mapper.mapPage(equipment, EquipmentDto.class);
     }
 }
