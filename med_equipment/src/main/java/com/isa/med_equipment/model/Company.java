@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class Company {
     @MapKeyJoinColumn(name = "equipment_id")
     @Column(name = "quantity", nullable = false)
     @JsonManagedReference
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Map<Equipment, Integer> equipment = new HashMap<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

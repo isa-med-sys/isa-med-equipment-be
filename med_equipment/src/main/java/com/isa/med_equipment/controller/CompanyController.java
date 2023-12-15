@@ -91,4 +91,15 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/update/{id}/equipment")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> updateEquipment(@PathVariable Long id, @RequestBody List<EquipmentDto> equipmentDto) {
+        try {
+            CompanyDto company = companyService.updateEquipment(id, equipmentDto);
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

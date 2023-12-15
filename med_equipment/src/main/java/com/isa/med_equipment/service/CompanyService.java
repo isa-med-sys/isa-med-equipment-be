@@ -23,4 +23,5 @@ public interface CompanyService {
     List<Company> findAllByEquipment(Long id);
     Company add(CompanyDto companyDto);
     Company update(Long id, CompanyDto companyDto);
+    CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto);
 }

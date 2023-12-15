@@ -55,4 +55,26 @@ public class EquipmentController {
             @RequestParam(required = false) Long id) {
         return new ResponseEntity<>(equipmentService.findAllByCompanyIdPaged(name, type, rating, id, PageRequest.of(page, size)), HttpStatus.OK);
     }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> add(@RequestBody EquipmentDto equipmentDto) {
+        try {
+            EquipmentDto newEquipment = equipmentService.add(equipmentDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEquipment);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody EquipmentDto equipmentDto) {
+        try {
+            EquipmentDto updatedEquipment = equipmentService.update(id, equipmentDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedEquipment);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

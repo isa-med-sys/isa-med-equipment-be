@@ -15,4 +15,6 @@ public interface EquipmentService {
     Page<EquipmentDto> findAllPaged(String name, String type, Float rating, Pageable pageable);
     Page<EquipmentDto> findAllByCompanyIdPaged(String name, String type, Float rating, Long id, Pageable pageable);
     Optional<Equipment> findById(Long id);
+    EquipmentDto add(EquipmentDto equipmentDto);
+    EquipmentDto update(Long id, EquipmentDto equipmentDto);
 }

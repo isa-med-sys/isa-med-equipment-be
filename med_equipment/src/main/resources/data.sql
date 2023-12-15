@@ -59,19 +59,19 @@ INSERT INTO registered_users (id, company_info, occupation, penalty_points, addr
 VALUES
     (1, 'FTN', 'Programer', 0, 1);
 
-INSERT INTO company_admins (id, company_id)
+INSERT INTO company_admins (id, company_id, has_changed_password)
 VALUES
-    (2, 1),
-    (3, 1),
-    (4, 2),
-    (5, 3),
-    (6, 4),
-    (7, 5),
-    (8, 6),
-    (9, 7),
-    (10, 8),
-    (11, 9),
-    (12, 10);
+    (2, 1, false),
+    (3, 1, false),
+    (4, 2, false),
+    (5, 3, false),
+    (6, 4, false),
+    (7, 5, false),
+    (8, 6, false),
+    (9, 7, false),
+    (10, 8, false),
+    (11, 9, false),
+    (12, 10, false);
 
 INSERT INTO system_admins (id, has_changed_password)
 VALUES
