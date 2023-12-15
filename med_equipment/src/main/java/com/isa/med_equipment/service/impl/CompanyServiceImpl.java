@@ -9,6 +9,7 @@ import com.isa.med_equipment.model.CompanyAdmin;
 import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.CompanySpecifications;
+import com.isa.med_equipment.repository.EquipmentRepository;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,12 +29,14 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final EquipmentRepository equipmentRepository;
     private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, Mapper mapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, EquipmentRepository equipmentRepository, Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
+        this.equipmentRepository = equipmentRepository;
         this.mapper = mapper;
     }
 
@@ -171,6 +174,8 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
+    @Override
+    @Transactional
     public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
 
         Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -179,16 +184,26 @@ public class CompanyServiceImpl implements CompanyService {
 
             Company company = optionalCompany.get();
 
-            Map<Equipment, Integer> updatedEquipment = new HashMap<>();
+//            company.getEquipment().clear();
+            company.getEquipment().entrySet().removeIf(entry ->
+                    equipmentDto.stream().noneMatch(eq -> eq.getId().equals(entry.getKey().getId()))
+            );
 
             for (EquipmentDto eq : equipmentDto) {
-                updatedEquipment.put(mapper.map(eq, Equipment.class), eq.getQuantity());
+
+                Optional<Equipment> optionalEquipment = equipmentRepository.findById(eq.getId());
+
+                if (optionalEquipment.isPresent()) {
+
+                    Equipment equipment = optionalEquipment.get();
+                    company.getEquipment().put(equipment, eq.getQuantity());
+                } else {
+                    throw new EntityNotFoundException("Company not found with id: " + id);
+                }
             }
 
-            company.setEquipment(updatedEquipment);
-
-            company = companyRepository.save(company);
-            return mapper.map(company, CompanyDto.class);
+            Company updatedCompany = companyRepository.save(company);
+            return mapper.map(updatedCompany, CompanyDto.class);
         } else {
             throw new EntityNotFoundException("Company not found with id: " + id);
         }

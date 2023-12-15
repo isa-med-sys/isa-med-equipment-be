@@ -16,4 +16,6 @@ public interface EquipmentService {
     List<Equipment> findAllByCompanyId(Long id);
     List<Equipment> search(String name, String type, Float rating, String userRole, Long id);
     Optional<Equipment> findById(Long id);
+    EquipmentDto add(EquipmentDto equipmentDto);
+    EquipmentDto update(Long id, EquipmentDto equipmentDto);
 }
