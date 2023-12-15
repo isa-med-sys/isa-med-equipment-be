@@ -82,7 +82,7 @@ public class UserController {
     }
 
     @GetMapping("/password-change/{id}")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN')")
     public ResponseEntity<Boolean> getPasswordChange(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getPasswordChange(id), HttpStatus.OK);
     }

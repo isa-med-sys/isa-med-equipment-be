@@ -22,6 +22,9 @@ public class CompanyAdmin extends User {
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TimeSlot> timeSlots;
     
+    @Column(name = "has_changed_password", nullable = false)
+    private Boolean hasChangedPassword;
+
     @Override
     public Role getRole() {
         return Role.COMPANY_ADMIN;

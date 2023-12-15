@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class EquipmentDto {
+
+    private Long id;
     @NotEmpty(message = "Name is required")
     @Size(min = 2, max = 32)
     private String name;
@@ -27,10 +29,11 @@ public class EquipmentDto {
 
     private Integer quantity;
 
-    public EquipmentDto(@NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
+    public EquipmentDto(Long id, @NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                    @NotEmpty(message = "Description is required") String description,
                    @NotEmpty(message = "Price is required") Float price, Float rating, EquipmentType type, Integer quantity) {
         super();
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
