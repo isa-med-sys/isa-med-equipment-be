@@ -29,18 +29,18 @@ VALUES
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic'), -- password = admin
     ('anas@gmail.com', false, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic'); -- password = anas
 
-INSERT INTO companies (name, rating, address_id, description)
+INSERT INTO companies (name, rating, address_id, description, version)
 VALUES
-    ('MediQuip', 4.5, 2, 'A test company with a good rating.'),
-    ('Health Innovations', 3.8, 3, 'Another test company with a moderate rating.'),
-    ('Wellness Solutions', 2.5, 4, 'A test company with a lower rating.'),
-    ('MedTech Solutions', 4.0, 5, 'A test company with a higher rating.'),
-    ('LifeCare Services', 4.2, 6, 'A test company with an average rating.'),
-    ('Advanced Health', 2.8, 7, 'A test company with a below-average rating.'),
-    ('Elite Medical Group', 4.7, 8, 'A test company with an excellent rating.'),
-    ('Precision Health', 4.5, 9, 'A test company with a decent rating.'),
-    ('Vitality Care', 2.0, 10, 'A test company with a very low rating.'),
-    ('WellBeing Solutions', 4.2, 11, 'A test company with a good rating.');
+    ('MediQuip', 4.5, 2, 'A test company with a good rating.', 0),
+    ('Health Innovations', 3.8, 3, 'Another test company with a moderate rating.', 0),
+    ('Wellness Solutions', 2.5, 4, 'A test company with a lower rating.', 0),
+    ('MedTech Solutions', 4.0, 5, 'A test company with a higher rating.', 0),
+    ('LifeCare Services', 4.2, 6, 'A test company with an average rating.', 0),
+    ('Advanced Health', 2.8, 7, 'A test company with a below-average rating.', 0),
+    ('Elite Medical Group', 4.7, 8, 'A test company with an excellent rating.', 0),
+    ('Precision Health', 4.5, 9, 'A test company with a decent rating.', 0),
+    ('Vitality Care', 2.0, 10, 'A test company with a very low rating.', 0),
+    ('WellBeing Solutions', 4.2, 11, 'A test company with a good rating.', 0);
 
 INSERT INTO equipment (name, description, price, rating, type, version)
 VALUES
@@ -120,12 +120,19 @@ VALUES
     (CURRENT_DATE + INTERVAL '10:30:00' + INTERVAL '2 day', true, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '12:15:00' + INTERVAL '2 day', true, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '16:00:00' + INTERVAL '2 day', true, 1, 2, 0),
-    (CURRENT_DATE + INTERVAL '09:45:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '13:30:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '1 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '2 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '2 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '2 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '12:45:00' + INTERVAL '2 day', true, 1, 3, 0);
+    (CURRENT_DATE + INTERVAL '09:45:00' + INTERVAL '3 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '13:30:00' + INTERVAL '3 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '3 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '3 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '4 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '4 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '4 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '12:45:00' + INTERVAL '5 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '16:00:00' + INTERVAL '5 day', true, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:45:00' + INTERVAL '5 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '13:30:00' + INTERVAL '5 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '6 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '6 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '7 day', true, 1, 3, 0),
+    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0);
 

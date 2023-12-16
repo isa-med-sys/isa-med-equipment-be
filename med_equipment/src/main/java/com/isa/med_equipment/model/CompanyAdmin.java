@@ -31,14 +31,21 @@ public class CompanyAdmin extends User {
     }
 
     public void addTimeSlot(TimeSlot timeSlot) {
-        for (TimeSlot existingTimeSlot : timeSlots) {
-            if (isOverlapping(existingTimeSlot, timeSlot)) {
-                throw new IllegalArgumentException("Admin isn't free for the time slot.");
-            }
+        if (!isFreeForTimeSlot(timeSlot)) {
+            throw new IllegalArgumentException("Admin isn't free for the time slot.");
         }
 
         timeSlot.setAdmin(this);
         timeSlots.add(timeSlot);
+    }
+
+    public boolean isFreeForTimeSlot(TimeSlot timeSlot) {
+        for (TimeSlot existingTimeSlot : timeSlots) {
+            if (isOverlapping(existingTimeSlot, timeSlot)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isOverlapping(TimeSlot timeSlot1, TimeSlot timeSlot2) {

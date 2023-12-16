@@ -36,10 +36,8 @@ public class CalendarController {
 
     @PostMapping("/time-slots")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY_ADMIN', 'ROLE_REGISTERED_USER')")
-    public ResponseEntity<TimeSlotDto> createTimeSlot(@RequestBody TimeSlotDto timeSlotDto){
-        TimeSlotDto result = calendarService.createTimeSlot(timeSlotDto);
+    public ResponseEntity<TimeSlotDto> createTimeSlot(@RequestParam Long companyId, @RequestBody TimeSlotDto timeSlotDto){
+        TimeSlotDto result = calendarService.createTimeSlot(companyId, timeSlotDto);
         return ResponseEntity.ok(result);
     }
-
-    // TODO add a method for user that generates timeslots that aren't predefined in the future and that's it!
 }
