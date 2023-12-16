@@ -3,17 +3,11 @@ package com.isa.med_equipment.service.impl;
 import com.isa.med_equipment.dto.CompanyAdminDto;
 import com.isa.med_equipment.dto.CompanyDto;
 import com.isa.med_equipment.dto.EquipmentDto;
-import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.model.Company;
-import com.isa.med_equipment.model.CompanyAdmin;
-import com.isa.med_equipment.model.Equipment;
-import com.isa.med_equipment.repository.CompanyRepository;
-import com.isa.med_equipment.repository.CompanySpecifications;
-import com.isa.med_equipment.repository.EquipmentRepository;
+import com.isa.med_equipment.model.*;
+import com.isa.med_equipment.repository.*;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,21 +16,33 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final EquipmentRepository equipmentRepository;
+    private final CalendarRepository calendarRepository;
+    private final ReservationRepository reservationRepository;
     private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, EquipmentRepository equipmentRepository, Mapper mapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepository,
+                              CalendarRepository calendarRepository,
+                              EquipmentRepository equipmentRepository,
+                              ReservationRepository reservationRepository,
+                              Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
         this.equipmentRepository = equipmentRepository;
+        this.calendarRepository = calendarRepository;
+        this.reservationRepository = reservationRepository;
         this.mapper = mapper;
     }
 
@@ -58,12 +64,17 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto findById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
-        return mapper.map(company, CompanyDto.class);
-    }
 
-    public Company findCompany(Long id) {
-        return companyRepository.findById(id)
+        Calendar calendar = calendarRepository.findByCompany_Id(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+
+        CompanyDto result = mapper.map(company, CompanyDto.class);
+
+        result.setWorkStartTime(calendar.getWorkStartTime());
+        result.setWorkEndTime(calendar.getWorkEndTime());
+        result.setWorksOnWeekends(calendar.getWorksOnWeekends());
+
+        return result;
     }
 
     @Override
@@ -86,12 +97,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<EquipmentDto> findAvailableEquipmentByCompany(Long id) {
-        Company company =  companyRepository.findById(id)
+        Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
 
-        List<Equipment> availableEquipment = company.getEquipment().entrySet().stream()
-                .filter(e -> e.getValue() > 0)
-                .map(Map.Entry::getKey)
+        List<Equipment> availableEquipment = company.getEquipment().keySet()
+                .stream()
+                .filter(equip -> isEquipmentAvailable(company, equip))
                 .collect(Collectors.toList());
 
         return mapper.mapList(availableEquipment, EquipmentDto.class);
@@ -140,7 +151,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public Company add(CompanyDto companyDto) {
         Company company = new Company();
 
@@ -161,7 +171,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public Company update(Long id, CompanyDto companyDto) {
 
         Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -187,7 +196,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
 
         Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -218,5 +226,12 @@ public class CompanyServiceImpl implements CompanyService {
         } else {
             throw new EntityNotFoundException("Company not found with id: " + id);
         }
+    }
+
+    private boolean isEquipmentAvailable(Company company, Equipment equipment) {
+        int inStockQuantity = company.getEquipmentQuantityInStock(equipment);
+        int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, company.getId());
+
+        return inStockQuantity - reservedQuantity > 0;
     }
 }

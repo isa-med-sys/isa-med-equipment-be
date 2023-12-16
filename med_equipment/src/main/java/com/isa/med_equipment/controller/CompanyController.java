@@ -69,6 +69,7 @@ public class CompanyController {
         List<EquipmentDto> result = companyService.findEquipmentByCompany(id);
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/{id}/equipment/available")
     public ResponseEntity<List<EquipmentDto>> findAvailableEquipment(@PathVariable Long id) {
         List<EquipmentDto> result = companyService.findAvailableEquipmentByCompany(id);

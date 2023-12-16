@@ -10,4 +10,7 @@ public class ReservationDto {
     private Long companyId;
     private List<Long> equipmentIds;
     private Long timeSlotId;
+    private Boolean isPickedUp = false;
+    private Boolean isCancelled = false;
+    private byte[] qrCode;
 }

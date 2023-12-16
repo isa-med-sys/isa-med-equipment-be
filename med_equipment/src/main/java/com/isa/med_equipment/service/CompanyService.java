@@ -16,7 +16,6 @@ public interface CompanyService {
     Page<CompanyDto> findAll(String name, String city, Float rating, Pageable pageable);
     List<Company> findAllTemp(); //temp
     CompanyDto findById(Long id);
-    Company findCompany(Long id);
     List<EquipmentDto> findEquipmentByCompany(Long id);
     List<EquipmentDto> findAvailableEquipmentByCompany(Long id);
     List<CompanyAdminDto> findAllAdmins(Long id);
