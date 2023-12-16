@@ -19,6 +19,7 @@ public interface CompanyService {
     List<EquipmentDto> findEquipmentByCompany(Long id);
     List<EquipmentDto> findAvailableEquipmentByCompany(Long id);
     List<CompanyAdminDto> findAllAdmins(Long id);
+    List<Long> findAllAdminIds(Long id);
     List<Company> findAllByEquipment(Long id);
     Company add(CompanyDto companyDto);
     Company update(Long id, CompanyDto companyDto);

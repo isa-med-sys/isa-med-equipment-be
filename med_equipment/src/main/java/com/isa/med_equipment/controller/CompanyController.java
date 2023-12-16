@@ -58,6 +58,11 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.findAllAdmins(id) , HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/admin-ids")
+    public ResponseEntity<List<Long>> findAllAdminIds(@PathVariable Long id) {
+        return new ResponseEntity<>(companyService.findAllAdminIds(id) , HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/equipment")
     @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<List<EquipmentDto>> findEquipmentByCompany(@PathVariable Long id) {

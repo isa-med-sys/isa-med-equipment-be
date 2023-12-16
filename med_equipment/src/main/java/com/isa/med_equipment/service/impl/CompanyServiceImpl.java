@@ -139,6 +139,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public List<Long> findAllAdminIds(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+
+        List<CompanyAdmin> companyAdmins = company.getAdmins();
+
+        return companyAdmins.stream()
+                .map(CompanyAdmin::getId)
+                .toList();
+    }
+
+    @Override
     public Company add(CompanyDto companyDto) {
         Company company = new Company();
 
@@ -192,7 +204,6 @@ public class CompanyServiceImpl implements CompanyService {
 
             Company company = optionalCompany.get();
 
-//            company.getEquipment().clear();
             company.getEquipment().entrySet().removeIf(entry ->
                     equipmentDto.stream().noneMatch(eq -> eq.getId().equals(entry.getKey().getId()))
             );
