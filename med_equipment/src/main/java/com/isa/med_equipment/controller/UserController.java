@@ -1,11 +1,13 @@
 package com.isa.med_equipment.controller;
 
 import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
+import com.isa.med_equipment.dto.SystemAdminRegistrationDto;
+import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.exception.EmailExistsException;
-import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.CompanyAdmin;
+import com.isa.med_equipment.model.SystemAdmin;
 import com.isa.med_equipment.model.User;
 import com.isa.med_equipment.security.authentication.AuthenticationRequest;
 import com.isa.med_equipment.security.authentication.AuthenticationResponse;
@@ -19,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,12 +38,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationDto userRegistrationDto) {
         try {
-            User registeredUser = userService.register(userRegistrationDto);
+            UserRegistrationDto registeredUser = userService.register(userRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
         } catch (EmailExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -60,20 +61,39 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register-system-admin")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
+    public ResponseEntity<?> registerSystemAdmin(@RequestBody SystemAdminRegistrationDto systemAdminRegistrationDto) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Principal: " + principal);
+        try {
+            SystemAdmin registeredSystemAdmin = userService.registerSystemAdmin(systemAdminRegistrationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(registeredSystemAdmin);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
+        }
+    }
+
     @GetMapping("/company/{id}")
     @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<List<CompanyAdmin>> getByCompanyId(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findByCompanyId(id), HttpStatus.OK);
     }
 
+    @GetMapping("/password-change/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<Boolean> getPasswordChange(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.getPasswordChange(id), HttpStatus.OK);
+    }
 
     @GetMapping("/confirm-account")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
         try {
-            User confirmedUser = userService.confirmRegistration(token);
+            UserRegistrationDto confirmedUser = userService.confirmRegistration(token);
             return (confirmedUser != null) ? ResponseEntity.ok("Account successfully confirmed.") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid or expired token.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the confirmation.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -84,20 +104,21 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
-    public ResponseEntity<Optional<User>> getById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    public ResponseEntity<UserDto> getById(@PathVariable Long id) {
+        UserDto result = userService.findById(id);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("(hasAnyRole('ROLE_REGISTERED_USER', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
-        try {
-            Optional<User> updatedUser = userService.update(id, userUpdateDto);
-            return updatedUser.map(user -> ResponseEntity.ok().body(user))
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IncorrectPasswordException e) {
-            return ResponseEntity.badRequest().body("Incorrect password");
-        }
+    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
+        UserDto result = userService.update(id, userUpdateDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/password/{id}")
+    @PreAuthorize("(hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
+    public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody String pass) {
+        return new ResponseEntity<>(userService.changePassword(id, pass), HttpStatus.OK);
     }
 }

@@ -1,8 +1,10 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
+import com.isa.med_equipment.dto.SystemAdminRegistrationDto;
 import com.isa.med_equipment.dto.UserRegistrationDto;
 import com.isa.med_equipment.dto.UserUpdateDto;
+import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.*;
@@ -11,7 +13,9 @@ import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
 import com.isa.med_equipment.service.UserService;
-
+import com.isa.med_equipment.util.EmailSender;
+import com.isa.med_equipment.util.Mapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,17 +31,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
-    private final EmailSenderService emailSenderService;
+    private final EmailSender emailSender;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, ConfirmationTokenRepository confirmationTokenRepository, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           CompanyRepository companyRepository,
+                           ConfirmationTokenRepository confirmationTokenRepository,
+                           EmailSender emailSender,
+                           PasswordEncoder passwordEncoder,
+                           Mapper mapper) {
         super();
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
-        this.emailSenderService = emailSenderService;
+        this.emailSender = emailSender;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     @Override
@@ -56,8 +67,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public UserDto findById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found!", id)));
+        return mapper.map(user, UserDto.class);
     }
 
     @Override
@@ -66,11 +79,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
-        RegisteredUser user = new RegisteredUser();
-
+    public UserRegistrationDto register(UserRegistrationDto userRegistrationDto) throws EmailExistsException {
         if(emailExists(userRegistrationDto.getEmail()).isPresent())
             throw new EmailExistsException("Account with email address: " + userRegistrationDto.getEmail() + " already exists");
+
+        RegisteredUser user = createUser(userRegistrationDto);
+        userRepository.save(user);
+
+        sendRegistrationEmail(user);
+
+        return mapper.map(user, UserRegistrationDto.class);
+    }
+
+    private RegisteredUser createUser(UserRegistrationDto userRegistrationDto) {
+        RegisteredUser user = new RegisteredUser();
 
         user.setName(userRegistrationDto.getName());
         user.setSurname(userRegistrationDto.getSurname());
@@ -86,20 +108,24 @@ public class UserServiceImpl implements UserService {
         address.setStreetNumber(userRegistrationDto.getAddress().getStreetNumber());
         address.setCity(userRegistrationDto.getAddress().getCity());
         address.setCountry(userRegistrationDto.getAddress().getCountry());
+
         user.setAddress(address);
-
-        userRepository.save(user);
-
-        ConfirmationToken token = new ConfirmationToken(user);
-        confirmationTokenRepository.save(token);
-
-        String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
-        emailSenderService.sendEmail(user, confirmationLink);
 
         return user;
     }
 
-    public User confirmRegistration(String confirmationToken) {
+    private void sendRegistrationEmail(User user) {
+        ConfirmationToken token = new ConfirmationToken(user);
+        confirmationTokenRepository.save(token);
+
+        String confirmationLink = "http://localhost:8080/api/users/confirm-account?token=" + token.getConfirmationToken();
+        String registrationSubject = "Complete your registration!";
+        String registrationMessage = "To be able to log into your account, please click on the following link: " + confirmationLink;
+
+        emailSender.sendEmail(user, registrationSubject, registrationMessage);
+    }
+
+    public UserRegistrationDto confirmRegistration(String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
         User user = token.getUser();
 
@@ -108,23 +134,45 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
 
-        return user;
+        return mapper.map(user, UserRegistrationDto.class);
     }
 
     @Override
     @Transactional
-    public Optional<User> update(Long userId, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
+    public UserDto update(Long id, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found!", id)));
+
+        validateCurrentPassword(userUpdateDto.getCurrentPassword(), user);
+        updateUserData(user, userUpdateDto);
+        userRepository.save(user);
+
+        return mapper.map(user, UserDto.class);
+    }
+
+    @Override
+    @Transactional
+    public Boolean changePassword(Long userId, String password) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
-        if (optionalUser.isEmpty()) { return Optional.empty(); }
+        if (optionalUser.isEmpty()) { return false; }
 
         User existingUser = optionalUser.get();
-        validateCurrentPassword(userUpdateDto.getCurrentPassword(), existingUser);
+        if(password != null && !password.isBlank() && !getPasswordChange(userId)) {
+            if (existingUser instanceof SystemAdmin systemAdmin) {
+                ((SystemAdmin) existingUser).setHasChangedPassword(true);
+                existingUser.setPassword(passwordEncoder.encode(password));
+                userRepository.save(existingUser);
+                return true;
+            } else if (existingUser instanceof CompanyAdmin companyAdmin) {
+                ((CompanyAdmin) existingUser).setHasChangedPassword(true);
+                existingUser.setPassword(passwordEncoder.encode(password));
+                userRepository.save(existingUser);
+                return true;
+            }
+        }
 
-        updateUserData(existingUser, userUpdateDto);
-        userRepository.save(existingUser);
-
-        return Optional.of(existingUser);
+        return false;
     }
 
     @Override
@@ -145,10 +193,48 @@ public class UserServiceImpl implements UserService {
         companyAdmin.setEmail(companyAdminRegistrationDto.getEmail());
         companyAdmin.setPhoneNumber(companyAdminRegistrationDto.getPhoneNumber());
         companyAdmin.setEnabled(true);
+        companyAdmin.setHasChangedPassword(false);
 
         userRepository.save(companyAdmin);
 
         return companyAdmin;
+    }
+
+    @Override
+    public SystemAdmin registerSystemAdmin(SystemAdminRegistrationDto systemAdminRegistrationDto) throws EmailExistsException {
+        SystemAdmin systemAdmin = new SystemAdmin();
+
+        if(emailExists(systemAdminRegistrationDto.getEmail()).isPresent())
+            throw new EmailExistsException("Account with email address: " + systemAdminRegistrationDto.getEmail() + " already exists");
+
+        systemAdmin.setName(systemAdminRegistrationDto.getName());
+        systemAdmin.setSurname(systemAdminRegistrationDto.getSurname());
+
+        systemAdmin.setPassword(passwordEncoder.encode(systemAdminRegistrationDto.getPassword()));
+        systemAdmin.setEmail(systemAdminRegistrationDto.getEmail());
+        systemAdmin.setPhoneNumber(systemAdminRegistrationDto.getPhoneNumber());
+        systemAdmin.setEnabled(true);
+        systemAdmin.setHasChangedPassword(false);
+
+        userRepository.save(systemAdmin);
+
+        return systemAdmin;
+    }
+
+    @Override
+    public Boolean getPasswordChange(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user instanceof SystemAdmin systemAdmin) {
+                return systemAdmin.getHasChangedPassword();
+            } else if (user instanceof CompanyAdmin companyAdmin) {
+                return companyAdmin.getHasChangedPassword();
+            } else {
+                return true;
+            }
+        }
+        return true;
     }
 
     private void validateCurrentPassword(String currentPassword, User existingUser) throws IncorrectPasswordException {

@@ -1,21 +1,17 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.dto.CompanyDto;
+import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.model.Company;
-import com.isa.med_equipment.model.CompanyAdmin;
-import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -55,27 +51,34 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.findAllByEquipment(id), HttpStatus.OK);
     }
 
-    @GetMapping("/admins/{id}")
-    public ResponseEntity<List<CompanyAdmin>> findAllAdmins(@PathVariable Long id) {
+    @GetMapping("/{id}/admins")
+    public ResponseEntity<List<CompanyAdminDto>> findAllAdmins(@PathVariable Long id) {
         return new ResponseEntity<>(companyService.findAllAdmins(id) , HttpStatus.OK);
     }
 
-    @GetMapping("/all-equipment/{id}")
-    public ResponseEntity<?> findEquipment(@PathVariable Long id) {
-        try {
-            Company company = companyService.findCompany(id);
-            Set<Equipment> equipment = company.getEquipment();
-            return ResponseEntity.status(HttpStatus.OK).body(equipment);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    @GetMapping("/{id}/admin-ids")
+    public ResponseEntity<List<Long>> findAllAdminIds(@PathVariable Long id) {
+        return new ResponseEntity<>(companyService.findAllAdminIds(id) , HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/equipment")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<List<EquipmentDto>> findEquipmentByCompany(@PathVariable Long id) {
+        List<EquipmentDto> result = companyService.findEquipmentByCompany(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/equipment/available")
+    public ResponseEntity<List<EquipmentDto>> findAvailableEquipment(@PathVariable Long id) {
+        List<EquipmentDto> result = companyService.findAvailableEquipmentByCompany(id);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
-    public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
+    public ResponseEntity<?> add(@RequestBody CompanyRegistrationDto companyRegistrationDto) {
         try {
-            Company company = companyService.add(companyDto);
+            Company company = companyService.add(companyRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(company);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -87,6 +90,17 @@ public class CompanyController {
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{id}/equipment")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> updateEquipment(@PathVariable Long id, @RequestBody List<EquipmentDto> equipmentDto) {
+        try {
+            CompanyDto company = companyService.updateEquipment(id, equipmentDto);
             return ResponseEntity.ok(company);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

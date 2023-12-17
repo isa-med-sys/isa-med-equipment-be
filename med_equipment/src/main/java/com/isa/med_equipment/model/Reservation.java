@@ -2,11 +2,15 @@ package com.isa.med_equipment.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "reservations")
+@Getter
+@Setter
 public class Reservation {
 
     @Id
@@ -15,19 +19,40 @@ public class Reservation {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName="id")
+    @JoinColumn(name = "user_id", referencedColumnName="id", nullable = false)
     @JsonManagedReference
     private RegisteredUser user;
 
-    @ManyToOne
-    @JoinColumn(name = "equipment_id", referencedColumnName="id")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "reservation_equipment",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "equipment_id")
+    )
     @JsonManagedReference
-    private Equipment equipment;
+    private List<Equipment> equipment;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "time_slot_id", referencedColumnName="id")
+    @JoinColumn(name = "time_slot_id", referencedColumnName="id", nullable = false)
     private TimeSlot  timeSlot;
 
-    @Column(name = "is_picked_up")
-    private Boolean isPickedUp;
+    @Column(name = "is_picked_up", nullable = false)
+    private Boolean isPickedUp = false;
+
+    @Column(name = "is_cancelled", nullable = false)
+    private Boolean isCancelled = false;
+
+    @Column(name = "qr_code")
+    private byte[] qrCode;
+
+    @Version
+    private Long  version;
+
+    public void make(RegisteredUser user, List<Equipment> equipment, TimeSlot timeSlot){
+        timeSlot.reserve();
+
+        this.setUser(user);
+        this.setEquipment(equipment);
+        this.setTimeSlot(timeSlot);
+    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,6 +25,18 @@ public class TimeSlot {
     @Column(name = "start")
     private LocalDateTime start;
 
-    @Column(name = "duration")
-    private Integer duration;
+    @Column(name = "is_free")
+    private Boolean isFree = true;
+
+    @Version
+    private Long version;
+
+    public static final Duration DURATION = Duration.ofMinutes(30);
+
+    public void reserve() {
+        if (!isFree) {
+            throw new IllegalStateException("Time Slot isn't free.");
+        }
+        isFree = false;
+    }
 }

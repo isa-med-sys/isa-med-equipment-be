@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 @Entity
@@ -29,24 +30,59 @@ public class Company {
     @Column(name = "rating")
     private Float rating;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //cascade type
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", referencedColumnName="id")
     private Address address;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(
+    @ElementCollection
+    @CollectionTable(
             name = "company_equipment",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "equipment_id")
+            joinColumns = @JoinColumn(name = "company_id")
     )
+    @MapKeyJoinColumn(name = "equipment_id")
+    @Column(name = "quantity", nullable = false)
     @JsonManagedReference
-    private Set<Equipment> equipment = new HashSet<>();
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Map<Equipment, Integer> equipment = new HashMap<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonBackReference
     private List<CompanyAdmin> admins = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "calendar_id", referencedColumnName="id")
-    private Calendar calendar;
+    @Version
+    private Long version;
+
+    public List<Equipment> getEquipmentInStock(List<Long> requestedEquipmentIds) {
+        List<Equipment> availableEquipment = new ArrayList<>();
+
+        for (Long equipmentId : requestedEquipmentIds) {
+            Equipment equipment = findEquipmentById(equipmentId);
+            if (getEquipmentQuantityInStock(equipment) <= 0) {
+                throw new IllegalStateException("No equipment in stock: " + equipment.getName());
+            }
+
+            availableEquipment.add(equipment);
+        }
+
+        return availableEquipment;
+    }
+
+    private Equipment findEquipmentById(Long equipmentId) {
+        for (Map.Entry<Equipment, Integer> entry : this.equipment.entrySet()) {
+            Equipment equipment = entry.getKey();
+            if (equipment.getId().equals(equipmentId)) {
+                return equipment;
+            }
+        }
+        throw new EntityNotFoundException("Equipment not found.");
+    }
+
+    public int getEquipmentQuantityInStock(Equipment equipment) {
+        return this.equipment.getOrDefault(equipment, 0);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s\n%s %s, %s, %s", name, address.getStreet(), address.getStreetNumber(), address.getCity(), address.getCountry());
+    }
 }
