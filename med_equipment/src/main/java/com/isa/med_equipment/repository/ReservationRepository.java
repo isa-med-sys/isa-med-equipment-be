@@ -17,5 +17,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.isCancelled = false")
     int getTotalReservedQuantity(@Param("equipment") Equipment equipment, @Param("companyId") Long companyId);
 
+    Reservation getReservationByTimeSlotId(Long id);
     Page<Reservation> findByUser_Id(Long userId, Pageable pageable);
 }

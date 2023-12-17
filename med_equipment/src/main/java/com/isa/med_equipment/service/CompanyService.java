@@ -1,8 +1,6 @@
 package com.isa.med_equipment.service;
 
-import com.isa.med_equipment.dto.CompanyAdminDto;
-import com.isa.med_equipment.dto.CompanyDto;
-import com.isa.med_equipment.dto.EquipmentDto;
+import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.model.Company;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +19,7 @@ public interface CompanyService {
     List<CompanyAdminDto> findAllAdmins(Long id);
     List<Long> findAllAdminIds(Long id);
     List<Company> findAllByEquipment(Long id);
-    Company add(CompanyDto companyDto);
+    Company add(CompanyRegistrationDto companyRegistrationDto);
     Company update(Long id, CompanyDto companyDto);
     CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto);
 }
