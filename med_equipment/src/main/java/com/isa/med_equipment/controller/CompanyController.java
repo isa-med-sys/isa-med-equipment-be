@@ -56,12 +56,18 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.findAllAdmins(id) , HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/admin-ids")
+    public ResponseEntity<List<Long>> findAllAdminIds(@PathVariable Long id) {
+        return new ResponseEntity<>(companyService.findAllAdminIds(id) , HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/equipment")
     @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<List<EquipmentDto>> findEquipmentByCompany(@PathVariable Long id) {
         List<EquipmentDto> result = companyService.findEquipmentByCompany(id);
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/{id}/equipment/available")
     public ResponseEntity<List<EquipmentDto>> findAvailableEquipment(@PathVariable Long id) {
         List<EquipmentDto> result = companyService.findAvailableEquipmentByCompany(id);
@@ -84,6 +90,17 @@ public class CompanyController {
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
         try {
             Company company = companyService.update(id, companyDto);
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{id}/equipment")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> updateEquipment(@PathVariable Long id, @RequestBody List<EquipmentDto> equipmentDto) {
+        try {
+            CompanyDto company = companyService.updateEquipment(id, equipmentDto);
             return ResponseEntity.ok(company);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

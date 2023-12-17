@@ -26,7 +26,7 @@ public class TimeSlot {
     private LocalDateTime start;
 
     @Column(name = "is_free")
-    private Boolean isFree;
+    private Boolean isFree = true;
 
     @Version
     private Long version;

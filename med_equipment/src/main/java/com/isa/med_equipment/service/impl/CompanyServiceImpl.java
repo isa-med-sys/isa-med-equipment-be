@@ -2,9 +2,7 @@ package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.model.*;
-import com.isa.med_equipment.repository.CalendarRepository;
-import com.isa.med_equipment.repository.CompanyRepository;
-import com.isa.med_equipment.repository.CompanySpecifications;
+import com.isa.med_equipment.repository.*;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,17 +21,26 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CalendarRepository calendarRepository;
+    private final EquipmentRepository equipmentRepository;
+    private final ReservationRepository reservationRepository;
     private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, CalendarRepository calendarRepository, Mapper mapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepository,
+                              CalendarRepository calendarRepository,
+                              EquipmentRepository equipmentRepository,
+                              ReservationRepository reservationRepository,
+                              Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
+        this.equipmentRepository = equipmentRepository;
         this.calendarRepository = calendarRepository;
+        this.reservationRepository = reservationRepository;
         this.mapper = mapper;
     }
 
@@ -55,12 +62,17 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto findById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
-        return mapper.map(company, CompanyDto.class);
-    }
 
-    public Company findCompany(Long id) {
-        return companyRepository.findById(id)
+        Calendar calendar = calendarRepository.findByCompany_Id(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+
+        CompanyDto result = mapper.map(company, CompanyDto.class);
+
+        result.setWorkStartTime(calendar.getWorkStartTime());
+        result.setWorkEndTime(calendar.getWorkEndTime());
+        result.setWorksOnWeekends(calendar.getWorksOnWeekends());
+
+        return result;
     }
 
     @Override
@@ -83,12 +95,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<EquipmentDto> findAvailableEquipmentByCompany(Long id) {
-        Company company =  companyRepository.findById(id)
+        Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
 
-        List<Equipment> availableEquipment = company.getEquipment().entrySet().stream()
-                .filter(e -> e.getValue() > 0)
-                .map(Map.Entry::getKey)
+        List<Equipment> availableEquipment = company.getEquipment().keySet()
+                .stream()
+                .filter(equip -> isEquipmentAvailable(company, equip))
                 .collect(Collectors.toList());
 
         return mapper.mapList(availableEquipment, EquipmentDto.class);
@@ -125,6 +137,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public List<Long> findAllAdminIds(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Company with ID %d not found!", id)));
+
+        List<CompanyAdmin> companyAdmins = company.getAdmins();
+
+        return companyAdmins.stream()
+                .map(CompanyAdmin::getId)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public Company add(CompanyRegistrationDto companyRegistrationDto) {
         Company company = new Company();
@@ -156,7 +180,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public Company update(Long id, CompanyDto companyDto) {
 
         Optional<Company> optionalCompany = companyRepository.findById(id);
@@ -179,5 +202,45 @@ public class CompanyServiceImpl implements CompanyService {
         } else {
             throw new EntityNotFoundException("Company not found with id: " + id);
         }
+    }
+
+    @Override
+    public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
+
+        Optional<Company> optionalCompany = companyRepository.findById(id);
+
+        if (optionalCompany.isPresent()) {
+
+            Company company = optionalCompany.get();
+
+            company.getEquipment().entrySet().removeIf(entry ->
+                    equipmentDto.stream().noneMatch(eq -> eq.getId().equals(entry.getKey().getId()))
+            );
+
+            for (EquipmentDto eq : equipmentDto) {
+
+                Optional<Equipment> optionalEquipment = equipmentRepository.findById(eq.getId());
+
+                if (optionalEquipment.isPresent()) {
+
+                    Equipment equipment = optionalEquipment.get();
+                    company.getEquipment().put(equipment, eq.getQuantity());
+                } else {
+                    throw new EntityNotFoundException("Company not found with id: " + id);
+                }
+            }
+
+            Company updatedCompany = companyRepository.save(company);
+            return mapper.map(updatedCompany, CompanyDto.class);
+        } else {
+            throw new EntityNotFoundException("Company not found with id: " + id);
+        }
+    }
+
+    private boolean isEquipmentAvailable(Company company, Equipment equipment) {
+        int inStockQuantity = company.getEquipmentQuantityInStock(equipment);
+        int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, company.getId());
+
+        return inStockQuantity - reservedQuantity > 0;
     }
 }

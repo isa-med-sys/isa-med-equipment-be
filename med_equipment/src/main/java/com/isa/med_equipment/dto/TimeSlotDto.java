@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class TimeSlotDto {
-    public Long id;
-    public CompanyAdminDto admin;
-    public LocalDateTime start;
-    public Duration duration = Duration.ofMinutes(30);
+    private Long id;
+    private CompanyAdminDto admin;
+    private Long companyAdminId;
+    private LocalDateTime start;
+    private Duration duration = Duration.ofMinutes(30);
     private Boolean isFree;
 }

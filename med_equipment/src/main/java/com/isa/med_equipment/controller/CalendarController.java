@@ -6,10 +6,7 @@ import com.isa.med_equipment.service.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +31,13 @@ public class CalendarController {
     @PreAuthorize("hasAnyRole('ROLE_COMPANY_ADMIN', 'ROLE_REGISTERED_USER')")
     public ResponseEntity<List<TimeSlotDto>> findFreePredefinedTimeSlotsByCompany(@RequestParam Long companyId){
         List<TimeSlotDto> result = calendarService.findFreePredefinedTimeSlotsByCompany(companyId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/time-slots")
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY_ADMIN', 'ROLE_REGISTERED_USER')")
+    public ResponseEntity<TimeSlotDto> createTimeSlot(@RequestParam Long companyId, @RequestBody TimeSlotDto timeSlotDto){
+        TimeSlotDto result = calendarService.createTimeSlot(companyId, timeSlotDto);
         return ResponseEntity.ok(result);
     }
 }

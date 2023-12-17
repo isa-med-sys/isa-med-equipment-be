@@ -15,6 +15,8 @@ import com.isa.med_equipment.util.Mapper;
 import com.isa.med_equipment.util.QRCodeGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class ReservationServiceImpl implements ReservationService {
 
     private final UserRepository userRepository;
@@ -44,7 +47,13 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    public Page<ReservationDto> findAllByUser(Long userId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findByUser_Id(userId, pageable);
+        return mapper.mapPage(reservations, ReservationDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public ReservationDto reserve(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));

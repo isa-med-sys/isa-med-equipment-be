@@ -7,6 +7,7 @@ import com.isa.med_equipment.repository.EquipmentSpecifications;
 import com.isa.med_equipment.service.CompanyService;
 import com.isa.med_equipment.service.EquipmentService;
 import com.isa.med_equipment.util.Mapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -84,5 +86,43 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .and(rating == null ? null : EquipmentSpecifications.ratingGreaterThanOrEqual(rating));
         Page<Equipment> equipment = equipmentRepository.findAll(spec, pageable);
         return mapper.mapPage(equipment, EquipmentDto.class);
+    }
+
+    @Override
+    @Transactional
+    public EquipmentDto add(EquipmentDto equipmentDto) {
+        Equipment equipment = new Equipment();
+
+        equipment.setName(equipmentDto.getName());
+        equipment.setDescription(equipmentDto.getDescription());
+        equipment.setType(equipmentDto.getType());
+        equipment.setRating(equipmentDto.getRating());
+        equipment.setPrice(equipmentDto.getPrice());
+
+        Equipment newEquipment = equipmentRepository.save(equipment);
+
+        return mapper.map(newEquipment, EquipmentDto.class);
+    }
+
+    @Override
+    @Transactional
+    public EquipmentDto update(Long id, EquipmentDto equipmentDto) {
+
+        Optional<Equipment> optionalEquipment = equipmentRepository.findById(id);
+
+        if (optionalEquipment.isPresent()) {
+
+            Equipment equipment = optionalEquipment.get();
+
+            equipment.setName(equipmentDto.getName());
+            equipment.setDescription(equipmentDto.getDescription());
+            equipment.setType(equipmentDto.getType());
+            equipment.setPrice(equipmentDto.getPrice());
+
+            Equipment updatedEquipment = equipmentRepository.save(equipment);
+            return mapper.map(updatedEquipment, EquipmentDto.class);
+        } else {
+            throw new EntityNotFoundException("Equipment not found with id: " + id);
+        }
     }
 }
