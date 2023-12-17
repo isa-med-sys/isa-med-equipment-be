@@ -213,9 +213,7 @@ public class CompanyServiceImpl implements CompanyService {
 
             Company company = optionalCompany.get();
 
-            company.getEquipment().entrySet().removeIf(entry ->
-                    equipmentDto.stream().noneMatch(eq -> eq.getId().equals(entry.getKey().getId()))
-            );
+            company.getEquipment().clear();
 
             for (EquipmentDto eq : equipmentDto) {
 

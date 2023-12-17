@@ -1,14 +1,12 @@
 package com.isa.med_equipment.service.impl;
 
+import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.exception.EmailNotSentException;
 import com.isa.med_equipment.exception.QRCodeGenerationException;
 import com.isa.med_equipment.model.*;
-import com.isa.med_equipment.repository.CompanyRepository;
-import com.isa.med_equipment.repository.ReservationRepository;
-import com.isa.med_equipment.repository.TimeSlotRepository;
-import com.isa.med_equipment.repository.UserRepository;
+import com.isa.med_equipment.repository.*;
 import com.isa.med_equipment.service.ReservationService;
 import com.isa.med_equipment.util.EmailSender;
 import com.isa.med_equipment.util.Mapper;
@@ -17,6 +15,7 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,15 +33,17 @@ public class ReservationServiceImpl implements ReservationService {
     private final TimeSlotRepository timeSlotRepository;
     private final CompanyRepository companyRepository;
     private final ReservationRepository reservationRepository;
+    private final EquipmentRepository equipmentRepository;
     private final EmailSender emailSender;
     private final Mapper mapper;
 
-    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, CompanyRepository companyRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EmailSender emailSender) {
+    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, CompanyRepository companyRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EquipmentRepository equipmentRepository, EmailSender emailSender) {
         this.mapper = mapper;
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.reservationRepository = reservationRepository;
+        this.equipmentRepository = equipmentRepository;
         this.emailSender = emailSender;
     }
 
@@ -124,5 +125,44 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             throw new QRCodeGenerationException("Failed to generate QR code for reservation " + user.getId());
         }
+    }
+
+    @Override
+    public Boolean canUpdateEquipment(Long companyId, EquipmentDto equipmentDto) {
+        int newQuantity = equipmentDto.getQuantity();
+        Optional<Equipment> optionalEquipment = equipmentRepository.findById(equipmentDto.getId());
+
+        if (optionalEquipment.isPresent()) {
+
+            Equipment equipment = optionalEquipment.get();
+            int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
+
+            if (newQuantity < reservedQuantity) {
+                throw new IllegalStateException("Can't update quantity value.");
+            }
+
+            return true;
+        }
+
+        throw new IllegalStateException("Equipment wasn't found!");
+    }
+
+    @Override
+    public Boolean canDeleteEquipment(Long companyId, Long equipmentId) {
+        Optional<Equipment> optionalEquipment = equipmentRepository.findById(equipmentId);
+
+        if (optionalEquipment.isPresent()) {
+
+            Equipment equipment = optionalEquipment.get();
+            int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
+
+            if (reservedQuantity > 0) {
+                throw new IllegalStateException("Can't delete equipment.");
+            }
+
+            return true;
+        }
+
+        throw new IllegalStateException("Equipment wasn't found!");
     }
 }
