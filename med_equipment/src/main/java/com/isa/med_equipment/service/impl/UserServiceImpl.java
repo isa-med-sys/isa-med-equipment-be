@@ -193,6 +193,7 @@ public class UserServiceImpl implements UserService {
         companyAdmin.setEmail(companyAdminRegistrationDto.getEmail());
         companyAdmin.setPhoneNumber(companyAdminRegistrationDto.getPhoneNumber());
         companyAdmin.setEnabled(true);
+        companyAdmin.setHasChangedPassword(false);
 
         userRepository.save(companyAdmin);
 
