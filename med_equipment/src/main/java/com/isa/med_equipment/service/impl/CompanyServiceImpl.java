@@ -1,12 +1,8 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.CompanyAdminDto;
-import com.isa.med_equipment.dto.CompanyDto;
-import com.isa.med_equipment.dto.EquipmentDto;
-import com.isa.med_equipment.model.Address;
-import com.isa.med_equipment.model.Company;
-import com.isa.med_equipment.model.CompanyAdmin;
-import com.isa.med_equipment.model.Equipment;
+import com.isa.med_equipment.dto.*;
+import com.isa.med_equipment.model.*;
+import com.isa.med_equipment.repository.CalendarRepository;
 import com.isa.med_equipment.repository.CompanyRepository;
 import com.isa.med_equipment.repository.CompanySpecifications;
 import com.isa.med_equipment.service.CompanyService;
@@ -30,12 +26,14 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final CalendarRepository calendarRepository;
     private final Mapper mapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, Mapper mapper) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, CalendarRepository calendarRepository, Mapper mapper) {
         super();
         this.companyRepository = companyRepository;
+        this.calendarRepository = calendarRepository;
         this.mapper = mapper;
     }
 
@@ -128,23 +126,33 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public Company add(CompanyDto companyDto) {
+    public Company add(CompanyRegistrationDto companyRegistrationDto) {
         Company company = new Company();
 
-        company.setName(companyDto.getName());
-        company.setDescription(companyDto.getDescription());
-        company.setRating(companyDto.getRating());
+        company.setName(companyRegistrationDto.getName());
+        company.setDescription(companyRegistrationDto.getDescription());
+        company.setRating(3.0f); //companyRegistrationDto.getRating()
 
         Address address = new Address();
 
-        address.setCity(companyDto.getAddress().getCity());
-        address.setCountry(companyDto.getAddress().getCountry());
-        address.setStreet(companyDto.getAddress().getStreet());
-        address.setStreetNumber(companyDto.getAddress().getStreetNumber());
+        address.setCity(companyRegistrationDto.getAddress().getCity());
+        address.setCountry(companyRegistrationDto.getAddress().getCountry());
+        address.setStreet(companyRegistrationDto.getAddress().getStreet());
+        address.setStreetNumber(companyRegistrationDto.getAddress().getStreetNumber());
 
         company.setAddress(address);
 
-        return companyRepository.save(company);
+        Company newCompany = companyRepository.save(company); //
+
+        Calendar calendar = new Calendar();
+        calendar.setWorksOnWeekends(true); //companyRegistrationDto.getWorksOnWeekends()
+        calendar.setWorkStartTime(companyRegistrationDto.getWorkStartTime());
+        calendar.setWorkEndTime(companyRegistrationDto.getWorkEndTime());
+        calendar.setCompany(newCompany);
+
+        Calendar newCalendar = calendarRepository.save(calendar); //
+
+        return newCompany;
     }
 
     @Override

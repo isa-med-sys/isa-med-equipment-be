@@ -1,8 +1,6 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.dto.CompanyAdminDto;
-import com.isa.med_equipment.dto.CompanyDto;
-import com.isa.med_equipment.dto.EquipmentDto;
+import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +70,9 @@ public class CompanyController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
-    public ResponseEntity<?> add(@RequestBody CompanyDto companyDto) {
+    public ResponseEntity<?> add(@RequestBody CompanyRegistrationDto companyRegistrationDto) {
         try {
-            Company company = companyService.add(companyDto);
+            Company company = companyService.add(companyRegistrationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(company);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

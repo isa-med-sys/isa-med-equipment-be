@@ -1,13 +1,11 @@
 package com.isa.med_equipment.controller;
 
 import com.isa.med_equipment.dto.ReservationDto;
+import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.service.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -21,7 +19,14 @@ public class ReservationController {
     @PostMapping
     @PreAuthorize("(hasRole('ROLE_REGISTERED_USER') and #reservationDto.userId == authentication.principal.id)")
     public ResponseEntity<ReservationDto> makeReservation(@RequestBody ReservationDto reservationDto) {
-            ReservationDto result = reservationService.reserve(reservationDto);
-            return ResponseEntity.ok(result);
+        ReservationDto result = reservationService.reserve(reservationDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/timeslot/{id}")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<UserDto> getByTimeSlotId(@PathVariable Long id) {
+        UserDto result = reservationService.getByTimeSlotId(id);
+        return ResponseEntity.ok(result);
     }
 }

@@ -14,4 +14,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.timeSlot.start > CURRENT_TIMESTAMP " +
             "AND r.isCancelled = false")
     int getTotalReservedQuantity(@Param("equipment") Equipment equipment, @Param("companyId") Long companyId);
+
+    Reservation getReservationByTimeSlotId(Long id);
 }

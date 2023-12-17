@@ -1,6 +1,7 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.ReservationDto;
+import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.exception.EmailNotSentException;
 import com.isa.med_equipment.exception.QRCodeGenerationException;
 import com.isa.med_equipment.model.*;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -73,6 +75,13 @@ public class ReservationServiceImpl implements ReservationService {
         sendEmailWithQRCode(user, qrCode);
 
         return mapper.map(reservation, ReservationDto.class);
+    }
+
+    @Override
+    public UserDto getByTimeSlotId(Long id) {
+        Reservation reservation = reservationRepository.getReservationByTimeSlotId(id);
+        Optional<User> user = userRepository.findById(reservation.getUser().getId());
+        return mapper.map(user, UserDto.class);
     }
 
     private byte[] generateQRCode(Reservation reservation) {
