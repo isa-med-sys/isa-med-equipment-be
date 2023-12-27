@@ -15,7 +15,6 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +29,7 @@ import java.util.Optional;
 public class ReservationServiceImpl implements ReservationService {
 
     private final UserRepository userRepository;
+    private final RegisteredUserRepository registeredUserRepository;
     private final TimeSlotRepository timeSlotRepository;
     private final CompanyRepository companyRepository;
     private final ReservationRepository reservationRepository;
@@ -37,9 +37,17 @@ public class ReservationServiceImpl implements ReservationService {
     private final EmailSender emailSender;
     private final Mapper mapper;
 
-    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, CompanyRepository companyRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EquipmentRepository equipmentRepository, EmailSender emailSender) {
+    public ReservationServiceImpl(Mapper mapper,
+                                  UserRepository userRepository,
+                                  RegisteredUserRepository registeredUserRepository,
+                                  CompanyRepository companyRepository,
+                                  TimeSlotRepository timeSlotRepository,
+                                  ReservationRepository reservationRepository,
+                                  EquipmentRepository equipmentRepository,
+                                  EmailSender emailSender) {
         this.mapper = mapper;
         this.userRepository = userRepository;
+        this.registeredUserRepository = registeredUserRepository;
         this.companyRepository = companyRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.reservationRepository = reservationRepository;
@@ -56,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public ReservationDto reserve(ReservationDto reservationDto) {
-        User user = userRepository.findById(reservationDto.getUserId())
+        RegisteredUser user = registeredUserRepository.findById(reservationDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
 
         Company company = companyRepository.findById(reservationDto.getCompanyId())
@@ -73,11 +81,15 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
         }
 
+        if (user.getPenaltyPoints() >= 3) {
+            throw new IllegalArgumentException("Reservation can't be made if you have 3 or more penalty points.");
+        }
+
         List<Equipment> equipment = company.getEquipmentInStock(reservationDto.getEquipmentIds());
         checkEquipmentAvailability(company, equipment);
 
         Reservation reservation = new Reservation();
-        reservation.make((RegisteredUser) user, equipment, timeSlot);
+        reservation.make(user, equipment, timeSlot);
         byte[] qrCode = generateQRCode(reservation);
 
         reservationRepository.save(reservation);
