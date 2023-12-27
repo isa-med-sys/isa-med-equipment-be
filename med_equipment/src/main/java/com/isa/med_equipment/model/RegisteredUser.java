@@ -32,4 +32,8 @@ public class RegisteredUser extends User {
     public Role getRole() {
         return Role.REGISTERED_USER;
     }
+
+    public void resetPenaltyPoints() {
+        this.penaltyPoints = 0;
+    }
 }

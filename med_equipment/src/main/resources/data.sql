@@ -10,7 +10,9 @@ VALUES
     ('Smederevo', 'Serbia', 'Karađorđeva', '33'),
     ('Kraljevo', 'Serbia', 'Stefana Nemanje', '24'),
     ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
-    ('Niš', 'Serbia', 'Obrenovićeva', '55');
+    ('Niš', 'Serbia', 'Obrenovićeva', '55'),
+    ('Novi Sad', 'Serbia', 'Šafarikova', '2'),
+    ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1');
 
 INSERT INTO users (email, enabled, name, password, phone_number, surname)
 VALUES
@@ -27,7 +29,10 @@ VALUES
     ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninkovic'),
     ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic'),
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic'), -- password = admin
-    ('anas@gmail.com', false, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic'); -- password = anas
+    ('anas@gmail.com', false, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic'), -- password = anas
+    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic'), -- password = user
+    ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan'); -- password = user
+
 
 INSERT INTO companies (name, rating, address_id, description, version)
 VALUES
@@ -57,7 +62,9 @@ VALUES
 
 INSERT INTO registered_users (id, company_info, occupation, penalty_points, address_id)
 VALUES
-    (1, 'FTN', 'Programer', 0, 1);
+    (1, 'Microsoft', 'SoftDev', 1, 1),
+    (15, 'MFNS', 'Doctor', 0, 12),
+    (16, 'PMF', 'Professor', 3, 13);
 
 INSERT INTO company_admins (id, company_id, has_changed_password)
 VALUES
