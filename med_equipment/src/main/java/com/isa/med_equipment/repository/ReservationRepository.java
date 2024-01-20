@@ -17,6 +17,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.isCancelled = false")
     int getTotalReservedQuantity(@Param("equipment") Equipment equipment, @Param("companyId") Long companyId);
 
-    Reservation getReservationByTimeSlotId(Long id);
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
+            "FROM Reservation r " +
+            "WHERE r.user.id = :userId " +
+            "AND r.timeSlot.id = :timeSlotId " +
+            "AND r.isCancelled = true")
+    boolean hasCanceledReservationInTimeslot(@Param("userId") Long userId, @Param("timeSlotId") Long timeSlotId);
+
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.timeSlot.id = :timeSlotId " +
+            "AND r.isCancelled = false")
+    Reservation findByTimeSlotIdAndIsCancelledIsFalse(@Param("timeSlotId") Long timeSlotId);
+
     Page<Reservation> findByUser_Id(Long userId, Pageable pageable);
 }
