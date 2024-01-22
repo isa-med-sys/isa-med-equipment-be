@@ -143,3 +143,4 @@ VALUES
     (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '7 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0);
 
+-- TODO add reservations
