@@ -34,7 +34,7 @@ public class Company {
     @JoinColumn(name = "address_id", referencedColumnName="id")
     private Address address;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "company_equipment",
             joinColumns = @JoinColumn(name = "company_id")
@@ -42,7 +42,7 @@ public class Company {
     @MapKeyJoinColumn(name = "equipment_id")
     @Column(name = "quantity", nullable = false)
     @JsonManagedReference
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade({})
     private Map<Equipment, Integer> equipment = new HashMap<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -52,33 +52,11 @@ public class Company {
     @Version
     private Long version;
 
-    public List<Equipment> getEquipmentInStock(List<Long> requestedEquipmentIds) {
-        List<Equipment> availableEquipment = new ArrayList<>();
-
-        for (Long equipmentId : requestedEquipmentIds) {
-            Equipment equipment = findEquipmentById(equipmentId);
-            if (getEquipmentQuantityInStock(equipment) <= 0) {
-                throw new IllegalStateException("No equipment in stock: " + equipment.getName());
-            }
-
-            availableEquipment.add(equipment);
-        }
-
-        return availableEquipment;
-    }
-
-    private Equipment findEquipmentById(Long equipmentId) {
-        for (Map.Entry<Equipment, Integer> entry : this.equipment.entrySet()) {
-            Equipment equipment = entry.getKey();
-            if (equipment.getId().equals(equipmentId)) {
-                return equipment;
-            }
+    public int getEquipmentQuantityInStock(Equipment equipment) {
+        if (this.equipment.containsKey(equipment)){
+            return this.equipment.getOrDefault(equipment, 0);
         }
         throw new EntityNotFoundException("Equipment not found.");
-    }
-
-    public int getEquipmentQuantityInStock(Equipment equipment) {
-        return this.equipment.getOrDefault(equipment, 0);
     }
 
     @Override

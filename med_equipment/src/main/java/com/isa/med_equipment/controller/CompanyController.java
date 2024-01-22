@@ -100,7 +100,18 @@ public class CompanyController {
     @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<?> updateEquipment(@PathVariable Long id, @RequestBody List<EquipmentDto> equipmentDto) {
         try {
-            CompanyDto company = companyService.updateEquipment(id, equipmentDto);
+            CompanyDto company = companyService.updateEquipment(id, equipmentDto, false);
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/remove/{id}/equipment")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<?> removeEquipment(@PathVariable Long id, @RequestBody List<EquipmentDto> equipmentDto) {
+        try {
+            CompanyDto company = companyService.updateEquipment(id, equipmentDto, true);
             return ResponseEntity.ok(company);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
