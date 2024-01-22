@@ -149,7 +149,6 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional
     public Company add(CompanyRegistrationDto companyRegistrationDto) {
         Company company = new Company();
 
@@ -206,32 +205,53 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found."));
 
-        Optional<Company> optionalCompany = companyRepository.findById(id);
-
-        if (optionalCompany.isPresent()) {
-
-            Company company = optionalCompany.get();
-
-            company.getEquipment().clear();
-
-            for (EquipmentDto eq : equipmentDto) {
-
-                Optional<Equipment> optionalEquipment = equipmentRepository.findById(eq.getId());
-
-                if (optionalEquipment.isPresent()) {
-
-                    Equipment equipment = optionalEquipment.get();
-                    company.getEquipment().put(equipment, eq.getQuantity());
-                } else {
-                    throw new EntityNotFoundException("Company not found with id: " + id);
-                }
+        List<EquipmentDto> updatedEquipment = new ArrayList<>();
+        for (EquipmentDto equip : equipmentDto) {
+            if (equip.getRemove() != null && equip.getRemove()) {
+                canDeleteEquipment(company.getId(), equip.getId());
+            } else {
+                canUpdateEquipment(company.getId(), equip);
+                updatedEquipment.add(equip);
             }
+        }
 
-            Company updatedCompany = companyRepository.save(company);
-            return mapper.map(updatedCompany, CompanyDto.class);
-        } else {
-            throw new EntityNotFoundException("Company not found with id: " + id);
+        company.getEquipment().clear();
+
+        for (EquipmentDto eq : updatedEquipment) {
+            Equipment equipment = equipmentRepository.findById(eq.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Equipment not found."));
+
+            company.getEquipment().put(equipment, eq.getQuantity());
+        }
+
+        Company updatedCompany = companyRepository.save(company);
+        return mapper.map(updatedCompany, CompanyDto.class);
+    }
+
+    private void canDeleteEquipment(Long companyId, Long equipmentId) {
+       Equipment equipment = equipmentRepository.findWithLockingById(equipmentId)
+                    .orElseThrow(() -> new EntityNotFoundException("Equipment not found."));
+
+        int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
+
+        if (reservedQuantity > 0) {
+            throw new IllegalStateException("Can't delete equipment.");
+        }
+    }
+
+    private void canUpdateEquipment(Long companyId, EquipmentDto equipmentDto) {
+        int newQuantity = equipmentDto.getQuantity();
+
+        Equipment equipment = equipmentRepository.findWithLockingById(equipmentDto.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Equipment not found."));
+
+        int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
+
+        if (newQuantity < reservedQuantity) {
+            throw new IllegalStateException("Can't update quantity value.");
         }
     }
 

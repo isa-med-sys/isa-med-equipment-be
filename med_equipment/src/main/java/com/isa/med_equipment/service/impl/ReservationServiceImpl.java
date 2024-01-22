@@ -1,6 +1,5 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.exception.EmailNotSentException;
@@ -25,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class ReservationServiceImpl implements ReservationService {
 
     private final UserRepository userRepository;
@@ -53,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public ReservationDto reserve(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
@@ -72,6 +71,8 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
         }
 
+        List<Equipment> equipment = equipmentRepository.findWithLockingAllByIdIn(reservationDto.getEquipmentIds());
+      
         if (reservationRepository.hasCanceledReservationInTimeslot(user.getId(), timeSlot.getId())) {
             throw new IllegalStateException("Cannot reserve timeslot that you have already cancelled.");
         }
@@ -80,7 +81,6 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalStateException("Time slot is already reserved and not free.");
         }
 
-        List<Equipment> equipment = company.getEquipmentInStock(reservationDto.getEquipmentIds());
         checkEquipmentAvailability(company, equipment);
 
         Reservation reservation = new Reservation();
@@ -132,45 +132,6 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             throw new QRCodeGenerationException("Failed to generate QR code for reservation " + user.getId());
         }
-    }
-
-    @Override
-    public Boolean canUpdateEquipment(Long companyId, EquipmentDto equipmentDto) {
-        int newQuantity = equipmentDto.getQuantity();
-        Optional<Equipment> optionalEquipment = equipmentRepository.findById(equipmentDto.getId());
-
-        if (optionalEquipment.isPresent()) {
-
-            Equipment equipment = optionalEquipment.get();
-            int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
-
-            if (newQuantity < reservedQuantity) {
-                throw new IllegalStateException("Can't update quantity value.");
-            }
-
-            return true;
-        }
-
-        throw new IllegalStateException("Equipment wasn't found!");
-    }
-
-    @Override
-    public Boolean canDeleteEquipment(Long companyId, Long equipmentId) {
-        Optional<Equipment> optionalEquipment = equipmentRepository.findById(equipmentId);
-
-        if (optionalEquipment.isPresent()) {
-
-            Equipment equipment = optionalEquipment.get();
-            int reservedQuantity = reservationRepository.getTotalReservedQuantity(equipment, companyId);
-
-            if (reservedQuantity > 0) {
-                throw new IllegalStateException("Can't delete equipment.");
-            }
-
-            return true;
-        }
-
-        throw new IllegalStateException("Equipment wasn't found!");
     }
 
     @Override
