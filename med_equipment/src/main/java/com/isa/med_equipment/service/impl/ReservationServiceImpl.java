@@ -67,11 +67,20 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Cannot reserve a time slot in the past.");
         }
 
-        if(!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
+        if (!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
         }
 
         List<Equipment> equipment = equipmentRepository.findWithLockingAllByIdIn(reservationDto.getEquipmentIds());
+      
+        if (reservationRepository.hasCanceledReservationInTimeslot(user.getId(), timeSlot.getId())) {
+            throw new IllegalStateException("Cannot reserve timeslot that you have already cancelled.");
+        }
+
+        if (reservationRepository.findByTimeSlotIdAndIsCancelledIsFalse(timeSlot.getId()) != null) {
+            throw new IllegalStateException("Time slot is already reserved and not free.");
+        }
+
         checkEquipmentAvailability(company, equipment);
 
         Reservation reservation = new Reservation();
@@ -87,7 +96,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public UserDto getByTimeSlotId(Long id) {
-        Reservation reservation = reservationRepository.getReservationByTimeSlotId(id);
+        Reservation reservation = reservationRepository.findByTimeSlotIdAndIsCancelledIsFalse(id);
         Optional<User> user = userRepository.findById(reservation.getUser().getId());
         return mapper.map(user, UserDto.class);
     }
@@ -123,5 +132,16 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             throw new QRCodeGenerationException("Failed to generate QR code for reservation " + user.getId());
         }
+    }
+
+    @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public ReservationDto cancelReservation(ReservationDto reservationDto) {
+        Reservation reservation = reservationRepository.findById(reservationDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
+
+        reservation.cancel();
+
+        return mapper.map(reservation, ReservationDto.class);
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -31,5 +32,15 @@ public class RegisteredUser extends User {
     @Override
     public Role getRole() {
         return Role.REGISTERED_USER;
+    }
+
+    public void updatePenaltyPointsOnCancellation(LocalDateTime reservationStartTime) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        if (currentDateTime.plusHours(24).isAfter(reservationStartTime)) {
+            penaltyPoints += 2;
+        } else {
+            penaltyPoints += 1;
+        }
     }
 }

@@ -39,4 +39,11 @@ public class TimeSlot {
         }
         isFree = false;
     }
+
+    public void markAsFree() {
+        if (isFree) {
+            throw new IllegalStateException("Time Slot is already free.");
+        }
+        isFree = true;
+    }
 }

@@ -12,4 +12,5 @@ public interface ReservationService {
     Page<ReservationDto> findAllByUser(Long userId, Pageable pageable);
     ReservationDto reserve(ReservationDto reservationDto);
     UserDto getByTimeSlotId(Long id);
+    ReservationDto cancelReservation(ReservationDto reservationDto);
 }

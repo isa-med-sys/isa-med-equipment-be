@@ -42,4 +42,11 @@ public class ReservationController {
         UserDto result = reservationService.getByTimeSlotId(id);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/cancel-reservation")
+    @PreAuthorize("(hasRole('ROLE_REGISTERED_USER') and #reservationDto.userId == authentication.principal.id)")
+    public ResponseEntity<ReservationDto> cancelReservation(@RequestBody ReservationDto reservationDto) {
+        ReservationDto result = reservationService.cancelReservation(reservationDto);
+        return ResponseEntity.ok(result);
+    }
 }
