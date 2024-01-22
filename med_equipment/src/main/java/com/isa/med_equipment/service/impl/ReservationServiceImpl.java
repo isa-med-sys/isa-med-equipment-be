@@ -80,7 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservationRepository.save(reservation);
 
-//        sendEmailWithQRCode(user, qrCode);
+        sendEmailWithQRCode(user, qrCode);
 
         return mapper.map(reservation, ReservationDto.class);
     }
