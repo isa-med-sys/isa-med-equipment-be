@@ -204,21 +204,23 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto, boolean remove) {
+    public CompanyDto updateEquipment(Long id, List<EquipmentDto> equipmentDto) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company not found."));
 
-        equipmentDto.forEach(equip -> {
-            if (remove) {
+        List<EquipmentDto> updatedEquipment = new ArrayList<>();
+        for (EquipmentDto equip : equipmentDto) {
+            if (equip.getRemove() != null && equip.getRemove()) {
                 canDeleteEquipment(company.getId(), equip.getId());
             } else {
                 canUpdateEquipment(company.getId(), equip);
+                updatedEquipment.add(equip);
             }
-        });
+        }
 
         company.getEquipment().clear();
 
-        for (EquipmentDto eq : equipmentDto) {
+        for (EquipmentDto eq : updatedEquipment) {
             Equipment equipment = equipmentRepository.findById(eq.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Equipment not found."));
 
