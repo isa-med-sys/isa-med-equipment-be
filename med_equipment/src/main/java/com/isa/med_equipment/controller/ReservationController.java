@@ -7,7 +7,6 @@ import com.isa.med_equipment.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +55,13 @@ public class ReservationController {
     @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
     public ResponseEntity<Boolean> canDeleteEquipment(@PathVariable Long id, @RequestParam Long equipmentId) {
         Boolean result = reservationService.canDeleteEquipment(id, equipmentId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/cancel-reservation")
+    @PreAuthorize("(hasRole('ROLE_REGISTERED_USER') and #reservationDto.userId == authentication.principal.id)")
+    public ResponseEntity<ReservationDto> cancelReservation(@RequestBody ReservationDto reservationDto) {
+        ReservationDto result = reservationService.cancelReservation(reservationDto);
         return ResponseEntity.ok(result);
     }
 }

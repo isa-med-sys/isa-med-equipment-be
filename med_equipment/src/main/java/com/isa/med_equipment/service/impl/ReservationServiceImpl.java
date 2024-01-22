@@ -15,7 +15,6 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,8 +68,16 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Cannot reserve a time slot in the past.");
         }
 
-        if(!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
+        if (!Objects.equals(timeSlot.getAdmin().getCompany(), company)) {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
+        }
+
+        if (reservationRepository.hasCanceledReservationInTimeslot(user.getId(), timeSlot.getId())) {
+            throw new IllegalStateException("Cannot reserve timeslot that you have already cancelled.");
+        }
+
+        if (reservationRepository.findByTimeSlotIdAndIsCancelledIsFalse(timeSlot.getId()) != null) {
+            throw new IllegalStateException("Time slot is already reserved and not free.");
         }
 
         List<Equipment> equipment = company.getEquipmentInStock(reservationDto.getEquipmentIds());
@@ -89,7 +96,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public UserDto getByTimeSlotId(Long id) {
-        Reservation reservation = reservationRepository.getReservationByTimeSlotId(id);
+        Reservation reservation = reservationRepository.findByTimeSlotIdAndIsCancelledIsFalse(id);
         Optional<User> user = userRepository.findById(reservation.getUser().getId());
         return mapper.map(user, UserDto.class);
     }
@@ -164,5 +171,16 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         throw new IllegalStateException("Equipment wasn't found!");
+    }
+
+    @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    public ReservationDto cancelReservation(ReservationDto reservationDto) {
+        Reservation reservation = reservationRepository.findById(reservationDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
+
+        reservation.cancel();
+
+        return mapper.map(reservation, ReservationDto.class);
     }
 }

@@ -15,4 +15,5 @@ public interface ReservationService {
     UserDto getByTimeSlotId(Long id);
     Boolean canUpdateEquipment(Long companyId, EquipmentDto equipmentDto);
     Boolean canDeleteEquipment(Long companyId, Long equipmentId);
+    ReservationDto cancelReservation(ReservationDto reservationDto);
 }

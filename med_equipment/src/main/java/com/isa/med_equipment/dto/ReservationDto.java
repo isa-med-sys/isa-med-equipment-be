@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class ReservationDto {
+    private Long id;
     private Long userId;
     private Long companyId;
     private List<Long> equipmentIds;
