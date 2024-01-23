@@ -18,5 +18,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     int getTotalReservedQuantity(@Param("equipment") Equipment equipment, @Param("companyId") Long companyId);
 
     Reservation getReservationByTimeSlotId(Long id);
-    Page<Reservation> findByUser_Id(Long userId, Pageable pageable);
+
+    @Query("SELECT r FROM Reservation r WHERE r.timeSlot.start <= CURRENT_TIMESTAMP")
+    Page<Reservation> findPastByUser(Long userId, Pageable pageable);
+
+    @Query("SELECT r FROM Reservation r WHERE r.timeSlot.start > CURRENT_TIMESTAMP")
+    Page<Reservation> findUpcomingByUser(Long userId, Pageable pageable);
 }

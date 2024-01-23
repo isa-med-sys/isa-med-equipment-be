@@ -56,9 +56,15 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Page<ReservationDto> findAllByUser(Long userId, Pageable pageable) {
-        Page<Reservation> reservations = reservationRepository.findByUser_Id(userId, pageable);
-        return mapper.mapPage(reservations, ReservationDto.class);
+    public Page<ReservationDto> findPastByUser(Long userId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findPastByUser(userId, pageable);
+        return populateReservations(reservations);
+    }
+
+    @Override
+    public Page<ReservationDto> findUpcomingByUser(Long userId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findUpcomingByUser(userId, pageable);
+        return populateReservations(reservations);
     }
 
     @Override
@@ -176,5 +182,16 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         throw new IllegalStateException("Equipment wasn't found!");
+    }
+
+    private Page<ReservationDto> populateReservations(Page<Reservation> reservations) {
+        Page<ReservationDto> reservationDtos = mapper.mapPage(reservations, ReservationDto.class);
+        for(ReservationDto res : reservationDtos) {
+            TimeSlot timeslot = timeSlotRepository.findById(res.getTimeSlotId()).orElseThrow();
+            res.setCompanyName(timeslot.getAdmin().getCompany().getName());
+            res.setStart(timeslot.getStart());
+        }
+
+        return reservationDtos;
     }
 }

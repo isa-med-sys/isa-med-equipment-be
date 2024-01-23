@@ -36,6 +36,9 @@ public class Reservation {
     @JoinColumn(name = "time_slot_id", referencedColumnName="id", nullable = false)
     private TimeSlot  timeSlot;
 
+    @Column(name = "price", nullable = false)
+    private Double price;
+
     @Column(name = "is_picked_up", nullable = false)
     private Boolean isPickedUp = false;
 
@@ -51,8 +54,13 @@ public class Reservation {
     public void make(RegisteredUser user, List<Equipment> equipment, TimeSlot timeSlot){
         timeSlot.reserve();
 
+        double totalPrice = equipment.stream()
+                .mapToDouble(Equipment::getPrice)
+                .sum();
+
         this.setUser(user);
         this.setEquipment(equipment);
+        this.setPrice(totalPrice);
         this.setTimeSlot(timeSlot);
     }
 }

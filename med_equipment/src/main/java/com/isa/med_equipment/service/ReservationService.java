@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ReservationService {
 
-    Page<ReservationDto> findAllByUser(Long userId, Pageable pageable);
+    Page<ReservationDto> findPastByUser(Long userId, Pageable pageable);
+    Page<ReservationDto> findUpcomingByUser(Long userId, Pageable pageable);
     ReservationDto reserve(ReservationDto reservationDto);
     UserDto getByTimeSlotId(Long id);
     Boolean canUpdateEquipment(Long companyId, EquipmentDto equipmentDto);
