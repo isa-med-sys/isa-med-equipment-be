@@ -141,6 +141,32 @@ VALUES
     (CURRENT_DATE + INTERVAL '15:30:00' + INTERVAL '6 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '6 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '7 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0);
+    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0),
+    -- reserved
+    (CURRENT_DATE + INTERVAL '12:30:00' - INTERVAL '1 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' - INTERVAL '2 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' - INTERVAL '3 day', false, 3, 5, 0),
+    (CURRENT_DATE + INTERVAL '09:30:00' + INTERVAL '11 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '12 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
+;
 
--- TODO add reservations
+-- TODO: add QR codes
+INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
+VALUES (1, 24, 650000.0, true, false, null, 0),
+       (1, 25, 250000.0, true, false, null, 0),
+       (1, 26, 1200.0, true, false, null, 0),
+       (1, 27, 650000.0, false, false, null, 0),
+       (1, 28, 250000.0, false, false, null, 0),
+       (1, 29, 1200.0, false, false, null, 0);
+
+INSERT INTO reservation_equipment (reservation_id, equipment_id)
+VALUES (1, 1),
+       (1, 3),
+       (2, 2),
+       (3, 6),
+       (4, 1),
+       (4, 3),
+       (5, 2),
+       (6, 6);
+SELECT pg_current_wal_lsn()::text;

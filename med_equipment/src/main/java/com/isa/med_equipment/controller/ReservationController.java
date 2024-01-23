@@ -35,7 +35,7 @@ public class ReservationController {
             sortField = "timeSlot.start";
         }
         else if (sortField.equalsIgnoreCase("companyName")) {
-            sortField = "company.name";
+            sortField = "timeSlot.admin.company.name";
         }
 
         Sort sort = Sort.by(sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortField);
