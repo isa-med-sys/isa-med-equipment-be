@@ -1,5 +1,9 @@
 package com.isa.med_equipment.service.impl;
 
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+import com.isa.med_equipment.dto.OrderDto;
 import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.exception.EmailNotSentException;
@@ -18,10 +22,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 @Transactional
@@ -85,13 +92,61 @@ public class ReservationServiceImpl implements ReservationService {
 
         Reservation reservation = new Reservation();
         reservation.make((RegisteredUser) user, equipment, timeSlot);
-        byte[] qrCode = generateQRCode(reservation);
 
-        reservationRepository.save(reservation);
+        reservation = reservationRepository.save(reservation);
+
+        byte[] qrCode = generateQRCode(reservation);
 
         sendEmailWithQRCode(user, qrCode);
 
         return mapper.map(reservation, ReservationDto.class);
+    }
+
+    @Override
+    public OrderDto findByCode(Long userId, InputStream fileInputStream) throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(fileInputStream);
+        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+        try {
+            OrderDto order = new OrderDto();
+            Result result = new MultiFormatReader().decode(bitmap);
+            String resultText = result.getText();
+
+            String reservationNumberPrefix = "Reservation Number: ";
+            int startIndex = resultText.indexOf(reservationNumberPrefix) + reservationNumberPrefix.length();
+            int endIndex = resultText.indexOf("\n", startIndex);
+            String reservationNumberString = resultText.substring(startIndex, endIndex).trim();
+            order.setId(Long.parseLong(reservationNumberString));
+
+            Reservation reservation = reservationRepository.findById(order.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
+
+            order.setCustomer(reservation.getUser().getName() + " " + reservation.getUser().getSurname());
+            order.setTimeslotStart(reservation.getTimeSlot().getStart());
+            order.setTimeslotEnd(order.getTimeslotStart().plusMinutes(TimeSlot.DURATION.toMinutes()));
+            List<String> equipment = new ArrayList<>();
+            for (Equipment e : reservation.getEquipment()) {
+                equipment.add(e.getName());
+            }
+            order.setEquipment(equipment);
+            order.setIsValid(new Date().before(Date.from(order.getTimeslotEnd().atZone(ZoneId.systemDefault()).toInstant())));
+            order.setIsTaken(reservation.getIsPickedUp());
+            order.setIsCanceled(reservation.getIsCancelled());
+            order.setIsRightAdmin(Objects.equals(userId, reservation.getTimeSlot().getAdmin().getId()));
+            if(!order.getIsValid() && !order.getIsCanceled()) {
+                ReservationDto reservationDto = new ReservationDto();
+                reservationDto.setId(Long.parseLong(reservationNumberString));
+                cancelReservation(reservationDto);
+            }
+            return order;
+        } catch (NotFoundException e) {
+            System.out.println("There is no QR code in the image");
+            return null;
+        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+            System.out.println("Failed to extract Data");
+            return null;
+        }
     }
 
     @Override
@@ -134,14 +189,53 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
+    @Async
+    public void sendConfirmationEmail(User user) {
+        String registrationSubject = "Your order was successfully taken.";
+        String registrationMessage = "Bottom text.";
+        try {
+            emailSender.sendEmail(user, registrationSubject, registrationMessage);
+        } catch (Exception e) {
+            throw new EmailNotSentException("Error sending email" + e);
+        }
+    }
+
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public ReservationDto cancelReservation(ReservationDto reservationDto) {
         Reservation reservation = reservationRepository.findById(reservationDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
 
         reservation.cancel();
-
         return mapper.map(reservation, ReservationDto.class);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReservationDto completeReservation(ReservationDto reservationDto) {
+        Reservation reservation = reservationRepository.findById(reservationDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
+
+        if (!reservation.getIsCancelled() && !reservation.getIsPickedUp()) {
+            reservation.setIsPickedUp(true);
+            reservationRepository.save(reservation);
+            updateCompanyEquipment(reservation);
+            sendConfirmationEmail(reservation.getUser());
+        }
+        return mapper.map(reservation, ReservationDto.class);
+    }
+
+    private void updateCompanyEquipment(Reservation reservation) {
+        Company company = reservation.getTimeSlot().getAdmin().getCompany();
+        Map<Equipment, Integer> equipment = new HashMap<>(company.getEquipment());
+
+        for (Equipment e : reservation.getEquipment()) {
+            Integer currentValue = equipment.get(e);
+            if (currentValue != null) {
+                equipment.put(e, currentValue - 1);
+            }
+        }
+        company.setEquipment(equipment);
+        companyRepository.save(company);
     }
 }
