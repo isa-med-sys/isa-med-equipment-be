@@ -1,11 +1,15 @@
 package com.isa.med_equipment.controller;
 
-import com.isa.med_equipment.dto.*;
+import com.isa.med_equipment.dto.CompanyAdminDto;
+import com.isa.med_equipment.dto.CompanyDto;
+import com.isa.med_equipment.dto.CompanyRegistrationDto;
+import com.isa.med_equipment.dto.EquipmentDto;
 import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,12 +29,22 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CompanyDto>> findAll(@RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "5") int size,
-                                                    @RequestParam(name = "name", required = false) String name,
-                                                    @RequestParam(name = "city", required = false) String city,
-                                                    @RequestParam(name = "rating", required = false) Float rating) {
-        Page<CompanyDto> result = companyService.findAll(name, city, rating,  PageRequest.of(page, size));
+    public ResponseEntity<Page<CompanyDto>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "city", required = false) String city,
+            @RequestParam(name = "rating", required = false) Float rating,
+            @RequestParam(name = "sort", required = false, defaultValue = "name") String sortField,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String sortDirection) {
+
+        if(sortField.equalsIgnoreCase("location"))
+            sortField = "address.city";
+
+        Sort sort = Sort.by(sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        Page<CompanyDto> result = companyService.findAll(name, city, rating, pageRequest);
         return ResponseEntity.ok(result);
     }
 

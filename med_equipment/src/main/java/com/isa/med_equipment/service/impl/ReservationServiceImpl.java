@@ -28,6 +28,7 @@ import java.util.Optional;
 public class ReservationServiceImpl implements ReservationService {
 
     private final UserRepository userRepository;
+    private final RegisteredUserRepository registeredUserRepository;
     private final TimeSlotRepository timeSlotRepository;
     private final CompanyRepository companyRepository;
     private final ReservationRepository reservationRepository;
@@ -35,9 +36,17 @@ public class ReservationServiceImpl implements ReservationService {
     private final EmailSender emailSender;
     private final Mapper mapper;
 
-    public ReservationServiceImpl(Mapper mapper, UserRepository userRepository, CompanyRepository companyRepository, TimeSlotRepository timeSlotRepository, ReservationRepository reservationRepository, EquipmentRepository equipmentRepository, EmailSender emailSender) {
+    public ReservationServiceImpl(Mapper mapper,
+                                  UserRepository userRepository,
+                                  RegisteredUserRepository registeredUserRepository,
+                                  CompanyRepository companyRepository,
+                                  TimeSlotRepository timeSlotRepository,
+                                  ReservationRepository reservationRepository,
+                                  EquipmentRepository equipmentRepository,
+                                  EmailSender emailSender) {
         this.mapper = mapper;
         this.userRepository = userRepository;
+        this.registeredUserRepository = registeredUserRepository;
         this.companyRepository = companyRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.reservationRepository = reservationRepository;
@@ -46,15 +55,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Page<ReservationDto> findAllByUser(Long userId, Pageable pageable) {
-        Page<Reservation> reservations = reservationRepository.findByUser_Id(userId, pageable);
-        return mapper.mapPage(reservations, ReservationDto.class);
+    public Page<ReservationDto> findPastByUser(Long userId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findPastByUser(userId, pageable);
+        return populateReservations(reservations);
+    }
+
+    @Override
+    public Page<ReservationDto> findUpcomingByUser(Long userId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findUpcomingByUser(userId, pageable);
+        return populateReservations(reservations);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReservationDto reserve(ReservationDto reservationDto) {
-        User user = userRepository.findById(reservationDto.getUserId())
+        RegisteredUser user = registeredUserRepository.findById(reservationDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
 
         Company company = companyRepository.findById(reservationDto.getCompanyId())
@@ -63,6 +78,23 @@ public class ReservationServiceImpl implements ReservationService {
         TimeSlot timeSlot = timeSlotRepository.findById(reservationDto.getTimeSlotId())
                 .orElseThrow(() -> new EntityNotFoundException("Time slot not found."));
 
+        validateReservation(user, company, timeSlot);
+
+        List<Equipment> equipment = equipmentRepository.findWithLockingAllByIdIn(reservationDto.getEquipmentIds());
+        checkEquipmentAvailability(company, equipment);
+
+        Reservation reservation = new Reservation();
+        reservation.make(user, equipment, timeSlot);
+        byte[] qrCode = generateQRCode(reservation);
+
+        reservationRepository.save(reservation);
+
+        sendEmailWithQRCode(user, qrCode);
+
+        return mapper.map(reservation, ReservationDto.class);
+    }
+
+    private void validateReservation(RegisteredUser user, Company company, TimeSlot timeSlot) {
         if (timeSlot.getStart().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot reserve a time slot in the past.");
         }
@@ -71,8 +103,6 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalArgumentException("Admin doesn't work at the company.");
         }
 
-        List<Equipment> equipment = equipmentRepository.findWithLockingAllByIdIn(reservationDto.getEquipmentIds());
-      
         if (reservationRepository.hasCanceledReservationInTimeslot(user.getId(), timeSlot.getId())) {
             throw new IllegalStateException("Cannot reserve timeslot that you have already cancelled.");
         }
@@ -81,17 +111,9 @@ public class ReservationServiceImpl implements ReservationService {
             throw new IllegalStateException("Time slot is already reserved and not free.");
         }
 
-        checkEquipmentAvailability(company, equipment);
-
-        Reservation reservation = new Reservation();
-        reservation.make((RegisteredUser) user, equipment, timeSlot);
-        byte[] qrCode = generateQRCode(reservation);
-
-        reservationRepository.save(reservation);
-
-        sendEmailWithQRCode(user, qrCode);
-
-        return mapper.map(reservation, ReservationDto.class);
+        if (user.getPenaltyPoints() >= 3) {
+            throw new IllegalArgumentException("Reservation can't be made if you have 3 or more penalty points.");
+        }
     }
 
     @Override
@@ -143,5 +165,16 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.cancel();
 
         return mapper.map(reservation, ReservationDto.class);
+    }
+
+    private Page<ReservationDto> populateReservations(Page<Reservation> reservations) {
+        Page<ReservationDto> reservationDtos = mapper.mapPage(reservations, ReservationDto.class);
+        for(ReservationDto res : reservationDtos) {
+            TimeSlot timeslot = timeSlotRepository.findById(res.getTimeSlotId()).orElseThrow();
+            res.setCompanyName(timeslot.getAdmin().getCompany().getName());
+            res.setStart(timeslot.getStart());
+        }
+
+        return reservationDtos;
     }
 }

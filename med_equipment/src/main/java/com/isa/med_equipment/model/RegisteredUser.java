@@ -43,4 +43,8 @@ public class RegisteredUser extends User {
             penaltyPoints += 1;
         }
     }
+
+    public void resetPenaltyPoints() {
+        this.penaltyPoints = 0;
+    }
 }
