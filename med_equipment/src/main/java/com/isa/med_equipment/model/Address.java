@@ -28,10 +28,18 @@ public class Address {
     @Column(name = "country", nullable = false)
     private String country;
 
-    public void updateAddress(String street, String streetNumber, String city, String country) {
+    @Column(name = "latitude", nullable = false)
+    private String latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private String longitude;
+
+    public void updateAddress(String street, String streetNumber, String city, String country, String longitude, String latitude) {
         this.street = street;
         this.streetNumber = streetNumber;
         this.city = city;
         this.country = country;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 }

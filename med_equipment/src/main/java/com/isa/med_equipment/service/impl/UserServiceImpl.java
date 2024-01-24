@@ -110,6 +110,8 @@ public class UserServiceImpl implements UserService {
         address.setStreetNumber(userRegistrationDto.getAddress().getStreetNumber());
         address.setCity(userRegistrationDto.getAddress().getCity());
         address.setCountry(userRegistrationDto.getAddress().getCountry());
+        address.setLatitude(userRegistrationDto.getAddress().getLatitude());
+        address.setLongitude(userRegistrationDto.getAddress().getLongitude());
 
         user.setAddress(address);
 
@@ -274,7 +276,9 @@ public class UserServiceImpl implements UserService {
                 userUpdateDto.getAddress().getStreet(),
                 userUpdateDto.getAddress().getStreetNumber(),
                 userUpdateDto.getAddress().getCity(),
-                userUpdateDto.getAddress().getCountry()
+                userUpdateDto.getAddress().getCountry(),
+                userUpdateDto.getAddress().getLongitude(),
+                userUpdateDto.getAddress().getLatitude()
         );
     }
 }
