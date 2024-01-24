@@ -31,7 +31,7 @@ VALUES
     ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninkovic', 0),
     ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic', 0),
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic', 0), -- password = admin
-    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic', 0), -- password = anas
+    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenic', 0), -- password = user
     ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0), -- password = user
     ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic', 0), -- password = user
     ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan', 0); -- password = user
@@ -64,11 +64,11 @@ VALUES
 
 INSERT INTO registered_users (id, company_info, occupation, penalty_points, address_id)
 VALUES
-    (1, 'FTN', 'Programer', 0, 1),
-    (14, 'FTN', 'Programer', 0, 12),
-    (15, 'FTN', 'Programer', 0, 13),
-    (16, 'MFNS', 'Doctor', 0, 14),
-    (17, 'PMF', 'Professor', 3, 15);
+    (1, 'Healing Horizon Hospital', 'Clinical Operations Manager', 1, 1),
+    (14, 'WellConnect Regional Clinic', 'Supervisor', 0, 12),
+    (15, 'FutureCare Medical Institute', 'Operations Director', 4, 13),
+    (16, 'City General Hospital', 'Hospital Administrator', 0, 14),
+    (17, 'Metropolitan Medical Center', 'Chief Technology Officer', 0, 15);
 
 INSERT INTO company_admins (id, company_id, has_changed_password)
 VALUES

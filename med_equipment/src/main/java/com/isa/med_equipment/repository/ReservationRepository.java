@@ -29,9 +29,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.isCancelled = false")
     Reservation findByTimeSlotIdAndIsCancelledIsFalse(@Param("timeSlotId") Long timeSlotId);
 
-    @Query("SELECT r FROM Reservation r WHERE r.timeSlot.start <= CURRENT_TIMESTAMP")
-    Page<Reservation> findPastByUser(Long userId, Pageable pageable);
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.user.id = :userId " +
+            "AND r.timeSlot.start <= CURRENT_TIMESTAMP")
+    Page<Reservation> findPastByUser(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("SELECT r FROM Reservation r WHERE r.timeSlot.start > CURRENT_TIMESTAMP")
-    Page<Reservation> findUpcomingByUser(Long userId, Pageable pageable);
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.user.id = :userId " +
+            "AND r.timeSlot.start > CURRENT_TIMESTAMP")
+    Page<Reservation> findUpcomingByUser(@Param("userId") Long userId, Pageable pageable);
+
 }
