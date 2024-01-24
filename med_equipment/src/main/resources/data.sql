@@ -1,20 +1,20 @@
-INSERT INTO addresses (city, country, street, street_number)
+INSERT INTO addresses (city, country, street, street_number, longitude, latitude)
 VALUES
-    ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2'),
-    ('Beograd', 'Serbia', 'Knez Mihailova', '13'),
-    ('Novi Sad', 'Serbia', 'Dunavska', '16'),
-    ('Beograd', 'Serbia', 'Karađorđeva', '15'),
-    ('Beograd', 'Serbia', 'Terazije', '16'),
-    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2'),
-    ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5'),
-    ('Smederevo', 'Serbia', 'Karađorđeva', '33'),
-    ('Kraljevo', 'Serbia', 'Stefana Nemanje', '24'),
-    ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
-    ('Niš', 'Serbia', 'Obrenovićeva', '55'),
-    ('Novi Sad', 'Serbia', 'Trg Slobode', '1'),
-    ('Novi Sad', 'Serbia', 'Cara Dusana', '1'),
-    ('Novi Sad', 'Serbia', 'Šafarikova', '2'),
-    ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1');
+    ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2', 19.842380184022577, 45.25368355794796),
+    ('Beograd', 'Serbia', 'Knez Mihailova', '13', 20.45849542982634, 44.816320141917636),
+    ('Novi Sad', 'Serbia', 'Dunavska', '16', 20.459630694226878, 44.828203810166215),
+    ('Beograd', 'Serbia', 'Karađorđeva', '15', 20.45051457923939, 44.81758591780305),
+    ('Beograd', 'Serbia', 'Terazije', '16', 20.460387332520195, 44.81371320384321),
+    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2', 19.846205896959972, 45.2554381285607),
+    ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5', 20.519220249804423, 43.13836375468665),
+    ('Smederevo', 'Serbia', 'Karađorđeva', '33', 20.92049569692809, 44.66407270173355),
+    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '24', 19.847758796960015, 45.256339318535794),
+    ('Kraljevo', 'Serbia', 'Ratka Mitrovića', '2', 20.681340915567823, 43.730664102222676),
+    ('Niš', 'Serbia', 'Obrenovićeva', '55', 21.894713878703357, 43.31657120893682),
+    ('Novi Sad', 'Serbia', 'Trg Slobode', '1', 19.84441355463242, 45.25501172354301),
+    ('Novi Sad', 'Serbia', 'Cara Dusana', '1', 19.82522559695965, 45.24894262435008),
+    ('Novi Sad', 'Serbia', 'Šafarikova', '2', 19.841037568123607, 45.25412196553212),
+    ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1', 19.852965254631968, 45.246370770950556);
 
 INSERT INTO users (email, enabled, name, password, phone_number, surname, version)
 VALUES
