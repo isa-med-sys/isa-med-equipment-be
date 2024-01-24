@@ -29,12 +29,12 @@ public class Address {
     private String country;
 
     @Column(name = "latitude", nullable = false)
-    private String latitude;
+    private Float latitude;
 
     @Column(name = "longitude", nullable = false)
-    private String longitude;
+    private Float longitude;
 
-    public void updateAddress(String street, String streetNumber, String city, String country, String longitude, String latitude) {
+    public void updateAddress(String street, String streetNumber, String city, String country, Float longitude, Float latitude) {
         this.street = street;
         this.streetNumber = streetNumber;
         this.city = city;
