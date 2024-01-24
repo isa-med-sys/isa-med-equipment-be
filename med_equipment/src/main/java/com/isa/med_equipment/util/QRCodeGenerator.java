@@ -34,6 +34,7 @@ public class QRCodeGenerator {
                     .collect(Collectors.joining(", "));
 
             String qrData = String.format("""
+                    Reservation Number: %s
                     Client: %s
                     
                     Pickup Date: %s - %s
@@ -42,6 +43,7 @@ public class QRCodeGenerator {
                     Admin Contact: %s
                     
                     %s""",
+                    reservation.getId(),
                     reservation.getUser(),
                     formattedStartDate,
                     formatDate(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()),

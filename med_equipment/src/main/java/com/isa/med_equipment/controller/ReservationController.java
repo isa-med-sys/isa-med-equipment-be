@@ -1,5 +1,6 @@
 package com.isa.med_equipment.controller;
 
+import com.isa.med_equipment.dto.OrderDto;
 import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.dto.UserDto;
 import com.isa.med_equipment.service.ReservationService;
@@ -10,6 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -86,5 +92,21 @@ public class ReservationController {
     public ResponseEntity<ReservationDto> cancelReservation(@RequestBody ReservationDto reservationDto) {
         ReservationDto result = reservationService.cancelReservation(reservationDto);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/complete-reservation")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<ReservationDto> completeReservation(@RequestBody ReservationDto reservationDto) {
+        ReservationDto result = reservationService.completeReservation(reservationDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/code/{id}")
+    @PreAuthorize("(hasRole('ROLE_COMPANY_ADMIN') and #id == authentication.principal.id)")
+    public ResponseEntity<OrderDto> getReservationsByCode(@PathVariable Long id, @RequestBody byte[] image) throws IOException {
+        try (InputStream fileInputStream = new ByteArrayInputStream(image)) {
+            OrderDto result = reservationService.findByCode(id, fileInputStream);
+            return ResponseEntity.ok(result);
+        }
     }
 }
