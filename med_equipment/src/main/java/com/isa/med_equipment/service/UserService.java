@@ -29,4 +29,5 @@ public interface UserService {
     SystemAdmin registerSystemAdmin(SystemAdminRegistrationDto systemAdminRegistrationDto) throws EmailExistsException;
     Boolean getPasswordChange(Long id);
     Boolean changePassword(Long userId, String password);
+    void resetPenaltyPointsForAllUsers();
 }

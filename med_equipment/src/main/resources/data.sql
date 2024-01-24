@@ -12,7 +12,9 @@ VALUES
     ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
     ('Niš', 'Serbia', 'Obrenovićeva', '55'),
     ('Novi Sad', 'Serbia', 'Trg Slobode', '1'),
-    ('Novi Sad', 'Serbia', 'Cara Dusana', '1');
+    ('Novi Sad', 'Serbia', 'Cara Dusana', '1'),
+    ('Novi Sad', 'Serbia', 'Šafarikova', '2'),
+    ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1');
 
 INSERT INTO users (email, enabled, name, password, phone_number, surname, version)
 VALUES
@@ -30,7 +32,9 @@ VALUES
     ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic', 0),
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic', 0), -- password = admin
     ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic', 0), -- password = anas
-    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0); -- password = user
+    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0), -- password = user
+    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic', 0), -- password = user
+    ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan', 0); -- password = user
 
 INSERT INTO companies (name, rating, address_id, description, version)
 VALUES
@@ -62,7 +66,9 @@ INSERT INTO registered_users (id, company_info, occupation, penalty_points, addr
 VALUES
     (1, 'FTN', 'Programer', 0, 1),
     (14, 'FTN', 'Programer', 0, 12),
-    (15, 'FTN', 'Programer', 0, 13);
+    (15, 'FTN', 'Programer', 0, 13),
+    (16, 'MFNS', 'Doctor', 0, 14),
+    (17, 'PMF', 'Professor', 3, 15);
 
 INSERT INTO company_admins (id, company_id, has_changed_password)
 VALUES
@@ -140,6 +146,30 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '6 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '7 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '1 day', true, 3, 5, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '2 day', true, 3, 5, 0);
+    -- reserved
+    (CURRENT_DATE + INTERVAL '12:30:00' - INTERVAL '1 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' - INTERVAL '2 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' - INTERVAL '3 day', false, 3, 5, 0),
+    (CURRENT_DATE + INTERVAL '09:30:00' + INTERVAL '11 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '12 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
+;
 
+-- TODO: add QR codes
+INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
+VALUES (1, 24, 650000.0, true, false, null, 0),
+       (1, 25, 250000.0, true, false, null, 0),
+       (1, 26, 1200.0, true, false, null, 0),
+       (1, 27, 650000.0, false, false, null, 0),
+       (1, 28, 250000.0, false, false, null, 0),
+       (1, 29, 1200.0, false, false, null, 0);
+
+INSERT INTO reservation_equipment (reservation_id, equipment_id)
+VALUES (1, 1),
+       (1, 3),
+       (2, 2),
+       (3, 6),
+       (4, 1),
+       (4, 3),
+       (5, 2),
+       (6, 6);

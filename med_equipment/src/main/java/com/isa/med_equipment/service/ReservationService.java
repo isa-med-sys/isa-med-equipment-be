@@ -15,7 +15,8 @@ import java.util.Optional;
 @Service
 public interface ReservationService {
 
-    Page<ReservationDto> findAllByUser(Long userId, Pageable pageable);
+    Page<ReservationDto> findPastByUser(Long userId, Pageable pageable);
+    Page<ReservationDto> findUpcomingByUser(Long userId, Pageable pageable);
     ReservationDto reserve(ReservationDto reservationDto);
     OrderDto findByCode(Long userId, InputStream fileInputStream) throws IOException;
     UserDto getByTimeSlotId(Long id);
