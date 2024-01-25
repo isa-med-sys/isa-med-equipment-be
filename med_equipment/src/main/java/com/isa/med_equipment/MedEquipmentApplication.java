@@ -22,19 +22,5 @@ public class MedEquipmentApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MedEquipmentApplication.class, args);
 		System.out.println("Hello world!");
-
-
-	}
-
-	@Bean
-	public MessageConverter converter(){
-		return new Jackson2JsonMessageConverter();
-	}
-
-	@Bean
-	public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
-		RabbitTemplate rabbitTemplate = new RabbitTemplate((connectionFactory));
-		rabbitTemplate.setMessageConverter((converter()));
-		return rabbitTemplate;
 	}
 }
