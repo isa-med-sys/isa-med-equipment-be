@@ -109,4 +109,34 @@ public class ReservationController {
             return ResponseEntity.ok(result);
         }
     }
+
+    @GetMapping("/orders")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<Page<ReservationDto>> getByCompany(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam Long companyId,
+            @RequestParam(name = "sort", required = false, defaultValue = "start") String sortField,
+            @RequestParam(name = "direction", required = false, defaultValue = "asc") String sortDirection
+    ) {
+        if(sortField.equalsIgnoreCase("start")) {
+            sortField = "timeSlot.start";
+        }
+        else if (sortField.equalsIgnoreCase("companyName")) {
+            sortField = "timeSlot.admin.company.name";
+        }
+
+        Sort sort = Sort.by(sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortField);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+
+        Page<ReservationDto> result = reservationService.findAllByCompany(companyId, pageRequest);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/order/{id}")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<OrderDto> getReservationById(@PathVariable Long id, @RequestBody Long userId) {
+        OrderDto result = reservationService.findOrderById(userId, id);
+        return ResponseEntity.ok(result);
+    }
 }
