@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum EquipmentType {
-    TYPE1(0),
-    TYPE2(1),
-    TYPE3(2);
+    DIAGNOSTIC(0),
+    INSTRUMENT(1),
+    THERAPEUTIC(2);
 
     private final int numericValue;
 

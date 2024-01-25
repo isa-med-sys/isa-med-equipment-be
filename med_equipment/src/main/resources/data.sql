@@ -1,17 +1,20 @@
-INSERT INTO addresses (city, country, street, street_number)
+INSERT INTO addresses (city, country, street, street_number, longitude, latitude)
 VALUES
-    ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2'),
-    ('Beograd', 'Serbia', 'Knez Mihailova', '13'),
-    ('Novi Sad', 'Serbia', 'Dunavska', '16'),
-    ('Beograd', 'Serbia', 'Karađorđeva', '15'),
-    ('Beograd', 'Serbia', 'Terazije', '16'),
-    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2'),
-    ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5'),
-    ('Smederevo', 'Serbia', 'Karađorđeva', '33'),
-    ('Kraljevo', 'Serbia', 'Stefana Nemanje', '24'),
-    ('Kraljevo', 'Serbia', 'Kralja Petra', '12'),
-    ('Niš', 'Serbia', 'Obrenovićeva', '55'),
-    ('Novi Sad', 'Serbia', 'Trg Slobode', '1');
+    ('Novi Sad', 'Serbia', 'Bulevar Mihajla Pupina', '2', 19.842380184022577, 45.25368355794796),
+    ('Beograd', 'Serbia', 'Knez Mihailova', '13', 20.45849542982634, 44.816320141917636),
+    ('Novi Sad', 'Serbia', 'Dunavska', '16', 20.459630694226878, 44.828203810166215),
+    ('Beograd', 'Serbia', 'Karađorđeva', '15', 20.45051457923939, 44.81758591780305),
+    ('Beograd', 'Serbia', 'Terazije', '16', 20.460387332520195, 44.81371320384321),
+    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '2', 19.846205896959972, 45.2554381285607),
+    ('Novi Pazar', 'Serbia', 'Vuka Karadžića', '5', 20.519220249804423, 43.13836375468665),
+    ('Smederevo', 'Serbia', 'Karađorđeva', '33', 20.92049569692809, 44.66407270173355),
+    ('Novi Sad', 'Serbia', 'Zmaj Jovina', '24', 19.847758796960015, 45.256339318535794),
+    ('Kraljevo', 'Serbia', 'Ratka Mitrovića', '2', 20.681340915567823, 43.730664102222676),
+    ('Niš', 'Serbia', 'Obrenovićeva', '55', 21.894713878703357, 43.31657120893682),
+    ('Novi Sad', 'Serbia', 'Trg Slobode', '1', 19.84441355463242, 45.25501172354301),
+    ('Novi Sad', 'Serbia', 'Cara Dusana', '1', 19.82522559695965, 45.24894262435008),
+    ('Novi Sad', 'Serbia', 'Šafarikova', '2', 19.841037568123607, 45.25412196553212),
+    ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1', 19.852965254631968, 45.246370770950556);
 
 INSERT INTO users (email, enabled, name, password, phone_number, surname, version)
 VALUES
@@ -28,7 +31,10 @@ VALUES
     ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninkovic', 0),
     ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic', 0),
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic', 0), -- password = admin
-    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$3EA5QPLs153HVBYfZrSvi.vLEAaESeL.cPEBbrZerRMN9RvY.ev9m', '0631234567', 'Marsenic', 0); -- password = anas
+    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenic', 0), -- password = user
+    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0), -- password = user
+    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic', 0), -- password = user
+    ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan', 0); -- password = user
 
 INSERT INTO companies (name, rating, address_id, description, version)
 VALUES
@@ -58,8 +64,11 @@ VALUES
 
 INSERT INTO registered_users (id, company_info, occupation, penalty_points, address_id)
 VALUES
-    (1, 'FTN', 'Programer', 0, 1),
-    (14, 'FTN', 'Programer', 0, 12);
+    (1, 'Healing Horizon Hospital', 'Clinical Operations Manager', 1, 1),
+    (14, 'WellConnect Regional Clinic', 'Supervisor', 0, 12),
+    (15, 'FutureCare Medical Institute', 'Operations Director', 4, 13),
+    (16, 'City General Hospital', 'Hospital Administrator', 0, 14),
+    (17, 'Metropolitan Medical Center', 'Chief Technology Officer', 0, 15);
 
 INSERT INTO company_admins (id, company_id, has_changed_password)
 VALUES
@@ -137,6 +146,30 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:30:00' + INTERVAL '6 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '7 day', true, 1, 3, 0),
     (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '7 day', true, 1, 3, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '1 day', true, 3, 5, 0),
-    (CURRENT_DATE + INTERVAL '13:45:00' + INTERVAL '2 day', true, 3, 5, 0);
+    -- reserved
+    (CURRENT_DATE + INTERVAL '12:30:00' - INTERVAL '1 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' - INTERVAL '2 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' - INTERVAL '3 day', false, 3, 5, 0),
+    (CURRENT_DATE + INTERVAL '09:30:00' + INTERVAL '11 day', false, 1, 2, 0),
+    (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '12 day', false, 2, 4, 0),
+    (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
+;
 
+-- TODO: add QR codes
+INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
+VALUES (1, 24, 650000.0, true, false, null, 0),
+       (1, 25, 250000.0, true, false, null, 0),
+       (1, 26, 1200.0, true, false, null, 0),
+       (1, 27, 650000.0, false, false, null, 0),
+       (1, 28, 250000.0, false, false, null, 0),
+       (1, 29, 1200.0, false, false, null, 0);
+
+INSERT INTO reservation_equipment (reservation_id, equipment_id)
+VALUES (1, 1),
+       (1, 3),
+       (2, 2),
+       (3, 6),
+       (4, 1),
+       (4, 3),
+       (5, 2),
+       (6, 6);

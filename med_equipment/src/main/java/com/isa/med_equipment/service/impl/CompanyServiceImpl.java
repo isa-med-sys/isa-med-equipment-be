@@ -162,6 +162,8 @@ public class CompanyServiceImpl implements CompanyService {
         address.setCountry(companyRegistrationDto.getAddress().getCountry());
         address.setStreet(companyRegistrationDto.getAddress().getStreet());
         address.setStreetNumber(companyRegistrationDto.getAddress().getStreetNumber());
+        address.setLongitude(companyRegistrationDto.getAddress().getLongitude());
+        address.setLatitude(companyRegistrationDto.getAddress().getLatitude());
 
         company.setAddress(address);
 
@@ -194,7 +196,9 @@ public class CompanyServiceImpl implements CompanyService {
                     companyDto.getAddress().getStreet(),
                     companyDto.getAddress().getStreetNumber(),
                     companyDto.getAddress().getCity(),
-                    companyDto.getAddress().getCountry()
+                    companyDto.getAddress().getCountry(),
+                    companyDto.getAddress().getLongitude(),
+                    companyDto.getAddress().getLatitude()
             );
 
             return companyRepository.save(company);
