@@ -39,4 +39,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.timeSlot.start > CURRENT_TIMESTAMP")
     Page<Reservation> findUpcomingByUser(@Param("userId") Long userId, Pageable pageable);
 
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.timeSlot.admin.company.id = :companyId " +
+            "AND r.isPickedUp = false")
+    Page<Reservation> findAllByCompany(@Param("companyId") Long companyId, Pageable pageable);
 }

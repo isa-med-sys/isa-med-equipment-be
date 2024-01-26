@@ -16,6 +16,7 @@ import com.isa.med_equipment.util.Mapper;
 import com.isa.med_equipment.util.QRCodeGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -131,7 +132,6 @@ public class ReservationServiceImpl implements ReservationService {
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
         try {
-            OrderDto order = new OrderDto();
             Result result = new MultiFormatReader().decode(bitmap);
             String resultText = result.getText();
 
@@ -139,29 +139,8 @@ public class ReservationServiceImpl implements ReservationService {
             int startIndex = resultText.indexOf(reservationNumberPrefix) + reservationNumberPrefix.length();
             int endIndex = resultText.indexOf("\n", startIndex);
             String reservationNumberString = resultText.substring(startIndex, endIndex).trim();
-            order.setId(Long.parseLong(reservationNumberString));
 
-            Reservation reservation = reservationRepository.findById(order.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
-
-            order.setCustomer(reservation.getUser().getName() + " " + reservation.getUser().getSurname());
-            order.setTimeslotStart(reservation.getTimeSlot().getStart());
-            order.setTimeslotEnd(order.getTimeslotStart().plusMinutes(TimeSlot.DURATION.toMinutes()));
-            List<String> equipment = new ArrayList<>();
-            for (Equipment e : reservation.getEquipment()) {
-                equipment.add(e.getName());
-            }
-            order.setEquipment(equipment);
-            order.setIsValid(new Date().before(Date.from(order.getTimeslotEnd().atZone(ZoneId.systemDefault()).toInstant())));
-            order.setIsTaken(reservation.getIsPickedUp());
-            order.setIsCanceled(reservation.getIsCancelled());
-            order.setIsRightAdmin(Objects.equals(userId, reservation.getTimeSlot().getAdmin().getId()));
-            if(!order.getIsValid() && !order.getIsCanceled()) {
-                ReservationDto reservationDto = new ReservationDto();
-                reservationDto.setId(Long.parseLong(reservationNumberString));
-                cancelReservation(reservationDto);
-            }
-            return order;
+            return getOrder(Long.parseLong(reservationNumberString), userId);
         } catch (NotFoundException e) {
             System.out.println("There is no QR code in the image");
             return null;
@@ -169,6 +148,38 @@ public class ReservationServiceImpl implements ReservationService {
             System.out.println("Failed to extract Data");
             return null;
         }
+    }
+
+    public OrderDto findOrderById(Long userId, Long orderId) {
+        return getOrder(orderId, userId);
+    }
+
+    private OrderDto getOrder(Long id, Long userId) {
+        OrderDto order = new OrderDto();
+
+        order.setId(id);
+
+        Reservation reservation = reservationRepository.findById(order.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found."));
+
+        order.setCustomer(reservation.getUser().getName() + " " + reservation.getUser().getSurname());
+        order.setTimeslotStart(reservation.getTimeSlot().getStart());
+        order.setTimeslotEnd(order.getTimeslotStart().plusMinutes(TimeSlot.DURATION.toMinutes()));
+        List<String> equipment = new ArrayList<>();
+        for (Equipment e : reservation.getEquipment()) {
+            equipment.add(e.getName());
+        }
+        order.setEquipment(equipment);
+        order.setIsValid(new Date().before(Date.from(order.getTimeslotEnd().atZone(ZoneId.systemDefault()).toInstant())));
+        order.setIsTaken(reservation.getIsPickedUp());
+        order.setIsCanceled(reservation.getIsCancelled());
+        order.setIsRightAdmin(Objects.equals(userId, reservation.getTimeSlot().getAdmin().getId()));
+        if(!order.getIsValid() && !order.getIsCanceled()) {
+            ReservationDto reservationDto = new ReservationDto();
+            reservationDto.setId(id);
+            cancelReservation(reservationDto);
+        }
+        return order;
     }
 
     @Override
@@ -270,5 +281,11 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         return reservationDtos;
+    }
+
+    @Override
+    public Page<ReservationDto> findAllByCompany(Long companyId, Pageable pageable) {
+        Page<Reservation> reservations = reservationRepository.findAllByCompany(companyId, pageable);
+        return populateReservations(reservations);
     }
 }

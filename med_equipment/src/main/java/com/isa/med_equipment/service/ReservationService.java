@@ -19,7 +19,9 @@ public interface ReservationService {
     Page<ReservationDto> findUpcomingByUser(Long userId, Pageable pageable);
     ReservationDto reserve(ReservationDto reservationDto);
     OrderDto findByCode(Long userId, InputStream fileInputStream) throws IOException;
+    OrderDto findOrderById(Long userId, Long orderId);
     UserDto getByTimeSlotId(Long id);
     ReservationDto cancelReservation(ReservationDto reservationDto);
     ReservationDto completeReservation(ReservationDto reservationDto);
+    Page<ReservationDto> findAllByCompany(Long companyId, Pageable pageable);
 }
