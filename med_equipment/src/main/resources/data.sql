@@ -90,23 +90,23 @@ VALUES
 
 INSERT INTO company_equipment (company_id, equipment_id, quantity)
 VALUES
-    (1, 1, 2),
-    (1, 3, 5),
-    (2, 2, 3),
-    (3, 5, 1),
-    (3, 6, 2),
-    (4, 4, 1),
-    (4, 7, 3),
-    (5, 8, 4),
-    (5, 9, 2),
-    (6, 10, 1),
-    (7, 1, 2),
-    (7, 4, 1),
-    (8, 5, 3),
-    (8, 7, 2),
-    (9, 2, 1),
-    (10, 3, 3),
-    (10, 8, 2);
+    (1, 1, 8),
+    (1, 3, 15),
+    (2, 2, 4),
+    (3, 5, 11),
+    (3, 6, 20),
+    (4, 4, 15),
+    (4, 7, 32),
+    (5, 8, 40),
+    (5, 9, 12),
+    (6, 10, 10),
+    (7, 1, 7),
+    (7, 4, 10),
+    (8, 5, 13),
+    (8, 7, 9),
+    (9, 2, 17),
+    (10, 3, 24),
+    (10, 8, 6);
 
 INSERT INTO calendars (company_id, work_start_time, work_end_time, works_on_weekends, version)
 VALUES
@@ -155,7 +155,6 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
 ;
 
--- TODO: add QR codes
 INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
 VALUES (1, 24, 650000.0, true, false, null, 0),
        (1, 25, 250000.0, true, false, null, 0),
@@ -173,3 +172,14 @@ VALUES (1, 1),
        (4, 3),
        (5, 2),
        (6, 6);
+
+INSERT INTO contracts (user_id, company_id, start_date, is_active)
+VALUES (1, 1, CURRENT_DATE, true), -- test: delivery can happen
+       (14, 1, CURRENT_DATE - INTERVAL '1 day', true),
+       (15, 2, CURRENT_DATE + INTERVAL '3 day', true); -- test: delivery can't happen - out of stock notification
+
+INSERT INTO contract_equipment (contract_id, equipment_id, quantity)
+VALUES (1, 1, 2),
+       (1, 3, 5),
+       (2, 3, 1),
+       (3, 2, 5);
