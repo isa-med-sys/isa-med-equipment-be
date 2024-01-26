@@ -41,6 +41,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r " +
             "WHERE r.timeSlot.admin.company.id = :companyId " +
-            "AND r.isPickedUp = false")
+            "AND r.isPickedUp = false " +
+            "AND r.isCancelled = false")
     Page<Reservation> findAllByCompany(@Param("companyId") Long companyId, Pageable pageable);
 }
