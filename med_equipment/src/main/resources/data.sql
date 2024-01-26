@@ -19,21 +19,21 @@ VALUES
 INSERT INTO users (email, enabled, name, password, phone_number, surname, version)
 VALUES
     ('ninabu16@gmail.com', true, 'Nina', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0628817058', 'Bu', 0), -- password = user
-    ('company.admin@gmail.com', true, 'Petar', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '123456789', 'Kovacevic', 0), -- password = admin
-    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Djekic', 0),
-    ('savic@gmail.com', true, 'Nikola', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065011509', 'Savic', 0),
-    ('djuka@gmail.com', true, 'Luka', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063120501', 'Djukanovic', 0),
-    ('morzy@gmail.com', true, 'Boris', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064040801', 'Marinkovic', 0),
-    ('crvena@gmail.com', true, 'Sinisa', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062999222', 'Mozetic', 0),
-    ('moravac@gmail.com', true, 'Vukasin', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063011011', 'Moravcevic', 0),
-    ('uros.prejaki@gmail.com', true, 'Uros', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065015015', 'Makevic', 0),
-    ('shkodra@gmail.com', true, 'Drasko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Begus', 0),
-    ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninkovic', 0),
-    ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic', 0),
-    ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic', 0), -- password = admin
-    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenic', 0), -- password = user
-    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0), -- password = user
-    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic', 0), -- password = user
+    ('company.admin@gmail.com', true, 'Petar', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '123456789', 'Kovačević', 0), -- password = admin
+    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Đekic', 0),
+    ('savic@gmail.com', true, 'Nikola', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065011509', 'Savić', 0),
+    ('djuka@gmail.com', true, 'Luka', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063120501', 'Đukanović', 0),
+    ('morzy@gmail.com', true, 'Boris', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064040801', 'Marinković', 0),
+    ('crvena@gmail.com', true, 'Siniša', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062999222', 'Mozetić', 0),
+    ('moravac@gmail.com', true, 'Vukašin', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063011011', 'Moravčević', 0),
+    ('uros.prejaki@gmail.com', true, 'Uroš', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065015015', 'Makević', 0),
+    ('shkodra@gmail.com', true, 'Draško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Begus', 0),
+    ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninković', 0),
+    ('shishko@gmail.com', true, 'Šiško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetić', 0),
+    ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlović', 0), -- password = admin
+    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenić', 0), -- password = user
+    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlović', 0), -- password = user
+    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekić', 0), -- password = user
     ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan', 0); -- password = user
 
 INSERT INTO companies (name, rating, address_id, description, version)
