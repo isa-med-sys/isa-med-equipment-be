@@ -1,5 +1,6 @@
 package com.isa.med_equipment.rabbitMQ;
 
+import com.isa.med_equipment.dto.DeliveryStartDto;
 import com.isa.med_equipment.dto.LocationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,11 @@ import java.util.Map;
 public class RabbitMQConsumerLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerLocation.class);
     private final SimpMessagingTemplate simpMessagingTemplate;
+
     public RabbitMQConsumerLocation(SimpMessagingTemplate simpMessagingTemplate) {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
+
     @RabbitListener(queues = {"${rabbitmq.queue.name}"})
     public void consume(LocationDto location){
         LOGGER.info(String.format("Received -> %s", location.toString()));
@@ -25,5 +28,10 @@ public class RabbitMQConsumerLocation {
         locationMap.put("longitude", location.getLongitude());
         //user -> company
         this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + location.getUserId(), locationMap);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.simulation.queue.name}")
+    public void consumeSimulation(DeliveryStartDto deliveryStart) {
+        LOGGER.info("Received Simulation Start -> totalDurationInMinutes: {}", deliveryStart.getTotalDurationInMinutes());
     }
 }
