@@ -41,6 +41,7 @@ public class SecurityConfig {
             "/api/reservations/**",
             "/api/calendars/**",
             "/socket/**",
+            "/api/mq/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
