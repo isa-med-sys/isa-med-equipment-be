@@ -20,18 +20,17 @@ public class RabbitMQConsumerLocation {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    @RabbitListener(queues = {"${rabbitmq.queue.name}"})
+    @RabbitListener(queues = {"${rabbitmq.locations.queue.name}"})
     public void consume(LocationDto location){
         LOGGER.info(String.format("Received -> %s", location.toString()));
         Map<String, Object> locationMap = new HashMap<>();
         locationMap.put("latitude", location.getLatitude());
         locationMap.put("longitude", location.getLongitude());
-        //user -> company
-        this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + location.getUserId(), locationMap);
+        this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + location.getCompanyId(), locationMap);
     }
 
     @RabbitListener(queues = "${rabbitmq.simulation.queue.name}")
     public void consumeSimulation(DeliveryStartDto deliveryStart) {
-        LOGGER.info("Received Simulation Start -> totalDurationInMinutes: {}", deliveryStart.getTotalDurationInMinutes());
+        LOGGER.info(String.format("Received Simulation Start -> %s", deliveryStart.toString()));
     }
 }
