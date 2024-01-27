@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -37,6 +39,32 @@ public class Contract {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "last_delivery_date")
+    private LocalDate lastDeliveryDate;
+
+    public List<Long> getEquipmentIds() {
+        return new ArrayList<>(equipmentQuantities.keySet());
+    }
+
+    public List<Integer> getQuantities() {
+        return new ArrayList<>(equipmentQuantities.values());
+    }
+
+    public LocalDate calculateNextDeliveryDate() {
+        if (lastDeliveryDate != null) {
+            return lastDeliveryDate.plusMonths(1);
+        } else if (startDate.isBefore(LocalDate.now())) {
+            return startDate.plusMonths(1);
+        } else {
+            return startDate;
+
+        }
+    }
+
+    public void updateLastDeliveryDate() {
+        this.lastDeliveryDate = LocalDate.now();
+    }
 
     public void deactivate() {
         if (!isActive) {

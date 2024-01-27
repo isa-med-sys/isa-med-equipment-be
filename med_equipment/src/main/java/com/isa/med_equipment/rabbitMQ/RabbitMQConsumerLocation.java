@@ -1,4 +1,4 @@
-package rabbitMQ;
+package com.isa.med_equipment.rabbitMQ;
 
 import com.isa.med_equipment.dto.LocationDto;
 import org.slf4j.Logger;

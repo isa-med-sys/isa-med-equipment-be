@@ -19,6 +19,8 @@ public class ContractDto {
     private Long companyId;
     private LocalDate startDate;
     private Map<Long, Integer> equipmentQuantities;
-    private Map<String, Integer> namedEquipmentQuantities;
     private Boolean isActive;
+
+    private Map<String, Integer> namedEquipmentQuantities;
+    private String hospitalName;
 }
