@@ -19,21 +19,21 @@ VALUES
 INSERT INTO users (email, enabled, name, password, phone_number, surname, version)
 VALUES
     ('ninabu16@gmail.com', true, 'Nina', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0628817058', 'Bu', 0), -- password = user
-    ('company.admin@gmail.com', true, 'Petar', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '123456789', 'Kovacevic', 0), -- password = admin
-    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Djekic', 0),
-    ('savic@gmail.com', true, 'Nikola', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065011509', 'Savic', 0),
-    ('djuka@gmail.com', true, 'Luka', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063120501', 'Djukanovic', 0),
-    ('morzy@gmail.com', true, 'Boris', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064040801', 'Marinkovic', 0),
-    ('crvena@gmail.com', true, 'Sinisa', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062999222', 'Mozetic', 0),
-    ('moravac@gmail.com', true, 'Vukasin', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063011011', 'Moravcevic', 0),
-    ('uros.prejaki@gmail.com', true, 'Uros', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065015015', 'Makevic', 0),
-    ('shkodra@gmail.com', true, 'Drasko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Begus', 0),
-    ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninkovic', 0),
-    ('shishko@gmail.com', true, 'Sisko', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetic', 0),
-    ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlovic', 0), -- password = admin
-    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenic', 0), -- password = user
-    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlovic', 0), -- password = user
-    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekic', 0), -- password = user
+    ('company.admin@gmail.com', true, 'Petar', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '123456789', 'Kovačević', 0), -- password = admin
+    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Đekic', 0),
+    ('savic@gmail.com', true, 'Nikola', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065011509', 'Savić', 0),
+    ('djuka@gmail.com', true, 'Luka', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063120501', 'Đukanović', 0),
+    ('morzy@gmail.com', true, 'Boris', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064040801', 'Marinković', 0),
+    ('crvena@gmail.com', true, 'Siniša', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062999222', 'Mozetić', 0),
+    ('moravac@gmail.com', true, 'Vukašin', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063011011', 'Moravčević', 0),
+    ('uros.prejaki@gmail.com', true, 'Uroš', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065015015', 'Makević', 0),
+    ('shkodra@gmail.com', true, 'Draško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Begus', 0),
+    ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninković', 0),
+    ('shishko@gmail.com', true, 'Šiško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetić', 0),
+    ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlović', 0), -- password = admin
+    ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenić', 0), -- password = user
+    ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlović', 0), -- password = user
+    ('bella@gmail.com', true, 'Bella', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062123532', 'Bekić', 0), -- password = user
     ('buba@gmail.com', true, 'Buba', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0639812354', 'Erdeljan', 0); -- password = user
 
 INSERT INTO companies (name, rating, address_id, description, version)
@@ -90,23 +90,23 @@ VALUES
 
 INSERT INTO company_equipment (company_id, equipment_id, quantity)
 VALUES
-    (1, 1, 2),
-    (1, 3, 5),
-    (2, 2, 3),
-    (3, 5, 1),
-    (3, 6, 2),
-    (4, 4, 1),
-    (4, 7, 3),
-    (5, 8, 4),
-    (5, 9, 2),
-    (6, 10, 1),
-    (7, 1, 2),
-    (7, 4, 1),
-    (8, 5, 3),
-    (8, 7, 2),
-    (9, 2, 1),
-    (10, 3, 3),
-    (10, 8, 2);
+    (1, 1, 8),
+    (1, 3, 15),
+    (2, 2, 4),
+    (3, 5, 11),
+    (3, 6, 20),
+    (4, 4, 15),
+    (4, 7, 32),
+    (5, 8, 40),
+    (5, 9, 12),
+    (6, 10, 10),
+    (7, 1, 7),
+    (7, 4, 10),
+    (8, 5, 13),
+    (8, 7, 9),
+    (9, 2, 17),
+    (10, 3, 24),
+    (10, 8, 6);
 
 INSERT INTO calendars (company_id, work_start_time, work_end_time, works_on_weekends, version)
 VALUES
@@ -155,7 +155,6 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
 ;
 
--- TODO: add QR codes
 INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
 VALUES (1, 24, 650000.0, true, false, null, 0),
        (1, 25, 250000.0, true, false, null, 0),
@@ -173,3 +172,14 @@ VALUES (1, 1),
        (4, 3),
        (5, 2),
        (6, 6);
+
+INSERT INTO contracts (user_id, company_id, start_date, is_active)
+VALUES (1, 1, CURRENT_DATE, true), -- test: delivery can happen
+       (14, 1, CURRENT_DATE - INTERVAL '1 day', true),
+       (15, 2, CURRENT_DATE + INTERVAL '3 day', true); -- test: delivery can't happen - out of stock notification
+
+INSERT INTO contract_equipment (contract_id, equipment_id, quantity)
+VALUES (1, 1, 2),
+       (1, 3, 5),
+       (2, 3, 1),
+       (3, 2, 5);
