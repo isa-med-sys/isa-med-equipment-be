@@ -13,4 +13,5 @@ public interface ContractService {
     List<ContractDto> findAllScheduledForDelivery();
     Boolean canBeDelivered(Long contractId);
     Page<ContractDto> findAllActiveByCompany(Long companyId, Pageable pageable);
+    void startDelivery(Long contractId);
 }

@@ -58,7 +58,6 @@ public class Contract {
             return startDate.plusMonths(1);
         } else {
             return startDate;
-
         }
     }
 

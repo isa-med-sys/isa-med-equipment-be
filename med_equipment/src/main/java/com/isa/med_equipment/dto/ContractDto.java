@@ -23,4 +23,5 @@ public class ContractDto {
 
     private Map<String, Integer> namedEquipmentQuantities;
     private String hospitalName;
+    private Boolean canStart;
 }

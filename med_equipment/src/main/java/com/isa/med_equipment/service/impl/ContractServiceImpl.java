@@ -1,10 +1,12 @@
 package com.isa.med_equipment.service.impl;
 
 import com.isa.med_equipment.dto.ContractDto;
+import com.isa.med_equipment.dto.StartDto;
 import com.isa.med_equipment.model.Company;
 import com.isa.med_equipment.model.Contract;
 import com.isa.med_equipment.model.Equipment;
 import com.isa.med_equipment.model.RegisteredUser;
+import com.isa.med_equipment.rabbitMQ.RabbitMQProducerLocation;
 import com.isa.med_equipment.repository.*;
 import com.isa.med_equipment.service.ContractService;
 import com.isa.med_equipment.util.Mapper;
@@ -30,6 +32,7 @@ public class ContractServiceImpl implements ContractService {
     private final EquipmentRepository equipmentRepository;
     private final ReservationRepository reservationRepository;
     private final RegisteredUserRepository userRepository;
+    private final RabbitMQProducerLocation producer;
     private final Mapper mapper;
 
     @Autowired
@@ -39,12 +42,14 @@ public class ContractServiceImpl implements ContractService {
             EquipmentRepository equipmentRepository,
             ReservationRepository reservationRepository,
             RegisteredUserRepository userRepository,
+            RabbitMQProducerLocation producer,
             Mapper mapper) {
         this.contractRepository = contractRepository;
         this.companyRepository = companyRepository;
         this.equipmentRepository = equipmentRepository;
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
+        this.producer = producer;
         this.mapper = mapper;
     }
 
@@ -81,10 +86,67 @@ public class ContractServiceImpl implements ContractService {
         Page<Contract> contracts = contractRepository.findAllByCompanyIdAndIsActiveTrue(companyId, pageable);
         Page<ContractDto> contractsDto = mapper.mapPage(contracts, ContractDto.class);
 
+        List<Contract> contractList = contracts.getContent();
+        List<ContractDto> contractDtoList = contractsDto.getContent();
+
+        for (Contract contract : contractList) {
+            ContractDto contractDto = contractDtoList.get(contractList.indexOf(contract));
+
+            boolean canStart = contract.calculateNextDeliveryDate().isEqual(LocalDate.now());
+            contractDto.setCanStart(canStart);
+        }
+
         populateEquipment(contractsDto);
-        return contracts == null
-                ? null
-                : contractsDto;
+        return contractsDto;
+    }
+
+    @Override
+    public void startDelivery(Long contractId) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new EntityNotFoundException("Contract not found."));
+        Company company = companyRepository.findById(contract.getCompanyId())
+                .orElseThrow(() -> new EntityNotFoundException("Company not found."));
+        RegisteredUser registeredUser = userRepository.findById(contract.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found."));
+        if(updateEquipmentAndContract(contract, company)) {
+            StartDto start = new StartDto(contract.getCompanyId(), company.getAddress().getLongitude(),
+                    company.getAddress().getLatitude(), registeredUser.getAddress().getLongitude(), registeredUser.getAddress().getLatitude());
+            producer.sendMessage(start);
+        }
+    }
+
+    @Transactional
+    public boolean updateEquipmentAndContract(Contract contract, Company company) {
+        contract.updateLastDeliveryDate();
+
+        Map<Equipment, Integer> eq = company.getEquipment();
+        Map<Long, Integer> ce = contract.getEquipmentQuantities();
+
+        for (Map.Entry<Long, Integer> entry : ce.entrySet()) {
+            Long equipmentId = entry.getKey();
+            Integer quantityToDeduct = entry.getValue();
+            Equipment equipmentToUpdate = findEquipmentById(eq, equipmentId);
+
+            if (equipmentToUpdate != null) {
+                int currentQuantity = eq.get(equipmentToUpdate);
+                int updatedQuantity = currentQuantity - quantityToDeduct;
+                if (updatedQuantity < 0) {
+                    throw new IllegalArgumentException("Negative quantity not allowed for equipment.");
+                }
+                eq.put(equipmentToUpdate, updatedQuantity);
+            }
+        }
+        company.setEquipment(eq);
+        return true;
+    }
+
+    private Equipment findEquipmentById(Map<Equipment, Integer> eq, Long equipmentId) {
+        for (Map.Entry<Equipment, Integer> entry : eq.entrySet()) {
+            if (entry.getKey().getId().equals(equipmentId)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private void populateEquipment(Page<ContractDto> contractsDto) {
