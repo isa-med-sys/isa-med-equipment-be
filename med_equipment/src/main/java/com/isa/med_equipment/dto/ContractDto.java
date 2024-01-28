@@ -1,5 +1,6 @@
 package com.isa.med_equipment.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContractDto {
 
     private Long id;
@@ -24,4 +26,5 @@ public class ContractDto {
     private Map<String, Integer> namedEquipmentQuantities;
     private String hospitalName;
     private Boolean canStart;
+    private Boolean delete = false;
 }
