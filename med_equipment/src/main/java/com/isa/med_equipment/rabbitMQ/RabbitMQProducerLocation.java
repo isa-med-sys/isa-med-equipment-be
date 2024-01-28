@@ -23,7 +23,6 @@ public class RabbitMQProducerLocation {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // TODO set startDto.userId 
     public void sendMessage(StartDto startDto) {
         LOGGER.info("Message -> {}", startDto);
         rabbitTemplate.convertAndSend(exchange, routingKey, startDto);

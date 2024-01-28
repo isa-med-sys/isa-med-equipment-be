@@ -39,9 +39,9 @@ public class RabbitMQHospitalProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // TODO uncomment
-    //  @Scheduled(cron = "0 0 7 * * ?")
+    // TODO testing
     @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 0 7 * * ?")
     public void checkUpcomingDeliveries() {
         List<ContractDto> upcomingContracts = contractService.findAllScheduledForDelivery();
         for(ContractDto contract : upcomingContracts) {
@@ -54,7 +54,6 @@ public class RabbitMQHospitalProducer {
         }
     }
 
-    // TODO test
     public void notifyOfDeliveryStart(DeliveryStartDto deliveryStart) {
         ContractNotificationDto message = new ContractNotificationDto(
                 deliveryStart.getUserId(),
