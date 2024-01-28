@@ -20,12 +20,19 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.starting.routing.key.name}")
     private String routingKey;
 
-    @Value("${rabbitmq.hosp-producer.queue.name}")
-    private String hospQueue;
-    @Value("${rabbitmq.hosp-producer.exchange.name}")
-    private String hospExchange;
-    @Value("${rabbitmq.hosp-producer.routing.key.name}")
-    private String hospRoutingKey;
+    @Value("${rabbitmq.hosp-producer.contract.queue.name}")
+    private String hospQueue1;
+    @Value("${rabbitmq.hosp-producer.contract.exchange.name}")
+    private String hospExchange1;
+    @Value("${rabbitmq.hosp-producer.contract.routing.key.name}")
+    private String hospRoutingKey1;
+
+    @Value("${rabbitmq.hosp-producer.notif.queue.name}")
+    private String hospQueue2;
+    @Value("${rabbitmq.hosp-producer.notif.exchange.name}")
+    private String hospExchange2;
+    @Value("${rabbitmq.hosp-producer.notif.routing.key.name}")
+    private String hospRoutingKey2;
 
     @Bean
     public Queue queue() {
@@ -43,18 +50,33 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue hospitalQueue (){
-        return new Queue(hospQueue);
+    public Queue hospitalQueue1(){
+        return new Queue(hospQueue1);
     }
 
     @Bean
-    public TopicExchange hospitalExchange(){
-        return new TopicExchange(hospExchange);
+    public TopicExchange hospitalExchange1(){
+        return new TopicExchange(hospExchange1);
     }
 
     @Bean
-    public Binding hospitalBinding(){
-        return BindingBuilder.bind(hospitalQueue()).to(hospitalExchange()).with(hospRoutingKey);
+    public Binding hospitalBinding1(){
+        return BindingBuilder.bind(hospitalQueue1()).to(hospitalExchange1()).with(hospRoutingKey1);
+    }
+
+    @Bean
+    public Queue hospitalQueue2(){
+        return new Queue(hospQueue2);
+    }
+
+    @Bean
+    public TopicExchange hospitalExchange2(){
+        return new TopicExchange(hospExchange2);
+    }
+
+    @Bean
+    public Binding hospitalBinding2(){
+        return BindingBuilder.bind(hospitalQueue2()).to(hospitalExchange2()).with(hospRoutingKey2);
     }
 
     @Bean

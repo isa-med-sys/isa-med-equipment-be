@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +46,38 @@ public class ContractServiceImpl implements ContractService {
         this.mapper = mapper;
     }
 
+    @Override
+    public ContractDto findActiveByUser(Long userId) {
+        Contract contract = contractRepository.findByUserIdAndIsActiveTrue(userId);
+        return contract == null
+                ? null
+                : mapper.map(contract, ContractDto.class);
+    }
+
+    @Override
+    public void handleReceived(ContractDto contractDto) {
+        Optional<Contract> existingContract = contractRepository.findById(contractDto.getId());
+
+        boolean isNewContract = contractDto.getId() == null || contractDto.getId() == 0;
+        boolean isCompanyChanged = existingContract.isPresent() && !Objects.equals(existingContract.get().getCompanyId(), contractDto.getCompanyId());
+
+        if (isNewContract || isCompanyChanged) {
+            create(contractDto);
+            return;
+        }
+
+        update(contractDto);
+    }
+
+    @Override
+    public void delete(Long contractId) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new EntityNotFoundException("Contract not found."));
+        contract.deactivate();
+        contractRepository.save(contract);
+    }
+
+    @Override
     public List<ContractDto> findAllScheduledForDelivery() {
         LocalDate currentDate = LocalDate.now();
         int deliveryNoticeDays = 3;
@@ -65,6 +95,7 @@ public class ContractServiceImpl implements ContractService {
          return  mapper.mapList(upcoming, ContractDto.class);
     }
 
+    @Override
     public Boolean canBeDelivered(Long contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new EntityNotFoundException("Contract not found."));
@@ -85,6 +116,49 @@ public class ContractServiceImpl implements ContractService {
         return contracts == null
                 ? null
                 : contractsDto;
+    }
+
+    private ContractDto create(ContractDto contractDto) {
+        Contract contract = setContract(contractDto);
+
+        Long userId = contractDto.getUserId();
+        deactivateExistingContract(userId);
+
+        contract = contractRepository.save(contract);
+        return mapper.map(contract, ContractDto.class);
+    }
+
+    private ContractDto update(ContractDto contractDto) {
+        Contract existingContract = contractRepository.findById(contractDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Contract not found."));
+
+        if(!existingContract.getIsActive()) {
+            throw new IllegalStateException("Contract not active.");
+        }
+
+        existingContract.setStartDate(contractDto.getStartDate());
+        existingContract.setEquipmentQuantities(contractDto.getEquipmentQuantities());
+
+        existingContract = contractRepository.save(existingContract);
+        return mapper.map(existingContract, ContractDto.class);
+    }
+
+    private Contract setContract(ContractDto contractDto) {
+        Contract contract = new Contract();
+        contract.setUserId(contractDto.getUserId());
+        contract.setCompanyId(contractDto.getCompanyId());
+        contract.setStartDate(contractDto.getStartDate());
+        contract.setEquipmentQuantities(contractDto.getEquipmentQuantities());
+        contract.setIsActive(true);
+        return contract;
+    }
+
+    private void deactivateExistingContract(Long userId) {
+        Contract existingContract = contractRepository.findByUserIdAndIsActiveTrue(userId);
+        if(existingContract == null) return;
+
+        existingContract.deactivate();
+        contractRepository.save(existingContract);
     }
 
     private void populateEquipment(Page<ContractDto> contractsDto) {

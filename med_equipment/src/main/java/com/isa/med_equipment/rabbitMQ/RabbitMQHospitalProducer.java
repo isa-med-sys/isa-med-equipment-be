@@ -17,11 +17,17 @@ import java.util.List;
 @Service
 public class RabbitMQHospitalProducer {
 
-    @Value("${rabbitmq.hosp-producer.exchange.name}")
-    private String exchange;
+    @Value("${rabbitmq.hosp-producer.notif.exchange.name}")
+    private String notifExchange;
 
-    @Value("${rabbitmq.hosp-producer.routing.key.name}")
-    private String routingKey;
+    @Value("${rabbitmq.hosp-producer.notif.routing.key.name}")
+    private String notifRoutingKey;
+
+    @Value("${rabbitmq.hosp-producer.contract.exchange.name}")
+    private String contractExchange;
+
+    @Value("${rabbitmq.hosp-producer.contract.routing.key.name}")
+    private String contractRoutingKey;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQHospitalProducer.class);
     private final RabbitTemplate rabbitTemplate;
@@ -43,7 +49,7 @@ public class RabbitMQHospitalProducer {
                 ContractNotificationDto message = new ContractNotificationDto(
                         contract.getUserId(),
                         "Delivery cannot be made. Equipment is out of stock." );
-                sendMessage(message);
+                sendNotification(message);
             }
         }
     }
@@ -54,11 +60,16 @@ public class RabbitMQHospitalProducer {
                 deliveryStart.getUserId(),
                 String.format("Your delivery has started. Estimated delivery time: %d minutes",
                         deliveryStart.getTotalDurationInMinutes()));
-        sendMessage(message);
+        sendNotification(message);
     }
 
-    private void sendMessage(ContractNotificationDto message) {
+    public void sendContract(ContractDto message) {
         LOGGER.info(String.format("Message -> %s", message));
-        rabbitTemplate.convertAndSend(exchange, routingKey, message);
+        rabbitTemplate.convertAndSend(contractExchange, contractRoutingKey, message);
+    }
+
+    private void sendNotification(ContractNotificationDto message) {
+        LOGGER.info(String.format("Message -> %s", message));
+        rabbitTemplate.convertAndSend(notifExchange, notifRoutingKey, message);
     }
 }

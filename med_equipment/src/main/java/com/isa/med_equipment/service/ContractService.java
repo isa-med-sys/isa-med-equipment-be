@@ -10,6 +10,9 @@ import java.util.List;
 @Service
 public interface ContractService {
 
+    ContractDto findActiveByUser(Long userId);
+    void handleReceived(ContractDto contractDto);
+    void delete(Long contractId);
     List<ContractDto> findAllScheduledForDelivery();
     Boolean canBeDelivered(Long contractId);
     Page<ContractDto> findAllActiveByCompany(Long companyId, Pageable pageable);

@@ -11,7 +11,8 @@ import java.util.List;
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
 
+    Contract findByUserIdAndIsActiveTrue(Long userId);
+    List<Contract> findByUserId(Long userId);
     List<Contract> findByIsActiveTrue();
-
     Page<Contract> findAllByCompanyIdAndIsActiveTrue(Long companyId, Pageable pageable);
 }
