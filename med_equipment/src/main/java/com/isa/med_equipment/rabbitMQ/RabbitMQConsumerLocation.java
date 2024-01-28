@@ -15,9 +15,11 @@ import java.util.Map;
 public class RabbitMQConsumerLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerLocation.class);
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final RabbitMQHospitalProducer mqHospitalProducer;
 
-    public RabbitMQConsumerLocation(SimpMessagingTemplate simpMessagingTemplate) {
+    public RabbitMQConsumerLocation(SimpMessagingTemplate simpMessagingTemplate, RabbitMQHospitalProducer mqHospitalProducer) {
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.mqHospitalProducer = mqHospitalProducer;
     }
 
     @RabbitListener(queues = {"${rabbitmq.locations.queue.name}"})
@@ -32,5 +34,6 @@ public class RabbitMQConsumerLocation {
     @RabbitListener(queues = "${rabbitmq.simulation.queue.name}")
     public void consumeSimulation(DeliveryStartDto deliveryStart) {
         LOGGER.info(String.format("Received Simulation Start -> %s", deliveryStart.toString()));
+        mqHospitalProducer.notifyOfDeliveryStart(deliveryStart);
     }
 }

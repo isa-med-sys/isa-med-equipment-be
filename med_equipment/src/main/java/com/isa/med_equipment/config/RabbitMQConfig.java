@@ -1,5 +1,7 @@
 package com.isa.med_equipment.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,24 +19,60 @@ public class RabbitMQConfig {
     private String queue;
     @Value("${rabbitmq.starting.routing.key.name}")
     private String routingKey;
+
+    @Value("${rabbitmq.hosp-producer.queue.name}")
+    private String hospQueue;
+    @Value("${rabbitmq.hosp-producer.exchange.name}")
+    private String hospExchange;
+    @Value("${rabbitmq.hosp-producer.routing.key.name}")
+    private String hospRoutingKey;
+
     @Bean
-    public Queue queue(){
+    public Queue queue() {
         return new Queue(queue);
     }
+
     @Bean
-    public TopicExchange exchange(){ return new TopicExchange(exchange); }
+    public TopicExchange exchange() {
+        return new TopicExchange(exchange);
+    }
+
     @Bean
-    public Binding binding(){
+    public Binding binding() {
         return BindingBuilder.bind(queue()).to(exchange()).with(routingKey);
     }
+
     @Bean
-    public MessageConverter converter(){
-        return new Jackson2JsonMessageConverter();
+    public Queue hospitalQueue (){
+        return new Queue(hospQueue);
     }
+
     @Bean
-    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate((connectionFactory));
-        rabbitTemplate.setMessageConverter((converter()));
+    public TopicExchange hospitalExchange(){
+        return new TopicExchange(hospExchange);
+    }
+
+    @Bean
+    public Binding hospitalBinding(){
+        return BindingBuilder.bind(hospitalQueue()).to(hospitalExchange()).with(hospRoutingKey);
+    }
+
+    @Bean
+    public MessageConverter converter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    @Bean
+    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory, MessageConverter converter) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter);
         return rabbitTemplate;
     }
 }
