@@ -12,6 +12,7 @@ import com.isa.med_equipment.service.ContractService;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class ContractServiceImpl implements ContractService {
 
+    @Value("${simulation.update.period}")
+    private Integer updatePeriod;
     private final ContractRepository contractRepository;
     private final CompanyRepository companyRepository;
     private final EquipmentRepository equipmentRepository;
@@ -110,7 +113,8 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
         if(updateEquipmentAndContract(contract, company)) {
             StartDto start = new StartDto(contract.getCompanyId(), company.getAddress().getLongitude(),
-                    company.getAddress().getLatitude(), registeredUser.getAddress().getLongitude(), registeredUser.getAddress().getLatitude());
+                    company.getAddress().getLatitude(), registeredUser.getAddress().getLongitude(),
+                    registeredUser.getAddress().getLatitude(), updatePeriod);
             producer.sendMessage(start);
         }
     }

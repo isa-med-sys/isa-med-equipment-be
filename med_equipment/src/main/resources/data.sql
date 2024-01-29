@@ -12,7 +12,7 @@ VALUES
     ('Kraljevo', 'Serbia', 'Ratka Mitrovića', '2', 20.681340915567823, 43.730664102222676),
     ('Niš', 'Serbia', 'Obrenovićeva', '55', 21.894713878703357, 43.31657120893682),
     ('Novi Sad', 'Serbia', 'Trg Slobode', '1', 19.84441355463242, 45.25501172354301),
-    ('Novi Sad', 'Serbia', 'Cara Dusana', '1', 19.82522559695965, 45.24894262435008),
+    ('Novi Sad', 'Serbia', 'Cara Dušana', '1', 19.82522559695965, 45.24894262435008),
     ('Novi Sad', 'Serbia', 'Šafarikova', '2', 19.841037568123607, 45.25412196553212),
     ('Novi Sad', 'Serbia', 'Trg Dositeja Obradovića', '1', 19.852965254631968, 45.246370770950556);
 
@@ -20,16 +20,16 @@ INSERT INTO users (email, enabled, name, password, phone_number, surname, versio
 VALUES
     ('ninabu16@gmail.com', true, 'Nina', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0628817058', 'Bu', 0), -- password = user
     ('company.admin@gmail.com', true, 'Petar', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '123456789', 'Kovačević', 0), -- password = admin
-    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Đekic', 0),
+    ('djeka@gmail.com', true, 'Stefan', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062555333', 'Đekić', 0),
     ('savic@gmail.com', true, 'Nikola', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065011509', 'Savić', 0),
     ('djuka@gmail.com', true, 'Luka', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063120501', 'Đukanović', 0),
     ('morzy@gmail.com', true, 'Boris', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064040801', 'Marinković', 0),
     ('crvena@gmail.com', true, 'Siniša', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062999222', 'Mozetić', 0),
     ('moravac@gmail.com', true, 'Vukašin', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063011011', 'Moravčević', 0),
     ('uros.prejaki@gmail.com', true, 'Uroš', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '065015015', 'Makević', 0),
-    ('shkodra@gmail.com', true, 'Draško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Begus', 0),
+    ('shkodra@gmail.com', true, 'Draško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '064343434', 'Beguš', 0),
     ('dovlaa@gmail.com', true, 'Vladimir', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063321321', 'Ninković', 0),
-    ('shishko@gmail.com', true, 'Šiško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Mencetić', 0),
+    ('shishko@gmail.com', true, 'Šiško', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '063242424', 'Menčetić', 0),
     ('system.admin@gmail.com', true, 'Vuk', '$2a$10$h9fD5LSSJ/cxG6pysikeOes5ANhA05FDyYi1tiw0mlSEYk8AKQC12', '062578547', 'Pavlović', 0), -- password = admin
     ('anastasijamarsenic@gmail.com', true, 'Anastasija', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '0631234567', 'Marsenić', 0), -- password = user
     ('vuk.pavlovic912@gmail.com', true, 'Vuk', '$2a$10$2iKltlyS7qxZPpFEub2U5OsjaPHTLhLYiB8OqLoK5X4mSNPr.emwS', '062578547', 'Pavlović', 0), -- password = user
@@ -152,7 +152,8 @@ VALUES
     (CURRENT_DATE + INTERVAL '12:00:00' - INTERVAL '3 day', false, 3, 5, 0),
     (CURRENT_DATE + INTERVAL '09:30:00' + INTERVAL '11 day', false, 1, 2, 0),
     (CURRENT_DATE + INTERVAL '09:15:00' + INTERVAL '12 day', false, 2, 4, 0),
-    (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0);
+    (CURRENT_DATE + INTERVAL '12:00:00' + INTERVAL '13 day', false, 3, 5, 0),
+    (CURRENT_DATE + INTERVAL '10:00:00', false, 1, 2, 0); -- TODO: termin u odbrani postaviti
 ;
 
 INSERT INTO reservations (user_id, time_slot_id, price, is_picked_up, is_cancelled, qr_code, version)
@@ -161,7 +162,8 @@ VALUES (1, 24, 650000.0, true, false, null, 0),
        (1, 26, 1200.0, true, false, null, 0),
        (1, 27, 650000.0, false, false, null, 0),
        (1, 28, 250000.0, false, false, null, 0),
-       (1, 29, 1200.0, false, false, null, 0);
+       (1, 29, 1200.0, false, false, null, 0),
+       (1, 30, 650000.0, false, false, null, 0);
 
 INSERT INTO reservation_equipment (reservation_id, equipment_id)
 VALUES (1, 1),
@@ -171,7 +173,9 @@ VALUES (1, 1),
        (4, 1),
        (4, 3),
        (5, 2),
-       (6, 6);
+       (6, 6),
+       (7, 1),
+       (7, 3);
 
 INSERT INTO contracts (user_id, company_id, start_date, is_active)
 VALUES (1, 1, CURRENT_DATE, true), -- test: delivery can happen
