@@ -259,7 +259,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void updateCompanyEquipment(Reservation reservation) {
-        Company company = reservation.getTimeSlot().getAdmin().getCompany();
+        Long id = reservation.getTimeSlot().getAdmin().getCompany().getId();
+        Company company = companyRepository.findWithLockingById(id).orElseThrow(() -> new EntityNotFoundException("Company not found."));
         Map<Equipment, Integer> equipment = new HashMap<>(company.getEquipment());
 
         for (Equipment e : reservation.getEquipment()) {

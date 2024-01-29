@@ -156,6 +156,24 @@ public class CompanyServiceImpl implements CompanyService {
         company.setDescription(companyRegistrationDto.getDescription());
         company.setRating(3.0f); //companyRegistrationDto.getRating()
 
+        Address address = getAddress(companyRegistrationDto);
+
+        company.setAddress(address);
+
+        Company newCompany = companyRepository.save(company);
+
+        Calendar calendar = new Calendar();
+        calendar.setWorksOnWeekends(true); //companyRegistrationDto.getWorksOnWeekends()
+        calendar.setWorkStartTime(companyRegistrationDto.getWorkStartTime());
+        calendar.setWorkEndTime(companyRegistrationDto.getWorkEndTime());
+        calendar.setCompany(newCompany);
+
+        Calendar newCalendar = calendarRepository.save(calendar);
+
+        return newCompany;
+    }
+
+    private Address getAddress(CompanyRegistrationDto companyRegistrationDto) {
         Address address = new Address();
 
         address.setCity(companyRegistrationDto.getAddress().getCity());
@@ -164,20 +182,7 @@ public class CompanyServiceImpl implements CompanyService {
         address.setStreetNumber(companyRegistrationDto.getAddress().getStreetNumber());
         address.setLongitude(companyRegistrationDto.getAddress().getLongitude());
         address.setLatitude(companyRegistrationDto.getAddress().getLatitude());
-
-        company.setAddress(address);
-
-        Company newCompany = companyRepository.save(company); //
-
-        Calendar calendar = new Calendar();
-        calendar.setWorksOnWeekends(true); //companyRegistrationDto.getWorksOnWeekends()
-        calendar.setWorkStartTime(companyRegistrationDto.getWorkStartTime());
-        calendar.setWorkEndTime(companyRegistrationDto.getWorkEndTime());
-        calendar.setCompany(newCompany);
-
-        Calendar newCalendar = calendarRepository.save(calendar); //
-
-        return newCompany;
+        return address;
     }
 
     @Override

@@ -114,10 +114,10 @@ public class ContractServiceImpl implements ContractService {
             producer.sendMessage(start);
         }
     }
-
-    @Transactional
-    public boolean updateEquipmentAndContract(Contract contract, Company company) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateEquipmentAndContract(Contract contract, Company comp) {
         contract.updateLastDeliveryDate();
+        Company company = companyRepository.findWithLockingById(comp.getId()).orElseThrow(() -> new EntityNotFoundException("Company not found."));
 
         Map<Equipment, Integer> eq = company.getEquipment();
         Map<Long, Integer> ce = contract.getEquipmentQuantities();
