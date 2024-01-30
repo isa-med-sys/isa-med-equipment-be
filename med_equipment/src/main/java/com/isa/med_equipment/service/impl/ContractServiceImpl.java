@@ -143,7 +143,7 @@ public class ContractServiceImpl implements ContractService {
         RegisteredUser registeredUser = userRepository.findById(contract.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
         if(updateEquipmentAndContract(contract, company)) {
-            StartDto start = new StartDto(contract.getCompanyId(), company.getAddress().getLongitude(),
+            StartDto start = new StartDto(contract.getUserId(), contract.getCompanyId(), company.getAddress().getLongitude(),
                     company.getAddress().getLatitude(), registeredUser.getAddress().getLongitude(),
                     registeredUser.getAddress().getLatitude(), updatePeriod);
             producer.sendMessage(start);
