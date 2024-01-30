@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StartDto {
+
+    private Long userId;
     private Long companyId;
     private Float longitudeStart;
     private Float latitudeStart;

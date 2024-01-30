@@ -3,6 +3,7 @@ package com.isa.med_equipment.service;
 import com.isa.med_equipment.dto.OrderDto;
 import com.isa.med_equipment.dto.ReservationDto;
 import com.isa.med_equipment.dto.UserDto;
+import com.isa.med_equipment.model.RegisteredUser;
 import com.isa.med_equipment.model.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +25,5 @@ public interface ReservationService {
     ReservationDto cancelReservation(ReservationDto reservationDto);
     ReservationDto completeReservation(ReservationDto reservationDto);
     Page<ReservationDto> findAllByCompany(Long companyId, Pageable pageable);
+    Page<UserDto> findAllUsers(Long companyId, Pageable pageable);
 }

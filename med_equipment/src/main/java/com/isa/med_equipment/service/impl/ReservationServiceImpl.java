@@ -289,4 +289,10 @@ public class ReservationServiceImpl implements ReservationService {
         Page<Reservation> reservations = reservationRepository.findAllByCompany(companyId, pageable);
         return populateReservations(reservations);
     }
+
+    @Override
+    public Page<UserDto> findAllUsers(Long companyId, Pageable pageable) {
+        Page<RegisteredUser> users = reservationRepository.findAllUsers(companyId, pageable);
+        return mapper.mapPage(users, UserDto.class);
+    }
 }

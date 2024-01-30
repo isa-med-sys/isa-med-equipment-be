@@ -1,7 +1,9 @@
 package com.isa.med_equipment.repository;
 
 import com.isa.med_equipment.model.Equipment;
+import com.isa.med_equipment.model.RegisteredUser;
 import com.isa.med_equipment.model.Reservation;
+import com.isa.med_equipment.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,4 +46,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.isPickedUp = false " +
             "AND r.isCancelled = false")
     Page<Reservation> findAllByCompany(@Param("companyId") Long companyId, Pageable pageable);
+
+    @Query("SELECT r.user FROM Reservation r " +
+            "WHERE r.timeSlot.admin.company.id = :companyId " +
+            "AND r.isPickedUp = false " +
+            "AND r.isCancelled = false")
+    Page<RegisteredUser> findAllUsers(@Param("companyId") Long companyId, Pageable pageable);
 }

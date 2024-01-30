@@ -139,4 +139,17 @@ public class ReservationController {
         OrderDto result = reservationService.findOrderById(userId, id);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/customers")
+    @PreAuthorize("hasRole('ROLE_COMPANY_ADMIN')")
+    public ResponseEntity<Page<UserDto>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam Long companyId
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<UserDto> result = reservationService.findAllUsers(companyId, pageRequest);
+        return ResponseEntity.ok(result);
+    }
 }
