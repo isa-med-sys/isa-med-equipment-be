@@ -1,14 +1,11 @@
 package com.isa.med_equipment.service.impl;
 
-import com.isa.med_equipment.dto.CompanyAdminRegistrationDto;
-import com.isa.med_equipment.dto.SystemAdminRegistrationDto;
-import com.isa.med_equipment.dto.UserRegistrationDto;
-import com.isa.med_equipment.dto.UserUpdateDto;
 import com.isa.med_equipment.dto.*;
 import com.isa.med_equipment.exception.EmailExistsException;
 import com.isa.med_equipment.exception.IncorrectPasswordException;
 import com.isa.med_equipment.model.*;
 import com.isa.med_equipment.repository.CompanyRepository;
+import com.isa.med_equipment.repository.RegisteredUserRepository;
 import com.isa.med_equipment.repository.UserRepository;
 import com.isa.med_equipment.security.token.ConfirmationToken;
 import com.isa.med_equipment.security.token.ConfirmationTokenRepository;
@@ -17,6 +14,7 @@ import com.isa.med_equipment.util.EmailSender;
 import com.isa.med_equipment.util.Mapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +24,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RegisteredUserRepository registeredUserRepository;
     private final CompanyRepository companyRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSender emailSender;
@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
+                           RegisteredUserRepository registeredUserRepository,
                            CompanyRepository companyRepository,
                            ConfirmationTokenRepository confirmationTokenRepository,
                            EmailSender emailSender,
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
                            Mapper mapper) {
         super();
         this.userRepository = userRepository;
+        this.registeredUserRepository = registeredUserRepository;
         this.companyRepository = companyRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailSender = emailSender;
@@ -108,6 +110,8 @@ public class UserServiceImpl implements UserService {
         address.setStreetNumber(userRegistrationDto.getAddress().getStreetNumber());
         address.setCity(userRegistrationDto.getAddress().getCity());
         address.setCountry(userRegistrationDto.getAddress().getCountry());
+        address.setLatitude(userRegistrationDto.getAddress().getLatitude());
+        address.setLongitude(userRegistrationDto.getAddress().getLongitude());
 
         user.setAddress(address);
 
@@ -138,7 +142,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserDto update(Long id, UserUpdateDto userUpdateDto) throws IncorrectPasswordException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found!", id)));
@@ -151,7 +154,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public Boolean changePassword(Long userId, String password) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
@@ -237,6 +239,14 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Scheduled(cron = "@monthly")
+    public void resetPenaltyPointsForAllUsers() {
+        List<RegisteredUser> users = registeredUserRepository.findAll();
+        for (RegisteredUser user : users) {
+            user.resetPenaltyPoints();
+        }
+    }
+
     private void validateCurrentPassword(String currentPassword, User existingUser) throws IncorrectPasswordException {
         if (!passwordEncoder.matches(currentPassword, existingUser.getPassword())) {
             throw new IncorrectPasswordException("Current password is incorrect");
@@ -266,7 +276,9 @@ public class UserServiceImpl implements UserService {
                 userUpdateDto.getAddress().getStreet(),
                 userUpdateDto.getAddress().getStreetNumber(),
                 userUpdateDto.getAddress().getCity(),
-                userUpdateDto.getAddress().getCountry()
+                userUpdateDto.getAddress().getCountry(),
+                userUpdateDto.getAddress().getLongitude(),
+                userUpdateDto.getAddress().getLatitude()
         );
     }
 }

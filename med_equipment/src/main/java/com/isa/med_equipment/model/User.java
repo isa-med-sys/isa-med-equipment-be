@@ -47,6 +47,9 @@ public abstract class User implements UserDetails {
     @JsonManagedReference
     private List<Token> tokens;
 
+    @Version
+    private Long  version;
+
     public abstract Role getRole();
 
     @Override

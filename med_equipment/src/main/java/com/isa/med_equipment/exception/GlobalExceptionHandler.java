@@ -1,6 +1,7 @@
 package com.isa.med_equipment.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<String> handleOptimisticLockingFailureException() {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("The data has been modified by another user. Please refresh and try again.");
+    }
+
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<String> handlePessimisticLLockingFailureException() {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("The data has been modified by another user. Please refresh and try again.");
     }
 

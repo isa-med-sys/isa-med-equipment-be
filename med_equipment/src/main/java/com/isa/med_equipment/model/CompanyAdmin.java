@@ -19,7 +19,7 @@ public class CompanyAdmin extends User {
     @JsonManagedReference
     private Company company;
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<TimeSlot> timeSlots;
     
     @Column(name = "has_changed_password", nullable = false)

@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,6 +35,7 @@ public class QRCodeGenerator {
                     .collect(Collectors.joining(", "));
 
             String qrData = String.format("""
+                    Reservation Number: %s
                     Client: %s
                     
                     Pickup Date: %s - %s
@@ -42,6 +44,7 @@ public class QRCodeGenerator {
                     Admin Contact: %s
                     
                     %s""",
+                    reservation.getId(),
                     reservation.getUser(),
                     formattedStartDate,
                     formatDate(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()),
@@ -63,6 +66,8 @@ public class QRCodeGenerator {
         int size = 200;
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+        hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(qrData, BarcodeFormat.QR_CODE, size, size, hints);
 

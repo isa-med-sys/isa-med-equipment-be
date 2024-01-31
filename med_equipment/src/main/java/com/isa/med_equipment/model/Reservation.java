@@ -2,7 +2,9 @@ package com.isa.med_equipment.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -32,9 +34,12 @@ public class Reservation {
     @JsonManagedReference
     private List<Equipment> equipment;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "time_slot_id", referencedColumnName="id", nullable = false)
     private TimeSlot  timeSlot;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
 
     @Column(name = "is_picked_up", nullable = false)
     private Boolean isPickedUp = false;
@@ -51,8 +56,23 @@ public class Reservation {
     public void make(RegisteredUser user, List<Equipment> equipment, TimeSlot timeSlot){
         timeSlot.reserve();
 
+        double totalPrice = equipment.stream()
+                .mapToDouble(Equipment::getPrice)
+                .sum();
+
         this.setUser(user);
         this.setEquipment(equipment);
+        this.setPrice(totalPrice);
         this.setTimeSlot(timeSlot);
+    }
+
+    public void cancel() {
+        if (isCancelled) {
+            throw new IllegalStateException("Reservation is already cancelled.");
+        }
+
+        user.updatePenaltyPointsOnCancellation(timeSlot.getStart());
+        timeSlot.markAsFree();
+        isCancelled = true;
     }
 }

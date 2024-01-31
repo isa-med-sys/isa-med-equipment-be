@@ -40,6 +40,9 @@ public class SecurityConfig {
             "/api/companies/**",
             "/api/reservations/**",
             "/api/calendars/**",
+            "/api/contracts/**",
+            "/socket/**",
+            "/api/mq/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

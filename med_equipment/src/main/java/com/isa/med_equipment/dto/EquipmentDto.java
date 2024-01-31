@@ -29,9 +29,11 @@ public class EquipmentDto {
 
     private Integer quantity;
 
+    private Boolean remove;
+
     public EquipmentDto(Long id, @NotEmpty(message = "Name is required") @Size(min = 2, max = 32) String name,
                    @NotEmpty(message = "Description is required") String description,
-                   @NotEmpty(message = "Price is required") Float price, Float rating, EquipmentType type, Integer quantity) {
+                   @NotEmpty(message = "Price is required") Float price, Float rating, EquipmentType type, Integer quantity, Boolean remove) {
         super();
         this.id = id;
         this.name = name;
@@ -40,5 +42,6 @@ public class EquipmentDto {
         this.rating = rating;
         this.type = type;
         this.quantity = quantity;
+        this.remove = remove;
     }
 }
