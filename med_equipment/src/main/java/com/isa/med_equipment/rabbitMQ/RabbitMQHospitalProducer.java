@@ -39,8 +39,8 @@ public class RabbitMQHospitalProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // TODO testing
-    @Scheduled(cron = "0 * * * * ?")
+    // for testing purpose every 5 minutes instead of daily
+    @Scheduled(cron = "0 */5 * * * ?")
 //    @Scheduled(cron = "0 0 7 * * ?")
     public void checkUpcomingDeliveries() {
         List<ContractDto> upcomingContracts = contractService.findAllScheduledForDelivery();
