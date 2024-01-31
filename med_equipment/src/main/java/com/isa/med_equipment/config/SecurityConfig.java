@@ -43,6 +43,7 @@ public class SecurityConfig {
             "/api/contracts/**",
             "/socket/**",
             "/api/mq/**",
+            "/actuator/prometheus"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

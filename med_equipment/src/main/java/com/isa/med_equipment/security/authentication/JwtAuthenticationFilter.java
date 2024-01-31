@@ -73,6 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Add specific endpoints that should bypass JWT validation
         return path.endsWith("/api/users/register") ||
                 path.contains("/api/users/confirm-account") ||
+                path.endsWith("/actuator/prometheus") ||
                 path.contains("/api/users/login") ||
                 (path.endsWith("/api/companies") && method.equals("GET")) ||
                 (path.matches(".*/api/companies/\\d+$") && method.equals("GET")) ||
